@@ -7,7 +7,7 @@ const getCookie = (name: string): string | null => {
   }
 
 const axiosInstance = axios.create({
-  baseURL: 'http://api-hf.com',
+  baseURL: 'https://api-hf.com',
   // withCredentials: true,
   headers: {
     "Content-Type": "application/json",
