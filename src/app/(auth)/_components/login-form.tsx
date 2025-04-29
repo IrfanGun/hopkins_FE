@@ -22,21 +22,21 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const axiosInstance = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL,
-    withCredentials: true,
-    headers: {
-      "Content-Type": "application/json",
-      "Accept": "application/json",
-    },
-  });
+  // const axiosInstance = axios.create({
+  //   baseURL: process.env.NEXT_PUBLIC_API_URL,
+  //   withCredentials: true,
+  //   headers: {
+  //     "Content-Type": "application/json",
+  //     "Accept": "application/json",
+  //   },
+  // });
 
-  useEffect(() => {
-    const token = getCookie('XSRF-TOKEN');
-    if (token) {
-      axiosInstance.defaults.headers['X-XSRF-TOKEN'] = token;
-    }
-  }, []);
+  // useEffect(() => {
+  //   const token = getCookie('XSRF-TOKEN');
+  //   if (token) {
+  //     axiosInstance.defaults.headers['X-XSRF-TOKEN'] = token;
+  //   }
+  // }, []);
   
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -44,41 +44,47 @@ export default function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(""); // Reset error message
-
-    if(!isCaptchaChecked) {
+    setError(""); // Reset error
+  
+    if (!isCaptchaChecked) {
       setError("Please complete the captcha verification");
       return;
     }
-
-    try {
-
-      const newLocal = await axiosInstance.get("/sanctum/csrf-cookie", {
-        withCredentials: true,
-      });
-
-        const response = await axiosInstance.post("/login", {
-        email,
-        password,
-      }, 
-      );
-
-     
-      const userData = response.data;
   
-      if (userData?.role === 'admin') {
+    try {
+      // Dapatkan CSRF token dari Laravel Sanctum
+      await fetch("https://api-hf.com/sanctum/csrf-cookie", {
+        method: "GET",
+        credentials: "include", // <== penting untuk menerima cookie dari backend
+      });
+  
+      // Kirim data login
+      const response = await fetch("https://api-hf.com/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include", // <== penting untuk kirim cookie saat login
+        body: JSON.stringify({ email, password }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Login failed");
+      }
+  
+      const userData = await response.json();
+  
+      if (userData?.role === "admin") {
         router.push("/admin");
       } else {
         router.push("/user");
       }
-  
     } catch (err: any) {
+      console.error("Login error:", err);
       setError("Invalid email or password");
-      console.error(err);
     }
-
   };
-
+  
   const [isCaptchaChecked, setIsCaptchaChecked] = useState(false);
 
   return (
