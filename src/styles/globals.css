@@ -1,0 +1,177 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 255, 255, 255;
+  --background-end-rgb: 255, 255, 255;
+}
+
+/* Enhanced Line animations */
+.line-animation {
+  position: absolute;
+  width: 8px;
+  background-color: white;
+  opacity: 0.2;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+}
+
+.line-animation:nth-child(1) {
+  left: 130px;
+  height: 180px;
+  animation: lineAnimationEnhanced 1.5s infinite linear; /* Ubah dari 4s menjadi 2.5s */
+  animation-delay: 0s;
+}
+
+.line-animation:nth-child(2) {
+  left: 28%;
+  height: 220px;
+  animation: lineAnimationEnhanced 1.5s infinite linear;
+  animation-delay: 0.7s;
+}
+
+.line-animation:nth-child(3) {
+  left: 42%;
+  height: 160px;
+  animation: lineAnimationEnhanced 1.3s infinite linear; /* Ubah dari 3.8s menjadi 2.8s */
+  animation-delay: 1.4s;
+}
+
+.line-animation:nth-child(4) {
+  left: 56%;
+  height: 200px;
+  animation: lineAnimationEnhanced 1.7s infinite linear; /* Ubah dari 4.2s menjadi 3.2s */
+  animation-delay: 2.1s;
+}
+
+.line-animation:nth-child(5) {
+  left: 70%;
+  height: 190px;
+  animation: lineAnimationEnhanced 1.2s infinite linear; /* Ubah dari 3.9s menjadi 2.9s */
+  animation-delay: 2.8s;
+}
+
+.line-animation:nth-child(6) {
+  left: 84%;
+  height: 230px;
+  animation: lineAnimationEnhanced 1.6s infinite linear; /* Ubah dari 4.3s menjadi 3.1s */
+  animation-delay: 3.5s;
+}
+
+.line-animation:nth-child(7) {
+  left: 98%;
+  height: 170px;
+  animation: lineAnimationEnhanced 1.9s infinite linear; /* Ubah dari 4.1s menjadi 3.4s */
+  animation-delay: 4.2s;
+}
+
+@keyframes lineAnimationEnhanced {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.2;
+  }
+  90% {
+    height: 50px;
+    opacity: 0.2;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+/* Form field styles */
+.form-field__input:focus {
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2);
+}
+
+.login__box {
+  display: flex;
+  flex-direction: column;
+}
+
+.login__content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+@media (max-width: 768px) {
+  .login__box--image {
+    display: none;
+  }
+}
+
+
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+  }
+}
+
+
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
