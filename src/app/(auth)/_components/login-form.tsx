@@ -57,7 +57,7 @@ export default function LoginForm() {
     try {
 
       await axiosInstance.get("/sanctum/csrf-cookie", {
-        // withCredentials: true,
+        withCredentials: true,
       });
 
         const response = await axiosInstance.post("/login", {
