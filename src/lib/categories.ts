@@ -19,7 +19,7 @@ export async function fetchCategories(): Promise<Category[]> {
   try {
     const response = await axiosInstance.get("/api/category/", {
       
-      withCredentials: true,
+      // withCredentials: true,
     });
     return response.data.map((Item: any) => ({
       
