@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
-import axios, {AxiosInstance} from "axios";        
+import axios from "axios";        
 import { useEffect } from "react";
 
 function getCookie(name: string): string | null {
@@ -22,23 +22,20 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const [axiosInstance, setAxiosInstance] = useState<AxiosInstance>(() =>
-    axios.create({
-      baseURL: process.env.NEXT_PUBLIC_API_URL,
-      withCredentials: true,
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-      },
-    })
-  );
-  
+  const axiosInstance = axios.create({
+    baseURL: process.env.NEXT_PUBLIC_API_URL,
+    withCredentials: true,
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+    },
+  });
+
   useEffect(() => {
     const token = getCookie('XSRF-TOKEN');
-    setAxiosInstance((prev: AxiosInstance) => {
-      prev.defaults.headers['X-XSRF-TOKEN'] = token || '';
-      return prev;
-    });
+    if (token) {
+      axiosInstance.defaults.headers['X-XSRF-TOKEN'] = token;
+    }
   }, []);
   
   const togglePasswordVisibility = () => {
@@ -56,7 +53,9 @@ export default function LoginForm() {
 
     try {
 
-  
+      const newLocal = await axiosInstance.get("/sanctum/csrf-cookie", {
+        withCredentials: true,
+      });
 
         const response = await axiosInstance.post("/login", {
         email,
