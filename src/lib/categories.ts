@@ -17,17 +17,20 @@ export interface Category {
 
 export async function fetchCategories(): Promise<Category[]> {
   try {
-    const res = await fetch("https://api-hf.com/api/category/");
-    const result = await res.json();
-    return result.data.map((item: any) => ({
-      id: item.id,
-      name: item.name,
-      subcategories: (item.subcategory ?? []).map((subcategory: any) => ({
-      id: subcategory.id,
-      name: subcategory.name,
+    const response = await axiosInstance.get("/api/category/", {
+      
+      withCredentials: true
+    });
+    return response.data.map((Item: any) => ({
+      
+      id : Item.id,
+      name: Item.name,
+      subcategories: (Item.subcategory ?? []).map((subcategory: any) => ({
+        
+        id: subcategory.id,
+        name: subcategory.name,
       })),
-    }));
-    console.log("success");
+     }));
   } catch (error) {
     console.error("Error fetching categories:", error);
     return []; // Return an empty array in case of error

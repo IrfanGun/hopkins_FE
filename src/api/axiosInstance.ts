@@ -8,12 +8,12 @@ const getCookie = (name: string): string | null => {
 
 const axiosInstance = axios.create({
   baseURL: 'https://api-hf.com',
-  // withCredentials: true,
-  // headers: {
-  //   "Content-Type": "application/json",
-  //   "Accept": "application/json",
-  //   "X-XSRF-TOKEN": getCookie('XSRF-TOKEN')
-  // },
+  withCredentials: true,
+  headers: {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-XSRF-TOKEN": getCookie('XSRF-TOKEN')
+  },
 });
 
 export default axiosInstance;
