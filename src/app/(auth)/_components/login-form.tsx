@@ -64,9 +64,7 @@ export default function LoginForm() {
         email,
         password,
       }, 
-      {
-        withCredentials: true,
-      });
+      );
 
      
       const userData = response.data;
