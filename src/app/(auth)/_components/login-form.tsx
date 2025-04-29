@@ -25,7 +25,7 @@ export default function LoginForm() {
   const [axiosInstance, setAxiosInstance] = useState<AxiosInstance>(() =>
     axios.create({
       baseURL: process.env.NEXT_PUBLIC_API_URL,
-      // withCredentials: true,
+      withCredentials: true,
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
@@ -57,7 +57,7 @@ export default function LoginForm() {
     try {
 
       await axiosInstance.get("/sanctum/csrf-cookie", {
-       
+        
       });
 
         const response = await axiosInstance.post("/login", {
