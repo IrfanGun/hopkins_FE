@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { fetchCategories as categories } from "../../../lib/categories";
 import React from "react";
+import { useEffect } from "react";
 
 type Category = {
   name: string;
@@ -10,12 +11,16 @@ type Category = {
 export default function AllCategories() {
   const [groupedCategories, setGroupedCategories] = React.useState<Category[][]>([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     async function fetchAndGroupCategories() {
       const fetchedCategories = await categories();
-      const grouped = [];
-      for (let i = 0; i < fetchedCategories.length; i += 5) {
-        grouped.push(fetchedCategories.slice(i, i + 5));
+      const normalizedCategories = fetchedCategories.map((category) => ({
+        ...category,
+        subcategories: category.subcategories?.map((sub: { name: string }) => sub.name) ?? [],
+      }));
+      const grouped: Category[][] = [];
+      for (let i = 0; i < normalizedCategories.length; i += 5) {
+        grouped.push(normalizedCategories.slice(i, i + 5));
       }
       setGroupedCategories(grouped);
     }
