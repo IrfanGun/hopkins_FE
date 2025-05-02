@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
-import axios from "axios";        
+import axios, {AxiosInstance} from "axios";        
 import { useEffect } from "react";
 
 function getCookie(name: string): string | null {
@@ -22,21 +22,24 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  // const axiosInstance = axios.create({
-  //   baseURL: process.env.NEXT_PUBLIC_API_URL,
-  //   withCredentials: true,
-  //   headers: {
-  //     "Content-Type": "application/json",
-  //     "Accept": "application/json",
-  //   },
-  // });
-
-  // useEffect(() => {
-  //   const token = getCookie('XSRF-TOKEN');
-  //   if (token) {
-  //     axiosInstance.defaults.headers['X-XSRF-TOKEN'] = token;
-  //   }
-  // }, []);
+  const [axiosInstance, setAxiosInstance] = useState<AxiosInstance>(() =>
+    axios.create({
+      baseURL: process.env.NEXT_PUBLIC_API_URL,
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+      },
+    })
+  );
+  
+  useEffect(() => {
+    const token = getCookie('XSRF-TOKEN');
+    setAxiosInstance((prev: AxiosInstance) => {
+      prev.defaults.headers['X-XSRF-TOKEN'] = token || '';
+      return prev;
+    });
+  }, []);
   
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -44,7 +47,7 @@ export default function LoginForm() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(""); // Reset error
+    setError("");
   
     if (!isCaptchaChecked) {
       setError("Please complete the captcha verification");
@@ -52,27 +55,19 @@ export default function LoginForm() {
     }
   
     try {
-      // Dapatkan CSRF token dari Laravel Sanctum
-      await fetch("https://api-hf.com/sanctum/csrf-cookie", {
-        method: "GET",
-        credentials: "include", // <== penting untuk menerima cookie dari backend
+      // WAJIB: Panggil csrf-cookie dulu
+      await axiosInstance.get("/sanctum/csrf-cookie", {
+        withCredentials: true, // Tetap aktif agar Laravel bisa set cookie-nya
       });
   
-      // Kirim data login
-      const response = await fetch("https://api-hf.com/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include", // <== penting untuk kirim cookie saat login
-        body: JSON.stringify({ email, password }),
-      });
+      // Baru kirim data login
+      const response = await axiosInstance.post(
+        "/login",
+        { email, password },
+        { withCredentials: true } // <- PENTING: pastikan di sini juga
+      );
   
-      if (!response.ok) {
-        throw new Error("Login failed");
-      }
-  
-      const userData = await response.json();
+      const userData = response.data;
   
       if (userData?.role === "admin") {
         router.push("/admin");
@@ -80,11 +75,12 @@ export default function LoginForm() {
         router.push("/user");
       }
     } catch (err: any) {
-      console.error("Login error:", err);
       setError("Invalid email or password");
+      console.error(err);
     }
   };
   
+
   const [isCaptchaChecked, setIsCaptchaChecked] = useState(false);
 
   return (
