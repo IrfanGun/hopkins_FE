@@ -22,7 +22,6 @@ export async function fetchCategories(): Promise<Category[]> {
       withCredentials: true
     });
 
-    console.log('berhasil ambil data. tidur dulu......');
     return response.data.map((Item: any) => ({
       
       id : Item.id,

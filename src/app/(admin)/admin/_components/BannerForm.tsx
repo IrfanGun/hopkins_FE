@@ -2,6 +2,7 @@
 
 import { Upload } from "lucide-react";
 import { Banner } from "../../../../lib/banners";
+import { Button, createTheme, Spinner, ThemeProvider } from "flowbite-react";
 
 interface BannerFormProps {
   banner: Omit<Banner, "id">;
@@ -9,7 +10,24 @@ interface BannerFormProps {
   onSubmit: () => void;
   onCancel: () => void;
   isEdit?: boolean;
+  isLoading? : boolean;
 }
+
+const customTheme = createTheme({
+  spinner : {
+    "base": "inline animate-spin text-gray-200",
+    "color": {
+      "default": "fill-primary-600",
+      "failure": "fill-red-600",
+      "gray": "fill-gray-600",
+      "info": "fill-cyan-600",
+      "pink": "fill-pink-600",
+      "purple": "fill-purple-600",
+      "success": "fill-green-500",
+      "warning": "fill-yellow-400",
+      "base" : "fill-orange-500"
+  }
+}});
 
 export default function BannerForm({
   banner,
@@ -17,6 +35,7 @@ export default function BannerForm({
   onSubmit,
   onCancel,
   isEdit = false,
+  isLoading,
 }: BannerFormProps) {
   return (
     <div className="w-full max-w-md rounded-lg bg-white p-6 shadow-xl">
@@ -65,31 +84,14 @@ export default function BannerForm({
             onChange={(e) => setBanner({ ...banner, page: e.target.value })}
             className="w-full rounded-md border border-gray-300 p-2"
           >
-            <option value="Home">Home</option>
-            <option value="Giveaways">Giveaways</option>
-            <option value="Discounts">Discounts</option>
-            <option value="Profile">Profile</option>
+            <option value="Dashboard">Dashboard</option>
+            <option value="Membership">Membership</option>
+            
           </select>
         </div>
 
         <div>
-          <label className="mb-1 block text-sm font-medium text-gray-700">
-            Position
-          </label>
-          <select
-            value={banner.position}
-            onChange={(e) =>
-              setBanner({
-                ...banner,
-                position: e.target.value as Banner["position"],
-              })
-            }
-            className="w-full rounded-md border border-gray-300 p-2"
-          >
-            <option value="Top">Top</option>
-            <option value="Middle">Middle</option>
-            <option value="Bottom">Bottom</option>
-          </select>
+         
         </div>
 
         <div className="flex items-center">
@@ -112,9 +114,20 @@ export default function BannerForm({
         </button>
         <button
           onClick={onSubmit}
-          className="rounded-md bg-orange-500 px-4 py-2 text-sm text-white hover:bg-orange-600"
+          disabled = {isLoading}
+          className={`rounded-md bg-orange-500 text-white px-4 py-2 text-sm  ${
+            isLoading
+              ? "bg-orange-300 cursor-not-allowed"
+              : "bg-orange-500 hover:bg-orange-600"
+          }`}
         >
-          {isEdit ? "Save Changes" : "Add Banner"}
+        {isLoading ?
+        <ThemeProvider theme={customTheme}><Spinner  size="sm" color="base" /></ThemeProvider> 
+        
+              : 
+            isEdit ? "Save Changes" : "Add Banner"
+          }
+
         </button>
       </div>
     </div>

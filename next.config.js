@@ -6,6 +6,18 @@ import "./src/env.js";
 import withFlowbiteReact from "flowbite-react/plugin/nextjs";
 
 /** @type {import("next").NextConfig} */
-const config = {};
+const config = {
+    reactStrictMode: true, // Aktifkan Strict Mode React
+    eslint: {
+      // Biar error dari ESLint tidak diabaikan saat build
+      ignoreDuringBuilds: false,
+    },
+    typescript: {
+      // Gagal build kalau ada error TypeScript
+      ignoreBuildErrors: false,
+    },
+};
+
+
 
 export default withFlowbiteReact(config);

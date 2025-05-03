@@ -11,7 +11,8 @@ const config: Config = {
       "./components/**/*.{js,ts,jsx,tsx,mdx}",
       "./app/**/*.{js,ts,jsx,tsx,mdx}",
       "*.{js,ts,jsx,tsx,mdx}",
-      ".flowbite-react/class-list.json"
+     "./node_modules/flowbite-react/**/*.js", // ini penting
+ 	 "./node_modules/flowbite/**/*.js",        // ini juga kadang dibutuhkan
   ],
   theme: {
   	extend: {

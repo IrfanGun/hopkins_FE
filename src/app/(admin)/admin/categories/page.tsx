@@ -78,7 +78,7 @@ export default function CategoriesPage() {
 
   const handleAddCategory = async() => {
     try {
-      const response = await axiosInstance.post("/api/category/", {
+      const response = await axiosInstance.post("/api/category", {
         name: newCategoryName,
       });
       
@@ -230,10 +230,10 @@ export default function CategoriesPage() {
   };
 
   const handleAddSubcategory = async(category_id : number, name : string ) => {
-    console.log(name, category_id  );
+    
 
     try  {
-    const response = await axiosInstance.post("/api/subcategory/", {
+    const response = await axiosInstance.post("/api/subcategory", {
       name: name,
       category_id: category_id,
     });

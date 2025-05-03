@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { Edit, Trash2 } from "lucide-react";
-import { Banner } from "../../../../lib/banners";                   
+import { Banner } from "../../../../lib/banners";    
+import { Spinner, ThemeProvider } from "flowbite-react";    
+import customTheme from "src/components/ui/spinner-custom";         
 
 interface BannerListProps {
   banners: Banner[];
@@ -9,6 +11,8 @@ interface BannerListProps {
   setShowEditBannerModal: (state: boolean) => void;
   handleDeleteBanner: (id: number) => void;
   handleToggleActive: (id: number) => void;
+  isLoadBanner : boolean;
+  loadingBannerId : number | null;
 }
 
 export default function BannerList({
@@ -18,6 +22,9 @@ export default function BannerList({
   setShowEditBannerModal,
   handleDeleteBanner,
   handleToggleActive,
+  isLoadBanner,
+  loadingBannerId 
+
 }: BannerListProps) {
   return (
     <div className="rounded-lg border bg-white shadow">
@@ -26,8 +33,12 @@ export default function BannerList({
           <div className="font-medium text-gray-700">All Banners</div>
           <div className="text-sm text-gray-500">{banners.length} banners</div>
         </div>
+        <div className="flex justify-center items-center">
+              {isLoadBanner ? <ThemeProvider theme={customTheme} > <Spinner color="base"  /> </ThemeProvider > : ''}
+          </div>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 ">
+
           {banners.map((banner) => (
             <div
               key={banner.id}
@@ -35,6 +46,7 @@ export default function BannerList({
                 banner.active ? "border-green-200" : "border-gray-200"
               } bg-white shadow-sm transition-all hover:shadow`}
             >
+          
               <div className="relative h-40 w-full overflow-hidden bg-gray-100">
                 <Image
                   src={
@@ -62,7 +74,7 @@ export default function BannerList({
                 </div>
                 <div className="mb-4 text-sm text-gray-500">
                   <p>Page: {banner.page}</p>
-                  <p>Position: {banner.position}</p>
+                
                 </div>
                 <div className="flex justify-between">
                   <div className="flex space-x-2">
@@ -74,7 +86,7 @@ export default function BannerList({
                           image: banner.image,
                           page: banner.page,
                           active: banner.active,
-                          position: banner.position,
+                 
                         });
                         setShowEditBannerModal(true);
                       }}
@@ -91,7 +103,13 @@ export default function BannerList({
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>
-                  <button
+
+                  {loadingBannerId === banner.id ? (
+                    <ThemeProvider theme={customTheme}>
+                      <Spinner color="base" />
+                    </ThemeProvider>
+                  ) : (
+                    <button
                     onClick={() => handleToggleActive(banner.id)}
                     className={`rounded-md px-3 py-1 text-xs font-medium ${
                       banner.active
@@ -99,8 +117,14 @@ export default function BannerList({
                         : "bg-green-100 text-green-700 hover:bg-green-200"
                     }`}
                   >
-                    {banner.active ? "Deactivate" : "Activate"}
+                    {  banner.active ? "Deactivate" : "Activate"}
+
+                  
                   </button>
+                  )}
+
+
+               
                 </div>
               </div>
             </div>
