@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Home } from "lucide-react";
 import Header from "../../components/layout/header";
@@ -9,14 +9,27 @@ import MobileMenu from "../../components/layout/MobileMenuButton";
 import GiveawayCard from "../_components/giveaway-card";
 import MobileBottomNavigationBar from "src/app/components/layout/MobileBottomNavigationBar";
 import FooterUser from "../../components/ui/footer-user";
-import { giveaways } from "../../../lib/giveaway";
+import { fetchGiveaway} from "../../../lib/giveaway";
+import { Giveaway } from "../../../lib/giveaway";
 
 export default function GiveawaysPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [giveaways, setGiveaways] = useState<Giveaway[]>([]);
+
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
+  
+  useEffect(() => {
+
+    const loadGiveaways = async() => {
+      const response = await  fetchGiveaway();
+      setGiveaways(response);
+    }
+    
+    loadGiveaways();
+  }, [])
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -51,7 +64,7 @@ export default function GiveawaysPage() {
 
         {/* Giveaways Grid */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {giveaways.map((giveaway) => (
+          {giveaways.map((giveaway : any) => (
             <GiveawayCard
               key={giveaway.id}
               id={giveaway.id}

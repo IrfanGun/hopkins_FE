@@ -1,13 +1,24 @@
 "use client";
 
-import { useState } from "react";
-import { partners, type Partner } from "../../../lib/partners";
+import { useState, useEffect } from "react";
+import { fetchPartner, Partner } from "../../../lib/partners";
 import { X, Facebook, Instagram, Globe } from "lucide-react";
 
 export default function ExclusivePartner() {
   const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
+  const[partners, setPartners] = useState<Partner[]>([]);
+  
+    useEffect(() => {
+      const loadPartner = async() => {
+        const response = await fetchPartner();
+        setPartners(response);
+      }
+      loadPartner();
+    },[]);
+  
+  
 
   const openModal = (partner: Partner) => {
     setSelectedPartner(partner);

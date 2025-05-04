@@ -1,8 +1,20 @@
 "use client";
-import { useState } from "react";
-import { partners, type Partner } from "../../../lib/partners";
+import { useState, useEffect } from "react";
+import {fetchPartner, Partner} from "../../../lib/partners";
 
 export default function FilterPartners() {
+  const[partners, setPartners] = useState<Partner[]>([]);
+  
+    useEffect(() => {
+      const loadPartner = async() => {
+        const response = await fetchPartner();
+        setPartners(response);
+      }
+      loadPartner();
+    },[]);
+  
+  
+
   return (
     <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
       <h3 className="mb-4 text-lg font-semibold">Filters</h3>

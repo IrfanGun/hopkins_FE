@@ -77,8 +77,8 @@ export default function ShowModal ({
                 <div className="mt-6 flex justify-center">
                     <button
                     onClick={setClose}
-                    className={`px-4 py-2 rounded border border-gray-300  ${
-                        isDelete ? 'text-gray-700 hover:bg-gray-50 ' :  'bg-orange-500 hover:bg-orange-600 text-white'
+                    className={`px-4 py-2 rounded  ${
+                        isDelete ? 'text-gray-700 hover:bg-gray-50 border border-gray-300  ' :  'bg-orange-500 hover:bg-orange-600 text-white'
                     }`}
                     >
                     Close

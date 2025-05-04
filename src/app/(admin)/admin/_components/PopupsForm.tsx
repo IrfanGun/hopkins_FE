@@ -1,26 +1,38 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { partners as defaultPartners, Partner } from "../../../../lib/partners";
+import { fetchPartner as defaultPartners, Partner } from "../../../../lib/partners";
 import { Button } from "../../../components/ui/button";
 import { getStates, States } from "../../../../lib/states";
 import { Category, fetchCategories } from "src/lib/categories";
 import { SubCategory } from "src/lib/types";
 import axiosInstance from "src/api/axiosInstance";
+import { AxiosError } from "axios";
+import ShowModal from "src/components/ui/custom-modal";
+import { Spinner, ThemeProvider } from 'flowbite-react';
+import customTheme from "src/components/ui/spinner-custom";
 
 
-export default function PopupsForm() {
+type PopupsFormProps = {
+  reloadData: () => void; // Callback untuk reload data setelah submit
+};
+
+export default function PopupsForm({reloadData} : PopupsFormProps) {
   // interface subCategory {
   //   id : number;
   //   name : string;
   // };
   
+
   const [categories, setCategories] = useState<Category[]>([]);
   const [subcategories, setSubCategories] = useState<SubCategory[]>([]) 
   const [states, setStates] = useState<States[]>([]);
-  const [partners, setPartners] = useState<Partner[]>(defaultPartners);
+  const [partners, setPartners] = useState<Partner[]>();
   const [editId, setEditId] = useState<number | null>(null);
-  const [form, setForm] = useState<Partial<Partner>>({
+  const [isLoading, setIsLoading] = useState(false);
+  const [Notification, setNotification] = useState < string[]>([]);
+  const [showNotification, setShowNotification] = useState(false);
+  const defaultForm = {
     name: "",
     category: "",
     subcategory: "",
@@ -39,7 +51,14 @@ export default function PopupsForm() {
     hasMap: "",
     url: "",
     isPopular: false,
-  });
+  };
+
+  const [form, setForm] = useState<Partial<Partner>>(defaultForm);
+  
+
+  useEffect(() => {
+    
+  }, []);
 
   const handleSubCategory = (e: React.ChangeEvent<any>) => {
     try {
@@ -51,7 +70,6 @@ export default function PopupsForm() {
       
       
       const subcategory = categories.filter(e => e.id == value).flatMap((e => e.subcategories));
-      
       setSubCategories(subcategory.filter((sub): sub is SubCategory => sub !== undefined));
       
      
@@ -77,11 +95,70 @@ export default function PopupsForm() {
     setForm((prev) => ({ ...prev, tags }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async(e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.category) return;
     console.log(form);
-    // if (editId !== null) {
+
+    setIsLoading(true);
+
+    try {
+      
+      const response = await axiosInstance.post('/api/product', {
+        name: form.name,
+        category: form.category,
+        subcategory: form.subcategory,
+        logo: form.logo,
+        discount: form.discount,
+        discountText: form.discountText,
+        promoCode: form.promoCode,
+        description: form.description,
+        tags: form.tags, 
+        storeAddress: form.storeAddress,
+        email: form.email,
+        phone: form.phone,
+        facebook: form.facebook,
+        instagram: form.instagram,
+        website: form.website,
+        hasMap: form.hasMap,
+        url: form.url,
+        isPopular: form.isPopular,
+        states: form.states
+
+      });
+
+      console.log("sukses");
+
+    } catch (error) {
+    
+
+       const err = error as AxiosError;
+          
+            if (err.response) {
+      
+              const errorData = err.response.data  as Record<string, string[]>;
+              const allMessages: string[] = Object.values(errorData).flat();
+              console.log(allMessages);
+              setNotification(allMessages);
+              setShowNotification(true);
+            
+            } 
+      
+    } finally {
+      const loadPartners = async () => {
+  
+          const data = await defaultPartners();
+          setPartners(data);
+      
+      };
+      loadPartners();
+      setIsLoading(false);
+      reloadData();
+      setForm(defaultForm);
+   
+    }
+
+   
     //   setPartners((prev) =>
     //     prev.map((partner) =>
     //       partner.id === editId
@@ -99,17 +176,17 @@ export default function PopupsForm() {
 
     //   setPartners((prev) => [...prev, newPartner]);
     // }
-    const sendForm = async () => {
-      try {
-        const response = await axiosInstance.post('api/product/', form );
-        console.log("Form submitted successfully:", response.data);
-      } catch (error) {
-        console.error("Error submitting form:", error);
-      }
+    // const sendForm = async () => {
+    //   try {
+    //     const response = await axiosInstance.post('api/product/', form );
+    //     console.log("Form submitted successfully:", response.data);
+    //   } catch (error) {
+    //     console.error("Error submitting form:", error);
+    //   }
       
-    } 
+    // } 
 
-    sendForm();
+    // sendForm();
 
     // setEditId(null);
     // setForm({
@@ -163,11 +240,21 @@ export default function PopupsForm() {
   }, []);
 
   // Unique categories
-  const uniqueCategories = [...new Set(partners.map((p) => p.category))];
+  // const uniqueCategories = [...new Set(partners.map((p) => p.category))];
   // const uniqueStates = [...new Set(states.map((p) => p.state))];
 
   return (
-    <form
+    <div>
+        {showNotification  && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                <ShowModal
+                  setMessage={Notification}
+                  setClose={() => setShowNotification(false)}
+                  isLoading = {isLoading}
+                />
+            </div>
+            ) }
+       <form
       onSubmit={handleSubmit}
       className="mb-8 space-y-4 rounded-lg border bg-white p-6 shadow-sm"
     >
@@ -352,13 +439,23 @@ export default function PopupsForm() {
           Popular Partner
         </label>
       </div>
-
+          {isLoading ? (
+      <Button disabled className=" bg-orange-500 flex items-center gap-2">
+          <ThemeProvider theme={customTheme}>
+          <Spinner size="sm" color="base"  />
+          </ThemeProvider>  
+      </Button>
+    ) : (
       <Button
         className="bg-orange-500 hover:bg-orange-700 hover:text-white"
         type="submit"
       >
         {editId ? "Update Partner" : "Add Partner"}
       </Button>
-    </form>
+    )}
+        </form>
+
+    </div>
+   
   );
 }

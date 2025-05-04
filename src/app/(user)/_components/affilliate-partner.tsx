@@ -1,10 +1,25 @@
 "use client";
 
-import { useState } from "react";
-import { partners, type Partner } from "../../../lib/partners";
+import { useEffect, useState } from "react";
+import { fetchPartner, Partner } from "../../../lib/partners";
 import Link from "next/link";
 
+
+
+
 export default function AffiliatePartner() {
+
+  const[partners, setPartners] = useState<Partner[]>([]);
+
+  useEffect(() => {
+    const loadPartner = async() => {
+      const response = await fetchPartner();
+      setPartners(response);
+    }
+    loadPartner();
+  },[]);
+
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-6 flex items-center justify-between border-b pb-2">

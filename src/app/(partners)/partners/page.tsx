@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
-import { partners, type Partner } from "../../../lib/partners";
-import { useState } from "react";
+import { fetchPartner, Partner } from "../../../lib/partners";
+import { useState, useEffect } from "react";
 import { Globe, Instagram, X, Facebook, Filter } from "lucide-react";
 import Header from "src/app/components/layout/header";
 import MobileMenuButton from "src/app/components/layout/MobileMenuButton";
@@ -18,10 +18,23 @@ export default function Partners() {
   const [showFilters, setShowFilters] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const[partners, setPartners] = useState<Partner[]>([]);
   const openModal = (partner: Partner) => {
     setSelectedPartner(partner);
     setShowModal(true);
   };
+
+  
+  
+    useEffect(() => {
+      const loadPartner = async() => {
+        const response = await fetchPartner();
+        setPartners(response);
+      }
+      loadPartner();
+    },[]);
+  
+  
 
   const closeModal = () => {
     setShowModal(false);
