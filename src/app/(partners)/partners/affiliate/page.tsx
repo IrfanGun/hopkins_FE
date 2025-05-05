@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
-import { partners, type Partner } from "../../../../lib/partners";
-import { useState } from "react";
+import { fetchPartner, type Partner } from "../../../../lib/partners";
+import { useState, useEffect } from "react";
 import { Globe, Instagram, X, Facebook, Menu, Filter } from "lucide-react";
 import Header from "../../../components/layout/header";
 import MobileMenuButton from "src/app/components/layout/MobileMenuButton";
@@ -17,6 +17,18 @@ export default function AffiliatePage() {
   const [page, setPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [partners, setPartners] = useState<Partner[]>([]);
+  
+    useEffect(() => {
+      const loadPartner = async() => {
+        const response = await fetchPartner();
+        setPartners(response);
+      }
+      loadPartner();
+    },[]);
+  
+  
+  
 
   const openModal = (partner: Partner) => {
     setSelectedPartner(partner);
