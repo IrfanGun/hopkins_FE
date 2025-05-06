@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Home } from "lucide-react";
 import Header from "../../components/layout/header";
@@ -9,11 +9,40 @@ import EntryCard from "../_components/entry-card";
 import MobileMenuButton from "src/app/components/layout/MobileMenuButton";
 import MobileMenu from "../../components/layout/MobileMenuButton";
 import MobileBottomNavigationBar from "../../components/layout/MobileBottomNavigationBar";
-import { userEntries } from "src/lib/userEntries";
+import { fetchUserEntries, UserEntries  } from "src/lib/userEntries";
+import { Spinner, ThemeProvider } from "flowbite-react";
+import baseTheme from "src/components/ui/spinner-custom-base";
+
 
 export default function MyEntriesPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [userEntries, setuserEntries] = useState<UserEntries[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
+  useEffect(() => {
+
+    loadEntries();
+
+  }, []);
+
+  const loadEntries = async() => {
+
+    try {
+
+      setIsLoading(true);
+      const response = await fetchUserEntries();
+      setuserEntries(response);
+      
+    } catch (error) {
+      
+    } finally {
+      setIsLoading(false);
+    }
+   
+  }
+
+
+  
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
   };
@@ -48,7 +77,16 @@ export default function MyEntriesPage() {
         <h1 className="mb-8 text-3xl font-bold">
           <span className="text-primary-color">MAJOR</span> GIVEAWAYS
         </h1>
+        {isLoading && (
+          <div className="text-center mb-4">
+            <ThemeProvider theme={baseTheme} >
+              <Spinner color="base"/>
+            </ThemeProvider>
 
+          </div>
+        )
+          
+        }
         {/* Entries List */}
         <div>
           {userEntries.map((entry) => (

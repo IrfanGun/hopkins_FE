@@ -25,9 +25,6 @@ export default function BannersPage() {
   const [loadingBannerId, setLoadingBannerId] = useState<number | null>(null);
 
 
-
-
-
   const [newBanner, setNewBanner] = useState<Omit<Banner, "id">>({
     title: "",
     image: "",

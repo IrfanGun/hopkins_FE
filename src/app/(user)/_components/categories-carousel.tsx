@@ -17,12 +17,15 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { fetchBanner, Banner } from "src/lib/banners";
+import axiosInstance from "src/api/axiosInstance";
+import { Category, fetchCategories } from "src/lib/categories";
 
 
 export default function CategoriesCarousel() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [slides, setSlider] = useState<Banner[]>([]);
   const filteredSlides = slides.filter((slide) => slide.page === "Dashboard");
+  const [category , setcategory] = useState<Category[]>([]);
 
   const generateUniqueKey = (slide: Banner, index: number) => {
     const baseKey = `${slide.id || "no-id"}-${slide.title || "no-title"}-${slide.image || "no-img"}`;
@@ -39,6 +42,7 @@ export default function CategoriesCarousel() {
       setSlider(response);
     };
 
+    loadCategory();
     loadSlider();
   }, []);
 
@@ -52,7 +56,20 @@ export default function CategoriesCarousel() {
     return () => clearInterval(interval);
   }, [filteredSlides.length]);
 
+  const loadCategory = async() => {
 
+    try {
+        
+        const response = await fetchCategories();
+        setcategory(response);
+
+    } catch (error) {
+      
+    } finally {
+      
+    }
+
+  };
 
   
 
@@ -97,10 +114,10 @@ export default function CategoriesCarousel() {
         {/* Categories sidebar */}
         <div className="rounded-lg bg-white p-4 shadow">
           <ul className="space-y-3">
-            {categories.map((category, index) => (
+            {category.map((category, index) => (
               <li key={index}>
                 <button className="flex w-full items-center rounded-md p-2 transition-colors hover:bg-gray-50">
-                  <category.icon className="mr-3 h-5 w-5 text-gray-600" />
+                  {/* <category.icon className="mr-3 h-5 w-5 text-gray-600" /> */}
                   <span className="font-medium">{category.name}</span>
                 </button>
               </li>
