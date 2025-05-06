@@ -8,17 +8,17 @@ export default function ExclusivePartner() {
   const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
-  const[partners, setPartners] = useState<Partner[]>([]);
-  
-    useEffect(() => {
-      const loadPartner = async() => {
-        const response = await fetchPartner();
-        setPartners(response);
-      }
-      loadPartner();
-    },[]);
-  
-  
+  const [partners, setPartners] = useState<Partner[]>([]);
+
+  useEffect(() => {
+    const loadPartner = async () => {
+      const response = await fetchPartner();
+      setPartners(response);
+    }
+    loadPartner();
+  }, []);
+
+
 
   const openModal = (partner: Partner) => {
     setSelectedPartner(partner);
@@ -187,15 +187,15 @@ export default function ExclusivePartner() {
                   {tag}
                 </span>
               )) || (
-                <>
-                  <span className="rounded-full bg-gray-100 px-4 py-2 text-sm text-gray-800">
-                    {selectedPartner.category}
-                  </span>
-                  <span className="rounded-full bg-gray-100 px-4 py-2 text-sm text-gray-800">
-                    Products
-                  </span>
-                </>
-              )}
+                  <>
+                    <span className="rounded-full bg-gray-100 px-4 py-2 text-sm text-gray-800">
+                      {selectedPartner.category}
+                    </span>
+                    <span className="rounded-full bg-gray-100 px-4 py-2 text-sm text-gray-800">
+                      Products
+                    </span>
+                  </>
+                )}
             </div>
 
             {/* Store information */}
@@ -256,11 +256,20 @@ export default function ExclusivePartner() {
               <div className="mt-4 rounded border border-gray-200 bg-gray-50 p-2 text-center text-sm text-orange-600 hover:underline">
                 {/* Display uploaded map image */}
                 <div className="mt-2">
-                  <img
+                  <iframe
+                    src={ selectedPartner.hasMap }
+                    width="600"
+                    height="450"
+                    style={{ border: 0 }}
+                    allowFullScreen
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  ></iframe>
+                  {/* <img
                     src={selectedPartner.hasMap}
                     alt="Map Location"
                     className="mx-auto mt-4 w-full rounded-lg"
-                  />
+                  /> */}
                 </div>
                 <a href="/user" onClick={(e) => e.preventDefault()}>
                   View larger map
