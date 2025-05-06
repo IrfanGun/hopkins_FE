@@ -10,7 +10,7 @@ export interface States {
 export async function getStates(): Promise<States[]> {
     try {
         
-        const response = await axiosInstance.get("/api/states/", {
+        const response = await axiosInstance.get("/api/states", {
             withCredentials: true,
         });
         return response.data.map((item: any) => ({
