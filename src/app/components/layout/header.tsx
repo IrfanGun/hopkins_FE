@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Avatar, AvatarFallback } from "../../../components/ui/avatar";
+import { useRouter } from "next/navigation";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,9 +11,31 @@ import {
   DropdownMenuTrigger,
 } from "../../../components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
+import axiosInstance from "src/api/axiosInstance";
+import Cookies from 'js-cookie';
+
+
 
 export default function Header() {
+
+  
   const [isScrolled, setIsScrolled] = useState(false);
+  const router = useRouter();
+  
+  const handleLogout = async () => {
+    try {
+      const response = await axiosInstance.post("/api/logout")
+      
+      localStorage.removeItem('token');
+
+      Cookies.remove('token');
+      router.push('/login');
+
+    } catch (error) {
+   
+    }
+  };
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -128,10 +151,10 @@ export default function Header() {
                     Get Support
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link href="/login" className="w-full text-left">
+                <DropdownMenuItem onClick={handleLogout}>
+                  <span className="w-full text-left">
                     Logout
-                  </Link>
+                  </span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

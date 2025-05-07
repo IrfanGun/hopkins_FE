@@ -5,8 +5,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
-import axios, {AxiosInstance} from "axios";        
+import axios, { AxiosInstance } from "axios";
 import { useEffect } from "react";
+import Cookies from 'js-cookie';
+import axiosInstance from "src/api/axiosInstance";
+
 
 function getCookie(name: string): string | null {
   const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
@@ -22,25 +25,25 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const [axiosInstance, setAxiosInstance] = useState<AxiosInstance>(() =>
-    axios.create({
-      baseURL: process.env.NEXT_PUBLIC_API_URL,
-      withCredentials: true,
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json",
-      },
-    })
-  );
-  
+  // const [axiosInstance, setAxiosInstance] = useState<AxiosInstance>(() =>
+  //   axios.create({
+  //     baseURL: process.env.NEXT_PUBLIC_API_URL,
+  //     withCredentials: true,
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       "Accept": "application/json",
+  //     },
+  //   })
+  // );
+
   useEffect(() => {
-    const token = getCookie('XSRF-TOKEN');
-    setAxiosInstance((prev: AxiosInstance) => {
-      prev.defaults.headers['X-XSRF-TOKEN'] = token || '';
-      return prev;
-    });
+    // const token = getCookie('XSRF-TOKEN');
+    // setAxiosInstance((prev: AxiosInstance) => {
+    //   prev.defaults.headers['X-XSRF-TOKEN'] = token || '';
+    //   return prev;
+    // });
   }, []);
-  
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -48,40 +51,61 @@ export default function LoginForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-  
+
     if (!isCaptchaChecked) {
       setError("Please complete the captcha verification");
       return;
     }
-  
+
     try {
-      // WAJIB: Panggil csrf-cookie dulu
-      await axiosInstance.get("/sanctum/csrf-cookie", {
-        withCredentials: true, // Tetap aktif agar Laravel bisa set cookie-nya
-      });
-  
+
+
       // Baru kirim data login
-      const response = await axiosInstance.post(
-        "/login",
+      await axiosInstance.get('/sanctum/csrf-cookie');
+      await axiosInstance.post(
+        "api/login",
         { email, password },
         { withCredentials: true } // <- PENTING: pastikan di sini juga
-      );
-  
-      const userData = response.data;
-  
-      if (userData?.role === "admin") {
-        router.push("/admin");
-      } else {
-        router.push("/user");
-      }
+      ).then((response) => {
+        
+        Cookies.set('token', response.data.token);
+        localStorage.setItem('token', response.data.token);
+        const userData = response.data.data;
+        if (userData?.role === "admin") {
+          router.push("/admin");
+        } else {
+          router.push("/user");
+        }
+
+      });
+
+      // const userData = response.data;
+
+      // if (userData?.role === "admin") {
+      //   router.push("/admin");
+      // } else {
+      //   router.push("/user");
+      // }
     } catch (err: any) {
       setError("Invalid email or password");
       console.error(err);
     }
   };
-  
+
+
+
 
   const [isCaptchaChecked, setIsCaptchaChecked] = useState(false);
+
+  useEffect(() => {
+
+    //check token
+    if (Cookies.get('token')) {
+
+      //redirect page dashboard
+      router.push('/admin');
+    }
+  }, []);
 
   return (
     <form onSubmit={handleSubmit} className="w-full">

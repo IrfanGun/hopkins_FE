@@ -16,6 +16,11 @@ import {
   FileText,
 } from "lucide-react";
 
+import axiosInstance from "src/api/axiosInstance";
+import { useRouter } from "next/navigation";
+import Cookies from 'js-cookie';
+
+
 interface SidebarProps {
   isSidebarOpen: boolean;
   isMobileMenuOpen: boolean;
@@ -74,13 +79,32 @@ export default function Sidebar({
     },
   ];
 
+
+  const router = useRouter();
+
+
+  const handleLogout = async () => {
+    try {
+      const response = await axiosInstance.post("api/logout", {
+        withCredentials: true 
+      });
+      localStorage.removeItem('token');
+
+      Cookies.remove('token');
+      router.push('/login');
+    } catch (error) {
+
+    }
+  };
+
+
+
   return (
     <>
       {/* Sidebar for desktop */}
       <aside
-        className={`fixed inset-y-0 z-50 flex-shrink-0 transform bg-white transition-all duration-300 ease-in-out lg:static lg:z-auto ${
-          isSidebarOpen ? "w-64" : "w-20"
-        } ${isMobileMenuOpen ? "left-0" : "-left-64"} lg:left-0`}
+        className={`fixed inset-y-0 z-50 flex-shrink-0 transform bg-white transition-all duration-300 ease-in-out lg:static lg:z-auto ${isSidebarOpen ? "w-64" : "w-20"
+          } ${isMobileMenuOpen ? "left-0" : "-left-64"} lg:left-0`}
       >
         <div className="flex h-full flex-col">
           {/* Header */}
@@ -95,9 +119,8 @@ export default function Sidebar({
               className="hidden rounded-md p-1 text-white hover:bg-orange-600 lg:block"
             >
               <ChevronDown
-                className={`h-5 w-5 transform transition-transform duration-200 ${
-                  isSidebarOpen ? "rotate-0" : "rotate-180"
-                }`}
+                className={`h-5 w-5 transform transition-transform duration-200 ${isSidebarOpen ? "rotate-0" : "rotate-180"
+                  }`}
               />
             </button>
             <button
@@ -115,11 +138,10 @@ export default function Sidebar({
                 <li key={item.name}>
                   <Link
                     href={item.href}
-                    className={`flex items-center rounded-md px-4 py-2 text-sm font-medium transition-colors ${
-                      pathname === item.href
+                    className={`flex items-center rounded-md px-4 py-2 text-sm font-medium transition-colors ${pathname === item.href
                         ? "bg-orange-100 text-orange-600"
                         : "text-gray-700 hover:bg-orange-50 hover:text-orange-500"
-                    }`}
+                      }`}
                   >
                     {item.icon}
                     {isSidebarOpen && <span className="ml-3">{item.name}</span>}
@@ -131,13 +153,13 @@ export default function Sidebar({
 
           {/* Footer */}
           <div className="border-t border-gray-200 p-4">
-            <Link
-              href="/"
+            <button
+              onClick={handleLogout}
               className="mt-2 flex items-center rounded-md px-4 py-2 text-sm font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-500"
             >
               <LogOut className="h-5 w-5" />
               {isSidebarOpen && <span className="ml-3">Logout</span>}
-            </Link>
+            </button>
           </div>
         </div>
       </aside>
