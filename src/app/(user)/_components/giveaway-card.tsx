@@ -7,6 +7,7 @@ interface GiveawayCardProps {
   image: string;
   status: "Early Bird" | "Closed" | "Live" | "Not Yet Open";
   dateText: string;
+  addressURL: string;
   tbd?: boolean;
   url: string;
 }
@@ -16,6 +17,7 @@ export default function GiveawayCard({
   image,
   status,
   dateText,
+  addressURL,
   tbd = false,
   url,
 }: GiveawayCardProps) {
@@ -52,7 +54,7 @@ export default function GiveawayCard({
         <p className="mt-1 text-sm text-gray-600">{dateText}</p>
         {tbd && <p className="text-sm text-gray-500">tbd</p>}
         <Link
-          href={url}
+          href={addressURL}
           className="mt-4 flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
         >
           <svg

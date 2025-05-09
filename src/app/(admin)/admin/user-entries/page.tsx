@@ -32,8 +32,16 @@ export default function AdminUserEntriesPage() {
     date: "",
     image: "",
     loyaltyPoints: 0,
+    addressURL: "",
     showWinBadge: false,
   });
+
+  const handleCloseModal = () => {
+    setIsShowModal(false);
+    setMessage([]);
+    setUserId(null);
+    setIsLoading(false);
+  }
 
   const confirmDelete = async () => {
 
@@ -82,7 +90,8 @@ export default function AdminUserEntriesPage() {
         date: form.date,
         image_url: form.image,
         loyal_points: form.loyaltyPoints,
-        show_win_badge: form.showWinBadge
+        show_win_badge: form.showWinBadge,
+        address_url : form.addressURL,
 
       });
 
@@ -108,6 +117,7 @@ export default function AdminUserEntriesPage() {
         date: "",
         image: "",
         loyaltyPoints: 0,
+        addressURL : "",
         showWinBadge: false,
       });
       loadUser();
@@ -129,7 +139,8 @@ export default function AdminUserEntriesPage() {
         date: form.date,
         image_url: form.image,
         loyal_points: form.loyaltyPoints,
-        show_win_badge: form.showWinBadge
+        show_win_badge: form.showWinBadge,
+        address_url : form.addressURL,
 
       });
 
@@ -155,6 +166,7 @@ export default function AdminUserEntriesPage() {
         date: "",
         image: "",
         loyaltyPoints: 0,
+        addressURL: "",
         showWinBadge: false,
       });
       loadUser();
@@ -170,6 +182,7 @@ export default function AdminUserEntriesPage() {
       title: entry.title || "",
       date: entry.date || "",
       image: entry.image || "",
+      addressURL : entry.addressURL,
       loyaltyPoints: entry.loyaltyPoints ?? 0,
       showWinBadge: entry.showWinBadge ?? false,
     });
@@ -215,7 +228,7 @@ export default function AdminUserEntriesPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <ShowModal
             setMessage={Message}
-            setClose={() => setIsShowModal(false)}
+            setClose={handleCloseModal}
             isDelete={isDelete}
             setDelete={confirmDelete}
             deleteId={UserId}
@@ -256,6 +269,14 @@ export default function AdminUserEntriesPage() {
           name="loyaltyPoints"
           placeholder="Loyalty Points"
           value={form.loyaltyPoints}
+          onChange={handleChange}
+          className="w-full border px-3 py-2"
+        />
+         <input
+          type="text"
+          name="addressURL"
+          placeholder="address URL"
+          value={form.addressURL}
           onChange={handleChange}
           className="w-full border px-3 py-2"
         />

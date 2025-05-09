@@ -113,10 +113,10 @@ export default function Dashboard() {
 
       {/* Partner section */}
       <ExclusivePartner />
-      <FeaturedPartner />
+      {/* <FeaturedPartner />
       <FeaturedAffiliatePartner />
       <NewPartner />
-      <AffilliatePartner />
+      <AffilliatePartner /> */}
       <FeaturedStores />
       <AllCategories />
       {/* Footer */}

@@ -10,6 +10,7 @@ export interface Giveaway {
   image: string;
   status: GiveawayStatus;
   dateText: string;
+  addressURL : string,
   tbd: boolean;
   url?: string;
 }
@@ -25,6 +26,7 @@ export const fetchGiveaway = async() : Promise<Giveaway[]> => {
       image: Item.image_url,
       status: Item.status,
       dateText: Item.date_text,
+      addressURL : Item.address_url,
       tbd : true
 
     }

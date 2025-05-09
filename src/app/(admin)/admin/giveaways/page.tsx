@@ -55,6 +55,7 @@ export default function AdminGiveawaysPage() {
     image: "",
     status: "Live",
     dateText: "",
+    addressURL : "",
     tbd: false,
   });
   const [editId, setEditId] = useState<number| null>(null);
@@ -100,7 +101,8 @@ export default function AdminGiveawaysPage() {
         title: form.title,
         image_url: form.image,
         status: form.status,
-        date_text: form.dateText
+        date_text: form.dateText,
+        address_url: form.addressURL,
 
       });
 
@@ -146,28 +148,22 @@ export default function AdminGiveawaysPage() {
         title: form.title,
         image_url: form.image,
         status: form.status,
-        date_text: form.dateText
+        date_text: form.dateText,
+        address_url :form.addressURL
+
       });
-
-
-
-
     } catch (error) {
 
       const err = error as AxiosError;
       console.log(err.response);
       if (err.response) {
-
         const errorData = err.response.data as Record<string, string[]>;
         const allMessages: string[] = Object.values(errorData).flat();
         setMessage(allMessages);
         setIsShowModal(true);
-
       }
 
-
     } finally {
-
       setIsLoading(false);
       console.log("cek");
       loadGiveaways();
@@ -229,6 +225,14 @@ export default function AdminGiveawaysPage() {
           value={form.dateText}
           onChange={handleChange}
           className="w-full border px-3 py-2"
+        />
+         <input //Tambahan addressURL
+          name="addressURL"
+          placeholder="URL"
+          value={form.addressURL}
+          onChange={handleChange}
+          className="w-full border px-3 py-2"
+          required
         />
         <label className="flex items-center gap-2">
           <input

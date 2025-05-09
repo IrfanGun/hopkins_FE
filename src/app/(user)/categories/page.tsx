@@ -191,7 +191,7 @@ export default function Categories() {
       </div>
       <div className="container mx-auto px-4 py-8">
         {/* Featured Categories Section */}
-        <section>
+        {/* <section>
           <h2 className="mb-6 text-xl font-bold text-gray-800">
             Featured Categories
           </h2>
@@ -209,7 +209,7 @@ export default function Categories() {
               </Link>
             ))}
           </div>
-        </section>
+        </section> */}
         <AllCategories />
         <MobileBottomNavigationBar />
       </div>

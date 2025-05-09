@@ -6,6 +6,7 @@ export interface UserEntries {
   date: string;
   image?: string;
   loyaltyPoints: number;
+  addressURL : string;
   showWinBadge: boolean;
 }
 
@@ -20,7 +21,8 @@ export async function fetchUserEntries() : Promise<UserEntries[]> {
     date : Item.date,
     image : Item.image_url,
     loyaltyPoints : Item.loyal_points,
-    showWinBadge : Item.show_win_badges
+    showWinBadge : Item.show_win_badges,
+    addressURL : Item.address_url,
     
   }))
 

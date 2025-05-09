@@ -78,7 +78,7 @@ export default function FeaturedSections() {
         </div>
       </div>
 
-      {/* Featured Categories Section */}
+      {/* Featured Categories Section
       <div>
         <div className="mb-6 flex items-center justify-between border-b pb-2">
           <h2 className="text-xl font-semibold text-gray-800">
@@ -120,7 +120,7 @@ export default function FeaturedSections() {
             </Link>
           ))}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -97,6 +97,7 @@ export default function MyEntriesPage() {
               date={entry.date}
               image={entry.image || ""}
               loyaltyPoints={entry.loyaltyPoints}
+              addressURL={entry.addressURL}
             />
           ))}
         </div>

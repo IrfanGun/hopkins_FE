@@ -6,6 +6,7 @@ interface EntryCardProps {
   title: string;
   date: string;
   image: string;
+  addressURL : string;
   loyaltyPoints: number;
 }
 
@@ -15,6 +16,7 @@ export default function EntryCard({
   date,
   image,
   loyaltyPoints,
+  addressURL
 }: EntryCardProps) {
   return (
     <div className="mb-6 overflow-hidden rounded-lg bg-white shadow">
@@ -46,7 +48,7 @@ export default function EntryCard({
             </div>
 
             <Link
-              href={`/giveaways/${id}`}
+              href={addressURL}
               className="mt-4 flex items-center justify-center rounded-md bg-orange-500 px-6 py-3 text-sm font-medium text-white hover:bg-orange-600 md:mt-0"
             >
               <svg
