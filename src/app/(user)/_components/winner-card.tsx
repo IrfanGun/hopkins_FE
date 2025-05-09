@@ -1,17 +1,17 @@
 import Image from "next/image";
 
-interface Winner {
-  place: "1st" | "2nd" | "3rd" | string;
-  name: string;
-  prize: string;
-}
+// interface Winner {
+//   // place: "1st" | "2nd" | "3rd" | string;
+//   name: string;
+//   prize: string;
+// }
 
 interface WinnerCardProps {
   id: string;
   title: string;
   date: string;
   image: string;
-  winners: Winner[];
+  winners: { label: string; prize: string }[];
 }
 
 export default function WinnerCard({
@@ -40,20 +40,12 @@ export default function WinnerCard({
           {winners.map((winner, index) => (
             <div key={index} className="flex items-center">
               <span
-                className={`mr-2 inline-block rounded-md px-2 py-0.5 text-xs font-bold text-white ${
-                  winner.place === "1st"
-                    ? "bg-orange-500"
-                    : winner.place === "2nd"
-                      ? "bg-orange-400"
-                      : winner.place === "3rd"
-                        ? "bg-orange-300"
-                        : "bg-gray-500"
-                }`}
+              
               >
-                {winner.place}
+                {winner.label}
               </span>
               <span className="text-sm">
-                {winner.prize} - {winner.name}
+                {winner.prize} - {winner.label}
               </span>
             </div>
           ))}

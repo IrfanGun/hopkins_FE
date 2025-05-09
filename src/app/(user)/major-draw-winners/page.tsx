@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Home } from "lucide-react";
 import Header from "../../components/layout/header";
@@ -9,90 +9,107 @@ import MobileMenuButton from "../../components/layout/MobileMenuButton";
 import MobileMenu from "../../components/layout/MobileMenuButton";
 import MobileBottomNavigationBar from "../../components/layout/MobileBottomNavigationBar";
 import WinnerCard from "../_components/winner-card";
+import { fetchDraws, MajorDrawWinner } from "src/lib/majorWinners";
 
-const majorDrawWinners = [
-  {
-    id: "quintrex-trident",
-    title: "Quintrex Trident 690 14/04/25",
-    date: "14/04/25",
-    image: "/logos/aus-merch.png",
-    winners: [
-      { place: "1st", name: "Craig M", prize: "Prize Quintrex Trident 690" },
-      { place: "2nd", name: "Stefanie M", prize: "Prize $2500 Credit" },
-      { place: "3rd", name: "Kim B", prize: "Prize $1000 Credit" },
-    ],
-    showWinBadge: true,
-  },
-  {
-    id: "100k-cash",
-    title: "$100,000 13/04/2025",
-    date: "13/04/2025",
-    image: "/logos/aus-merch.png",
-    winners: [
-      { place: "1st", name: "Ralph M", prize: "Prize $100,000" },
-      { place: "2nd", name: "Jonathan M", prize: "Prize $2500 Credit" },
-      { place: "3rd", name: "Damien S", prize: "Prize $1000 Credit" },
-    ],
-  },
-  {
-    id: "5-winners-100k",
-    title: "5 Winners $100K Each 11/04/25",
-    date: "11/04/25",
-    image: "/logos/aus-merch.png",
-    winners: [
-      { place: "Winner 1", name: "Scott M", prize: "$100,000" },
-      { place: "Winner 2", name: "Jono P", prize: "$100,000" },
-      { place: "Winner 3", name: "Jack M", prize: "$100,000" },
-      { place: "Winner 4", name: "RiRi W", prize: "$100,000" },
-      { place: "Winner 5", name: "Tina L", prize: "$100,000" },
-    ],
-  },
-  {
-    id: "mates-rates",
-    title: "Mates Rates — Access Discounts",
-    date: "",
-    image: "/logos/aus-merch.png",
-    winners: [],
-    isPromo: true,
-  },
-  {
-    id: "vf-gts",
-    title: "VF GTS 8/04/25",
-    date: "8/04/25",
-    image: "/logos/aus-merch.png",
-    winners: [{ place: "1st", name: "Halim F", prize: "Prize VF GTS" }],
-  },
-  {
-    id: "porsche-gt3rs",
-    title: "Porsche GT3RS or $600K 3/04/25",
-    date: "3/04/25",
-    image: "/logos/aus-merch.png",
-    winners: [
-      { place: "1st", name: "Keesie", prize: "Prize Porsche GT3RS or $600K" },
-    ],
-    showWinBadge: true,
-  },
-  {
-    id: "1-million-cash",
-    title: "$1 Million Cash 30/03/25",
-    date: "30/03/25",
-    image: "/logos/aus-merch.png",
-    winners: [
-      { place: "1st", name: "Zarii O", prize: "Prize $1 Million Cash" },
-    ],
-    showWinBadge: true,
-  },
-  {
-    id: "ford-f150-raptor",
-    title: "Ford F150 Raptor + Lotus Caravan 27/03/2025",
-    date: "27/03/2025",
-    image: "/logos/aus-merch.png",
-    winners: [],
-  },
-];
+// const majorDrawWinners = [
+//   {
+//     id: "quintrex-trident",
+//     title: "Quintrex Trident 690 14/04/25",
+//     date: "14/04/25",
+//     image: "/logos/aus-merch.png",
+//     winners: [
+//       { place: "1st", name: "Craig M", prize: "Prize Quintrex Trident 690" },
+//       { place: "2nd", name: "Stefanie M", prize: "Prize $2500 Credit" },
+//       { place: "3rd", name: "Kim B", prize: "Prize $1000 Credit" },
+//     ],
+//     showWinBadge: true,
+//   },
+//   {
+//     id: "100k-cash",
+//     title: "$100,000 13/04/2025",
+//     date: "13/04/2025",
+//     image: "/logos/aus-merch.png",
+//     winners: [
+//       { place: "1st", name: "Ralph M", prize: "Prize $100,000" },
+//       { place: "2nd", name: "Jonathan M", prize: "Prize $2500 Credit" },
+//       { place: "3rd", name: "Damien S", prize: "Prize $1000 Credit" },
+//     ],
+//   },
+//   {
+//     id: "5-winners-100k",
+//     title: "5 Winners $100K Each 11/04/25",
+//     date: "11/04/25",
+//     image: "/logos/aus-merch.png",
+//     winners: [
+//       { place: "Winner 1", name: "Scott M", prize: "$100,000" },
+//       { place: "Winner 2", name: "Jono P", prize: "$100,000" },
+//       { place: "Winner 3", name: "Jack M", prize: "$100,000" },
+//       { place: "Winner 4", name: "RiRi W", prize: "$100,000" },
+//       { place: "Winner 5", name: "Tina L", prize: "$100,000" },
+//     ],
+//   },
+//   {
+//     id: "mates-rates",
+//     title: "Mates Rates — Access Discounts",
+//     date: "",
+//     image: "/logos/aus-merch.png",
+//     winners: [],
+//     isPromo: true,
+//   },
+//   {
+//     id: "vf-gts",
+//     title: "VF GTS 8/04/25",
+//     date: "8/04/25",
+//     image: "/logos/aus-merch.png",
+//     winners: [{ place: "1st", name: "Halim F", prize: "Prize VF GTS" }],
+//   },
+//   {
+//     id: "porsche-gt3rs",
+//     title: "Porsche GT3RS or $600K 3/04/25",
+//     date: "3/04/25",
+//     image: "/logos/aus-merch.png",
+//     winners: [
+//       { place: "1st", name: "Keesie", prize: "Prize Porsche GT3RS or $600K" },
+//     ],
+//     showWinBadge: true,
+//   },
+//   {
+//     id: "1-million-cash",
+//     title: "$1 Million Cash 30/03/25",
+//     date: "30/03/25",
+//     image: "/logos/aus-merch.png",
+//     winners: [
+//       { place: "1st", name: "Zarii O", prize: "Prize $1 Million Cash" },
+//     ],
+//     showWinBadge: true,
+//   },
+//   {
+//     id: "ford-f150-raptor",
+//     title: "Ford F150 Raptor + Lotus Caravan 27/03/2025",
+//     date: "27/03/2025",
+//     image: "/logos/aus-merch.png",
+//     winners: [],
+//   },
+// ];
+
+
 
 export default function MajorDrawWinnersPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [majorDrawWinners, setMajorDrawWinners] = useState<MajorDrawWinner[]>([]);
+
+useEffect(() => {
+
+const loadDraws = async() => {
+  const response = await fetchDraws();
+  console.log(response);
+  setMajorDrawWinners(response);
+}  
+
+loadDraws();
+
+
+},[])
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -185,7 +202,7 @@ export default function MajorDrawWinnersPage() {
         {/* Mobile View for First 4 Cards */}
         <div className="mb-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:hidden">
           {majorDrawWinners.slice(0, 4).map((winner) => {
-            if (winner.isPromo) {
+            if (winner?.isPromo) {
               return (
                 <div
                   key={winner.id}
