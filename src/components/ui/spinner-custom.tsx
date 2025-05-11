@@ -13,8 +13,12 @@ const customTheme = createTheme( { spinner : {
       "success": "fill-green-500",
       "warning": "fill-yellow-400",
       "base" : "fill-orange-500",
-      "white" : "fill-white"
+      "white" : "fill-white",
+      "base-secondary" : "fill-orange-600"
   }
 }});
 
-export default customTheme
+
+
+
+export default customTheme;
