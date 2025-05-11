@@ -18,6 +18,8 @@ export default function AffiliatePage() {
   const [showFilters, setShowFilters] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [partners, setPartners] = useState<Partner[]>([]);
+  const [filteredPartners, setFilteredPartners] = useState<Partner[]>([]);
+  
   
     useEffect(() => {
       const loadPartner = async() => {
@@ -28,6 +30,9 @@ export default function AffiliatePage() {
     },[]);
   
   
+  const handleFilterChange = (filtered: Partner[]) => {
+    setFilteredPartners(filtered);
+  };
   
 
   const openModal = (partner: Partner) => {
@@ -89,7 +94,7 @@ export default function AffiliatePage() {
             href="/partners-affiliate"
             className="border-b-2 border-white px-3 py-1 font-medium"
           >
-            AFFILIATE PARTNERS
+            POPULAR PARTNERS
           </Link>
           <Link
             href="/stores"
@@ -126,7 +131,7 @@ export default function AffiliatePage() {
             <div
               className={`${showFilters ? "block" : "hidden"} mb-6 w-full lg:mb-0 lg:block lg:w-1/4`}
             >
-              <FilterPartners />
+              <FilterPartners onFilterChange={handleFilterChange}/>
             </div>
 
             {/* Results Section */}

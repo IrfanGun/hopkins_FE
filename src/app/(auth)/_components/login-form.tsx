@@ -5,11 +5,11 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
-import axios, { AxiosInstance } from "axios";
 import { useEffect } from "react";
 import Cookies from 'js-cookie';
 import axiosInstance from "src/api/axiosInstance";
-
+import { ThemeProvider, Spinner } from "flowbite-react";
+import customTheme from "src/components/ui/spinner-custom";
 
 function getCookie(name: string): string | null {
   const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
@@ -24,6 +24,7 @@ export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   // const [axiosInstance, setAxiosInstance] = useState<AxiosInstance>(() =>
   //   axios.create({
@@ -59,7 +60,7 @@ export default function LoginForm() {
 
     try {
 
-
+      setIsLoading(true);
       // Baru kirim data login
       await axiosInstance.get('/sanctum/csrf-cookie');
       await axiosInstance.post(
@@ -89,6 +90,8 @@ export default function LoginForm() {
     } catch (err: any) {
       setError("Invalid email or password");
       console.error(err);
+    } finally {
+      // setIsLoading(false);
     }
   };
 
@@ -170,9 +173,14 @@ export default function LoginForm() {
 
       <button
         type="submit"
-        className="w-full rounded-md bg-primary-color px-4 py-3 font-medium text-white transition-colors duration-300 hover:bg-orange-600"
+        className={`w-full rounded-md px-4 py-3 font-medium text-white transition-colors duration-300 ${
+        isLoading ? "bg-orange-600" : "bg-primary-color hover:bg-orange-600"
+         }`} 
       >
-        Log In
+        { isLoading ? (<ThemeProvider theme={customTheme}>
+          <Spinner color="base-secondary" />
+        </ThemeProvider>) : ' Log In' } 
+       
       </button>
 
       <div className="mt-4 text-center">

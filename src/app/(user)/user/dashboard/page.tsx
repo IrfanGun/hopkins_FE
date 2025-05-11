@@ -86,7 +86,7 @@ export default function Dashboard() {
             href="/partners/affiliate"
             className="px-3 py-1 font-medium hover:border-b-2 hover:border-white"
           >
-            AFFILIATE PARTNERS
+            POPULAR PARTNERS
           </Link>
           <Link
             href="/stores"
@@ -113,10 +113,10 @@ export default function Dashboard() {
 
       {/* Partner section */}
       <ExclusivePartner />
-      {/* <FeaturedPartner />
-      <FeaturedAffiliatePartner />
-      <NewPartner />
-      <AffilliatePartner /> */}
+      {/* <FeaturedPartner /> */}
+      {/* <FeaturedAffiliatePartner />
+      <NewPartner /> */}
+      <AffilliatePartner />
       <FeaturedStores />
       <AllCategories />
       {/* Footer */}

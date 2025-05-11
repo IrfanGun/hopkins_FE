@@ -8,6 +8,7 @@ import withFlowbiteReact from "flowbite-react/plugin/nextjs";
 /** @type {import("next").NextConfig} */
 const config = {
     reactStrictMode: true, // Aktifkan Strict Mode React
+    
     eslint: {
       // Biar error dari ESLint tidak diabaikan saat build
       ignoreDuringBuilds: false,
@@ -16,8 +17,19 @@ const config = {
       // Gagal build kalau ada error TypeScript
       ignoreBuildErrors: false,
     },
+     images: {
+    remotePatterns: [
+     {
+        protocol: "https",
+        hostname: "static.vecteezy.com",
+      },
+      {
+        protocol: "https",
+        hostname: "www.shutterstock.com",
+      },
+    ],
+  },
 };
-
 
 
 export default withFlowbiteReact(config);

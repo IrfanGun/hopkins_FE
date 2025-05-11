@@ -19,6 +19,8 @@ import {
 import { fetchBanner, Banner } from "src/lib/banners";
 import axiosInstance from "src/api/axiosInstance";
 import { Category, fetchCategories } from "src/lib/categories";
+import { ThemeProvider,Spinner } from "flowbite-react";
+import customTheme from "src/components/ui/spinner-custom";
 
 
 export default function CategoriesCarousel() {
@@ -26,6 +28,8 @@ export default function CategoriesCarousel() {
   const [slides, setSlider] = useState<Banner[]>([]);
   const filteredSlides = slides.filter((slide) => slide.page === "Dashboard");
   const [category , setcategory] = useState<Category[]>([]);
+  const [Isloading, setIsLoading] = useState<Boolean>(false);
+
 
   const generateUniqueKey = (slide: Banner, index: number) => {
     const baseKey = `${slide.id || "no-id"}-${slide.title || "no-title"}-${slide.image || "no-img"}`;
@@ -38,8 +42,16 @@ export default function CategoriesCarousel() {
   
   useEffect(() => {
     const loadSlider = async () => {
+     try {
+
+      setIsLoading(true);
       const response = await fetchBanner();
       setSlider(response);
+
+     } catch (error) {
+        setIsLoading(false);
+     } 
+  
     };
 
     loadCategory();
@@ -66,29 +78,12 @@ export default function CategoriesCarousel() {
     } catch (error) {
       
     } finally {
-      
+      setIsLoading(false);
     }
 
   };
 
-  
-
-  const categories = [
-    { name: "Automotive", icon: Car },
-    { name: "Trades & Services", icon: Hammer },
-    { name: "Services", icon: Wrench },
-    { name: "Retail", icon: ShoppingCart },
-    { name: "Beauty", icon: Scissors },
-    { name: "Health & Fitness", icon: Heart },
-    { name: "Food & Beverages", icon: Coffee },
-    { name: "Pets", icon: PawPrint },
-    { name: "Recreation", icon: Gamepad2 },
-    { name: "Affiliates", icon: Users },
-    { name: "Cosmetics", icon: Sparkles },
-  ];
-
  
-
   // Auto-advance carousel
   useEffect(() => {
     if (filteredSlides.length > 0 && currentSlide >= filteredSlides.length) {
@@ -126,6 +121,16 @@ export default function CategoriesCarousel() {
         </div>
 
         {/* Carousel */}
+
+        {Isloading ? (
+          <div className=" justify-center flex max-w-screen-sm items-center mb-5 mt-5">
+            <ThemeProvider theme={customTheme}>
+              <Spinner color="base"/>
+            </ThemeProvider>
+          </div>
+
+        ) : (
+
         <div className="relative h-[400px] overflow-hidden rounded-lg md:col-span-3">
           <div
             className="flex h-full transition-transform duration-500 ease-in-out"
@@ -161,6 +166,11 @@ export default function CategoriesCarousel() {
             ))}
           </div>
         </div>
+
+        )
+
+      }
+       
       </div>
     </div>
   );

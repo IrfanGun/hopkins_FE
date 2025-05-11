@@ -39,13 +39,14 @@ export default function WinnerCard({
         <div className="mt-3 space-y-2">
           {winners.map((winner, index) => (
             <div key={index} className="flex items-center">
-              <span
-              
+              <span className="w-10 text-center py-[0.2] bg-orange-500 text-white rounded-md"
+
               >
-                {winner.label}
+                {winner.label} 
               </span>
-              <span className="text-sm">
-                {winner.prize} - {winner.label}
+
+              <span className="text-sm mx-2">
+                 {winner.prize} 
               </span>
             </div>
           ))}

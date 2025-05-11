@@ -81,17 +81,11 @@ export default function MajorDrawWinnersAdminPage() {
       const response = await fetchDraws();
       setData(response);
       console.log(response);
-
-
     } catch (error) {
-
-
 
     } finally {
       setIsLoading(false);
     }
-
-
   }
 
   useEffect(() => {
@@ -123,7 +117,7 @@ export default function MajorDrawWinnersAdminPage() {
         const response = await axiosInstance.post('/api/major-winners', {
           draw_id : editId,
           label : newPrize.label,
-          prize : newPrize.label,
+          prize : newPrize.prize,
         });
   
       } catch (error) {

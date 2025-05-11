@@ -10,6 +10,10 @@ import Pagination from "../../components/layout/pagination";
 import FilterPartners from "../_components/filter-partners";
 import MobileMenu from "../../components/layout/MobileMenuButton";
 import FooterUser from "../../components/ui/footer-user";
+import { ThemeProvider, Spinner } from "flowbite-react";
+import customTheme from "src/components/ui/spinner-custom";
+
+
 export default function Partners() {
   const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null);
   const [showModal, setShowModal] = useState(false);
@@ -18,27 +22,62 @@ export default function Partners() {
   const [showFilters, setShowFilters] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const[partners, setPartners] = useState<Partner[]>([]);
+  const [partners, setPartners] = useState<Partner[]>([]);
+  const [filteredPartners, setFilteredPartners] = useState<Partner[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");  // State untuk pencarian
+  const [isLoading, setIsLoading] = useState<Boolean>(false);
+
   const openModal = (partner: Partner) => {
     setSelectedPartner(partner);
     setShowModal(true);
   };
-
-  
-  
-    useEffect(() => {
-      const loadPartner = async() => {
-        const response = await fetchPartner();
-        setPartners(response);
-      }
-      loadPartner();
-    },[]);
-  
-  
-
+   
   const closeModal = () => {
     setShowModal(false);
   };
+
+   const handleFilterChange = (filtered: Partner[]) => {
+    setFilteredPartners(filtered);
+  };
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(event.target.value);
+  };
+
+   // Fungsi untuk menggabungkan pencarian dan filter
+  const filterPartners = (partners: Partner[]) => {
+    const filteredData = filteredPartners.length > 0 ? filteredPartners : partners;
+    return filteredData.filter((partner) => {
+      const matchesSearchQuery =
+        partner.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        partner.category.toLowerCase().includes(searchQuery.toLowerCase());
+        
+      return matchesSearchQuery;
+    });
+  };
+
+  const displayedPartners = filterPartners(filteredPartners?.length > 0 ? filteredPartners : partners);
+
+
+   useEffect(() => {
+      const loadPartner = async() => {
+
+        try {
+          setIsLoading(true);
+           const response = await fetchPartner();
+          setPartners(response);
+        } catch (error) {
+          
+        } finally {
+          setIsLoading(false);
+        }
+
+       
+      }
+      loadPartner();
+     
+    },[]);
+
 
   const copyCode = (code: string) => {
     navigator.clipboard.writeText(code).then(() => {
@@ -126,59 +165,76 @@ export default function Partners() {
             <div
               className={`${showFilters ? "block" : "hidden"} mb-6 w-full lg:mb-0 lg:block lg:w-1/4`}
             >
-              <FilterPartners />
+              <FilterPartners onFilterChange={handleFilterChange} />
             </div>
 
             {/* Results Section */}
             <div className="w-full lg:w-3/4">
               <div className="mb-4 flex flex-col space-y-3 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
                 <span className="text-sm sm:text-base">
-                  {partners.length} Results
+                  {displayedPartners?.length} Results
                 </span>
                 <div className="flex w-full items-center sm:w-auto">
                   <input
                     type="text"
                     placeholder="Search..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full rounded border border-gray-300 p-2 sm:w-auto"
                   />
                 </div>
               </div>
 
               {/* Partner Results */}
-              {partners.map((partner, index) => (
-                <div
-                  key={`${partner.id}-${index}`} // Use both `id` and `index` for uniqueness
-                  className="flex flex-col rounded bg-white p-4 shadow-md sm:flex-row sm:items-center"
-                >
-                  {/* Partner Logo */}
-                  <div className="mb-4 flex justify-center sm:mb-0 sm:mr-4 sm:justify-start">
-                    <img
-                      src={partner.logo || "/placeholder.svg"}
-                      alt={partner.name}
-                      className="h-16 w-auto object-contain sm:h-20"
-                    />
-                  </div>
+             {displayedPartners?.length > 0 ? (
+  displayedPartners.map((partner, index) => (
+    <div
+      key={`${partner.id}-${index}`}
+      className="flex flex-col rounded bg-white p-4 shadow-md sm:flex-row sm:items-center"
+    >
+      {/* Partner Logo */}
+      <div className="mb-4 flex justify-center sm:mb-0 sm:mr-4 sm:justify-start">
+        <img
+          src={partner.logo || "/placeholder.svg"}
+          alt={partner.name}
+          className="h-16 w-auto object-contain sm:h-20"
+        />
+      </div>
 
-                  {/* Partner Info */}
-                  <div className="mb-4 flex-1 text-center sm:mb-0 sm:text-left">
-                    <h4 className="font-semibold">{partner.name}</h4>
-                    <p className="text-sm text-gray-600">{partner.category}</p>
-                  </div>
+      {/* Partner Info */}
+      <div className="mb-4 flex-1 text-center sm:mb-0 sm:text-left">
+        <h4 className="font-semibold">{partner.name}</h4>
+        <p className="text-sm text-gray-600">{partner.category}</p>
+      </div>
 
-                  {/* Action Button */}
-                  <div className="flex flex-col items-center sm:items-end">
-                    <button
-                      className="w-full rounded-full bg-orange-500 px-4 py-2 text-white transition hover:bg-orange-600 sm:w-auto sm:min-w-[120px]"
-                      onClick={() => openModal(partner)}
-                    >
-                      Get Code
-                    </button>
-                    <button className="mt-2 text-sm text-blue-600 hover:text-blue-700">
-                      Details
-                    </button>
-                  </div>
-                </div>
-              ))}
+      {/* Action Button */}
+      <div className="flex flex-col items-center sm:items-end">
+        <button
+          className="w-full rounded-full bg-orange-500 px-4 py-2 text-white transition hover:bg-orange-600 sm:w-auto sm:min-w-[120px]"
+          onClick={() => openModal(partner)}
+        >
+          Get Code
+        </button>
+        <button className="mt-2 text-sm text-blue-600 hover:text-blue-700">
+          Details
+        </button>
+      </div>
+    </div>
+        ))
+          ) : isLoading ? (
+            <div className="text-center">
+              <ThemeProvider theme={customTheme}>
+            <Spinner color="base"/>
+          </ThemeProvider>
+            </div>
+          
+          ) : (
+            <div className="text-center text-lg text-gray-500 mt-4">
+            Coupon Not Found
+            </div>
+          )}
+
+
 
               {/* Pagination */}
               <div className="mt-8">

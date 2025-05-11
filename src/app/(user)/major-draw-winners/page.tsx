@@ -10,100 +10,30 @@ import MobileMenu from "../../components/layout/MobileMenuButton";
 import MobileBottomNavigationBar from "../../components/layout/MobileBottomNavigationBar";
 import WinnerCard from "../_components/winner-card";
 import { fetchDraws, MajorDrawWinner } from "src/lib/majorWinners";
-
-// const majorDrawWinners = [
-//   {
-//     id: "quintrex-trident",
-//     title: "Quintrex Trident 690 14/04/25",
-//     date: "14/04/25",
-//     image: "/logos/aus-merch.png",
-//     winners: [
-//       { place: "1st", name: "Craig M", prize: "Prize Quintrex Trident 690" },
-//       { place: "2nd", name: "Stefanie M", prize: "Prize $2500 Credit" },
-//       { place: "3rd", name: "Kim B", prize: "Prize $1000 Credit" },
-//     ],
-//     showWinBadge: true,
-//   },
-//   {
-//     id: "100k-cash",
-//     title: "$100,000 13/04/2025",
-//     date: "13/04/2025",
-//     image: "/logos/aus-merch.png",
-//     winners: [
-//       { place: "1st", name: "Ralph M", prize: "Prize $100,000" },
-//       { place: "2nd", name: "Jonathan M", prize: "Prize $2500 Credit" },
-//       { place: "3rd", name: "Damien S", prize: "Prize $1000 Credit" },
-//     ],
-//   },
-//   {
-//     id: "5-winners-100k",
-//     title: "5 Winners $100K Each 11/04/25",
-//     date: "11/04/25",
-//     image: "/logos/aus-merch.png",
-//     winners: [
-//       { place: "Winner 1", name: "Scott M", prize: "$100,000" },
-//       { place: "Winner 2", name: "Jono P", prize: "$100,000" },
-//       { place: "Winner 3", name: "Jack M", prize: "$100,000" },
-//       { place: "Winner 4", name: "RiRi W", prize: "$100,000" },
-//       { place: "Winner 5", name: "Tina L", prize: "$100,000" },
-//     ],
-//   },
-//   {
-//     id: "mates-rates",
-//     title: "Mates Rates — Access Discounts",
-//     date: "",
-//     image: "/logos/aus-merch.png",
-//     winners: [],
-//     isPromo: true,
-//   },
-//   {
-//     id: "vf-gts",
-//     title: "VF GTS 8/04/25",
-//     date: "8/04/25",
-//     image: "/logos/aus-merch.png",
-//     winners: [{ place: "1st", name: "Halim F", prize: "Prize VF GTS" }],
-//   },
-//   {
-//     id: "porsche-gt3rs",
-//     title: "Porsche GT3RS or $600K 3/04/25",
-//     date: "3/04/25",
-//     image: "/logos/aus-merch.png",
-//     winners: [
-//       { place: "1st", name: "Keesie", prize: "Prize Porsche GT3RS or $600K" },
-//     ],
-//     showWinBadge: true,
-//   },
-//   {
-//     id: "1-million-cash",
-//     title: "$1 Million Cash 30/03/25",
-//     date: "30/03/25",
-//     image: "/logos/aus-merch.png",
-//     winners: [
-//       { place: "1st", name: "Zarii O", prize: "Prize $1 Million Cash" },
-//     ],
-//     showWinBadge: true,
-//   },
-//   {
-//     id: "ford-f150-raptor",
-//     title: "Ford F150 Raptor + Lotus Caravan 27/03/2025",
-//     date: "27/03/2025",
-//     image: "/logos/aus-merch.png",
-//     winners: [],
-//   },
-// ];
-
+import { ThemeProvider, Spinner } from "flowbite-react";
+import customTheme from "src/components/ui/spinner-custom";
+import baseTheme from "src/components/ui/spinner-custom-base";
 
 
 export default function MajorDrawWinnersPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [majorDrawWinners, setMajorDrawWinners] = useState<MajorDrawWinner[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
 useEffect(() => {
 
+
 const loadDraws = async() => {
+  try {
+  setIsLoading(true);
   const response = await fetchDraws();
-  console.log(response);
   setMajorDrawWinners(response);
+  } catch (error) {
+    
+  } finally {
+    setIsLoading(false);
+  }
+
 }  
 
 loadDraws();
@@ -141,7 +71,17 @@ loadDraws();
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 pb-12">
+
+      {isLoading ? (
+
+        <div className="text-center mb-4 mt-4">
+          <ThemeProvider theme={baseTheme}>
+               <Spinner color="base"/>
+          </ThemeProvider>
+        </div>
+     
+      ) : (
+           <div className="container mx-auto px-4 pb-12">
         <h1 className="mb-8 text-3xl font-bold">
           <span className="text-orange-500">LATEST</span> MAJOR DRAWS WINNER
         </h1>
@@ -269,6 +209,10 @@ loadDraws();
           ))}
         </div>
       </div>
+      )
+
+      }
+   
 
       <MobileBottomNavigationBar />
       <FooterUser />

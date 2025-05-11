@@ -3,11 +3,13 @@ import Link from "next/link";
 import Header from "../../components/layout/header";
 import { ChevronRight, Home, Copy } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FooterUser from "../../components/ui/footer-user";
+import { fetchBanner } from "src/lib/banners";
 
 export default function Membership() {
   const [isCopied, setIsCopied] = useState(false);
+  const [isBanner, setIsBanner] = useState<null | string >('');
 
   // Fungsi untuk menyalin kode ke clipboard
   const copyCode = (code: string) => {
@@ -17,6 +19,32 @@ export default function Membership() {
       setTimeout(() => setIsCopied(false), 2000);
     });
   };
+
+  useEffect(() => {
+    loadSlider();
+    
+  },[])
+
+  const loadSlider = async () => {
+       try {
+  
+   
+        const response = await fetchBanner();
+
+      const getBanner = response
+        .filter((banner) => banner.page === "Membership" && banner.active == true )
+        .map((banner) => banner.image);
+
+        setIsBanner(getBanner[0] ?? null);
+       
+       } catch (error) {
+          // setIsLoading(false);
+       } 
+    
+      };
+
+
+
   return (
     <div>
       <Header />
@@ -44,16 +72,29 @@ export default function Membership() {
 
           {/* Banner */}
           <div className="relative mb-8 h-48 w-full overflow-hidden rounded-lg md:h-64">
-            <Image
+            {isBanner && isBanner.length > 0  ? (
+                <Image
               className="object-cover"
-              src="/img/bg-2.jpeg"
-              alt="Luxury Cars"
+              src={isBanner}
+              alt="Membership Cover"
               fill
-              priority
-            />
+             />
+
+            ) : (
+              <Image
+              className="object-cover"
+              src="https://static.vecteezy.com/system/resources/thumbnails/008/255/803/small_2x/page-not-found-error-404-system-updates-uploading-computing-operation-installation-programs-system-maintenance-a-hand-drawn-layout-template-of-a-broken-robot-illustration-vector.jpg"
+              alt="Not Found"
+              fill
+              
+             />
+            )
+             }
+            
+            
             <div className="absolute inset-0 flex items-center justify-center bg-black/30">
               <h2 className="text-3xl font-bold text-white md:text-4xl">
-                Manage Subscription
+                Manage Subscription cek
               </h2>
             </div>
           </div>
