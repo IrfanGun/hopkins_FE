@@ -94,7 +94,7 @@ export default function Membership() {
             
             <div className="absolute inset-0 flex items-center justify-center bg-black/30">
               <h2 className="text-3xl font-bold text-white md:text-4xl">
-                Manage Subscription cek
+                Manage Subscription 
               </h2>
             </div>
           </div>
