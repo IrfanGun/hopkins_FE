@@ -73,11 +73,11 @@ export default function Membership() {
           {/* Banner */}
           <div className="relative mb-8 h-48 w-full overflow-hidden rounded-lg md:h-64">
             {isBanner && isBanner.length > 0  ? (
-                <Image
+                <img
               className="object-cover"
               src={isBanner}
               alt="Membership Cover"
-              fill
+             
              />
 
             ) : (
