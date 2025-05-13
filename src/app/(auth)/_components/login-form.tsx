@@ -38,11 +38,7 @@ export default function LoginForm() {
   // );
 
   useEffect(() => {
-    // const token = getCookie('XSRF-TOKEN');
-    // setAxiosInstance((prev: AxiosInstance) => {
-    //   prev.defaults.headers['X-XSRF-TOKEN'] = token || '';
-    //   return prev;
-    // });
+   
   }, []);
 
   const togglePasswordVisibility = () => {
@@ -80,18 +76,11 @@ export default function LoginForm() {
 
       });
 
-      // const userData = response.data;
-
-      // if (userData?.role === "admin") {
-      //   router.push("/admin");
-      // } else {
-      //   router.push("/user");
-      // }
     } catch (err: any) {
       setError("Invalid email or password");
       console.error(err);
     } finally {
-      // setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -106,7 +95,7 @@ export default function LoginForm() {
     if (Cookies.get('token')) {
 
       //redirect page dashboard
-      router.push('/admin');
+      router.push('/user');
     }
   }, []);
 

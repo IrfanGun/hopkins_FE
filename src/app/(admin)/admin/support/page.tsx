@@ -127,7 +127,7 @@ export default function SupportPage() {
 
 
       {/* Form */}
-      <SupportForm  onSuccess={loadSupport} />
+      <SupportForm  onSuccess={loadSupport}  />
 
       {/* List */}
       <div className="rounded-lg border bg-white p-4 shadow-sm">

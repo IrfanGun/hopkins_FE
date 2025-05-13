@@ -15,9 +15,10 @@ import customTheme from "src/components/ui/spinner-custom";
 
 type PopupsFormProps = {
   reloadData: () => void; // Callback untuk reload data setelah submit
+   editPartner?: Partner | null; 
 };
 
-export default function PopupsForm({reloadData} : PopupsFormProps) {
+export default function PopupsForm({reloadData, editPartner} : PopupsFormProps) {
   // interface subCategory {
   //   id : number;
   //   name : string;
@@ -56,9 +57,15 @@ export default function PopupsForm({reloadData} : PopupsFormProps) {
   const [form, setForm] = useState<Partial<Partner>>(defaultForm);
   
 
-  useEffect(() => {
-    
-  }, []);
+ useEffect(() => {
+    if (editPartner) {
+      setEditId(editPartner.id);
+      setForm({ ...editPartner });
+    } else {
+      setForm(defaultForm);
+    }
+  }, [editPartner]);
+
 
   const handleSubCategory = (e: React.ChangeEvent<any>) => {
     try {
@@ -104,7 +111,42 @@ export default function PopupsForm({reloadData} : PopupsFormProps) {
 
     try {
       
-      const response = await axiosInstance.post('/api/product', {
+      if (editPartner) {
+        try {
+           await axiosInstance.put(`/api/product/${editPartner.id}`, {
+             name: form.name,
+        category: form.category,
+        subcategory: form.subcategory,
+        logo: form.logo,
+        discount: form.discount,
+        discountText: form.discountText,
+        promoCode: form.promoCode,
+        description: form.description,
+        tags: form.tags, 
+        storeAddress: form.storeAddress,
+        email: form.email,
+        phone: form.phone,
+        facebook: form.facebook,
+        instagram: form.instagram,
+        website: form.website,
+        hasMap: form.hasMap,
+        url: form.url,
+        isPopular: form.isPopular,
+        states: form.states
+
+           });
+                 console.log(form);
+                 console.log('berhasil');
+        } catch (error){
+          console.log(error);
+
+        }
+
+                //  await axiosInstance.put(`/api/product/${editPartner.id}`, form);
+                //  console.log(form);
+                //  console.log('berhasil');
+      } else {
+            const response = await axiosInstance.post('/api/product', {
         name: form.name,
         category: form.category,
         subcategory: form.subcategory,
@@ -126,6 +168,9 @@ export default function PopupsForm({reloadData} : PopupsFormProps) {
         states: form.states
 
       });
+      }
+
+  
 
       console.log("sukses");
 
@@ -159,56 +204,7 @@ export default function PopupsForm({reloadData} : PopupsFormProps) {
     }
 
    
-    //   setPartners((prev) =>
-    //     prev.map((partner) =>
-    //       partner.id === editId
-    //         ? ({ ...partner, ...form } as Partner)
-    //         : partner,
-    //     ),
-    //   );
-    // } else {
-    //   const newPartner: Partner = {
-    //     id: Date.now(),
-    //     ...form,
-    //     tags: form.tags ?? [],
-    //     isPopular: form.isPopular ?? false,
-    //   } as Partner;
-
-    //   setPartners((prev) => [...prev, newPartner]);
-    // }
-    // const sendForm = async () => {
-    //   try {
-    //     const response = await axiosInstance.post('api/product/', form );
-    //     console.log("Form submitted successfully:", response.data);
-    //   } catch (error) {
-    //     console.error("Error submitting form:", error);
-    //   }
-      
-    // } 
-
-    // sendForm();
-
-    // setEditId(null);
-    // setForm({
-    //   name: "",
-    //   category: "",
-    //   subcategory : "",
-    //   logo: "",
-    //   discount: "",
-    //   discountText: "",
-    //   promoCode: "",
-    //   description: "",
-    //   tags: [],
-    //   storeAddress: "",
-    //   email: "",
-    //   phone: "",
-    //   facebook: "",
-    //   instagram: "",
-    //   website: "",
-    //   hasMap: "",
-    //   url: "",
-    //   isPopular: false,
-    // });
+   
   };
 
   useEffect(() => {

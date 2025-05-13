@@ -19,6 +19,8 @@ export default function PopupsPage() {
   const [isDelete, setIsDelete] = useState<boolean>(false);
   const [isLoadingDelete, setIsLoadingDelete] = useState<boolean>(false);
   const [partnerToDelete, setPartnerToDelete] = useState<number | null>(null);
+ const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null);
+
 
   const [form, setForm] = useState<Omit<Partner, "id">>({
     name: "",
@@ -67,7 +69,10 @@ export default function PopupsPage() {
 
   const handleEdit = (partner: Partner) => {
     setEditId(partner.id);
+    setSelectedPartner(partner);
+    
     setForm({ ...partner });
+    console.log(partner);
   };
 
   const handleDelete = (id: number) => {
@@ -127,7 +132,7 @@ export default function PopupsPage() {
         Manage Pop-up Products
       </h1>
       <PopupsForm 
-        reloadData = {reloadData}
+        reloadData = {reloadData} editPartner={selectedPartner}
       />
       <div className="rounded-lg border bg-white p-4 shadow-sm">
         <h2 className="mb-4 text-lg font-semibold text-gray-700">
@@ -176,12 +181,12 @@ export default function PopupsPage() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  {/* <button
+                  <button
                     onClick={() => handleEdit(partner)}
                     className="text-blue-500"
                   >
                     <PencilLine className="h-4 w-4" />
-                  </button> */}
+                  </button>
                   <button
                     onClick={() => handleDelete(partner.id)}
                     className="text-red-500"

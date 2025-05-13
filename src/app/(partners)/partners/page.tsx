@@ -12,6 +12,7 @@ import MobileMenu from "../../components/layout/MobileMenuButton";
 import FooterUser from "../../components/ui/footer-user";
 import { ThemeProvider, Spinner } from "flowbite-react";
 import customTheme from "src/components/ui/spinner-custom";
+import { useRouter } from 'next/router';
 
 
 export default function Partners() {
@@ -26,6 +27,8 @@ export default function Partners() {
   const [filteredPartners, setFilteredPartners] = useState<Partner[]>([]);
   const [searchQuery, setSearchQuery] = useState("");  // State untuk pencarian
   const [isLoading, setIsLoading] = useState<Boolean>(false);
+  const [itemsPerPage] = useState(10);
+  
 
   const openModal = (partner: Partner) => {
     setSelectedPartner(partner);
@@ -36,6 +39,7 @@ export default function Partners() {
     setShowModal(false);
   };
 
+ 
    const handleFilterChange = (filtered: Partner[]) => {
     setFilteredPartners(filtered);
   };
@@ -57,6 +61,16 @@ export default function Partners() {
   };
 
   const displayedPartners = filterPartners(filteredPartners?.length > 0 ? filteredPartners : partners);
+
+   const handlePageChange = (newPage:number) => {
+    setPage(newPage);
+  }
+
+
+  const paginatedPartners = displayedPartners.slice(
+    (page - 1) * itemsPerPage,
+    page * itemsPerPage
+  );
 
 
    useEffect(() => {
@@ -128,7 +142,7 @@ export default function Partners() {
             href="/partners/affiliate"
             className="px-3 py-1 font-medium hover:border-b-2 hover:border-white"
           >
-            AFFILIATE PARTNERS
+            POPULAR PARTNERS
           </Link>
           <Link
             href="/stores"
@@ -197,7 +211,7 @@ export default function Partners() {
         <img
           src={partner.logo || "/placeholder.svg"}
           alt={partner.name}
-          className="h-16 w-auto object-contain sm:h-20"
+          className="h-16 w-20 sm:h-20 sm:w-28 "
         />
       </div>
 
@@ -215,9 +229,9 @@ export default function Partners() {
         >
           Get Code
         </button>
-        <button className="mt-2 text-sm text-blue-600 hover:text-blue-700">
+        {/* <button className="mt-2 text-sm text-blue-600 hover:text-blue-700">
           Details
-        </button>
+        </button> */}
       </div>
     </div>
         ))
@@ -240,8 +254,8 @@ export default function Partners() {
               <div className="mt-8">
                 <Pagination
                   currentPage={page}
-                  totalPages={58}
-                  onPageChange={(newPage) => setPage(newPage)}
+                  totalPages={Math.ceil(displayedPartners.length / itemsPerPage)}
+                  onPageChange={handlePageChange}
                 />
               </div>
               <MobileBottomNavigationBar />
@@ -281,8 +295,8 @@ export default function Partners() {
 
             {/* Discount information */}
             <p className="mb-4 text-center font-medium text-gray-800">
-              {selectedPartner.discountText ||
-                `${selectedPartner.discount || "20%"} OFF - must use link and code provided`}
+             { 
+                `${selectedPartner.discount } OFF`}   {selectedPartner.discountText }
             </p>
 
             {/* Promo code */}
@@ -418,15 +432,17 @@ export default function Partners() {
             {selectedPartner.hasMap && (
               <div className="mt-4 rounded border border-gray-200 bg-gray-50 p-2 text-center text-xs text-orange-600 hover:underline sm:text-sm">
                 <div className="mt-2">
-                  <img
-                    src={selectedPartner.hasMap || "/placeholder.svg"}
-                    alt="Map Location"
-                    className="mx-auto mt-4 w-full rounded-lg"
-                  />
+                 <iframe
+                    src={selectedPartner.hasMap}
+                    title="Map Location"
+                    className="mx-auto mt-4 w-full h-[400px] rounded-lg border border-gray-300"
+                    allowFullScreen
+                    loading="lazy"
+                  ></iframe>
                 </div>
-                <a href="/user" onClick={(e) => e.preventDefault()}>
+                {/* <a href="/user" onClick={(e) => e.preventDefault()}>
                   View larger map
-                </a>
+                </a> */}
               </div>
             )}
           </div>

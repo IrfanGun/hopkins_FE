@@ -1,5 +1,6 @@
 import { Gift, Users, DollarSign, AlertCircle } from "lucide-react";
 import QuickAccess from "./_components/QuickAccess";
+import AnalyticsPage from "./analytics/page";
 
 export default function AdminDashboard() {
   const stats = [
@@ -30,38 +31,38 @@ export default function AdminDashboard() {
   ];
 
   // Sample recent activities
-  const recentActivities = [
-    {
-      id: 1,
-      action: "New category added",
-      category: "Automotive",
-      time: "2 hours ago",
-    },
-    {
-      id: 2,
-      action: "Banner updated",
-      category: "Homepage",
-      time: "5 hours ago",
-    },
-    {
-      id: 3,
-      action: "New giveaway created",
-      category: "Ford F150 Raptor",
-      time: "1 day ago",
-    },
-    {
-      id: 4,
-      action: "Support ticket resolved",
-      category: "Ticket #4582",
-      time: "1 day ago",
-    },
-    {
-      id: 5,
-      action: "Pop-up message updated",
-      category: "Discount Code",
-      time: "2 days ago",
-    },
-  ];
+  // const recentActivities = [
+  //   {
+  //     id: 1,
+  //     action: "New category added",
+  //     category: "Automotive",
+  //     time: "2 hours ago",
+  //   },
+  //   {
+  //     id: 2,
+  //     action: "Banner updated",
+  //     category: "Homepage",
+  //     time: "5 hours ago",
+  //   },
+  //   {
+  //     id: 3,
+  //     action: "New giveaway created",
+  //     category: "Ford F150 Raptor",
+  //     time: "1 day ago",
+  //   },
+  //   {
+  //     id: 4,
+  //     action: "Support ticket resolved",
+  //     category: "Ticket #4582",
+  //     time: "1 day ago",
+  //   },
+  //   {
+  //     id: 5,
+  //     action: "Pop-up message updated",
+  //     category: "Discount Code",
+  //     time: "2 days ago",
+  //   },
+  // ];
 
   return (
     <div>
@@ -97,29 +98,14 @@ export default function AdminDashboard() {
       {/* Quick access */}
       <QuickAccess />
 
-      {/* Recent activity */}
-      <div>
-        <h2 className="mb-4 text-lg font-semibold text-gray-700">
-          Recent Activity
-        </h2>
-        <div className="overflow-hidden rounded-lg border bg-white shadow">
-          <ul className="divide-y divide-gray-200">
-            {recentActivities.map((activity) => (
-              <li key={activity.id} className="p-4 hover:bg-gray-50">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium text-gray-800">
-                      {activity.action}
-                    </p>
-                    <p className="text-sm text-gray-500">{activity.category}</p>
-                  </div>
-                  <span className="text-sm text-gray-500">{activity.time}</span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
+      {/* Analytics */}
+      
+      {/* Analytic Graphs */}
+       
+      <AnalyticsPage /> {/* Panggil Komponen Analytics */}
+
+    
+
     </div>
   );
 }

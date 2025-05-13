@@ -12,7 +12,7 @@ export default function QuickAccess() {
   return (
     <div className="mb-8">
       <h2 className="mb-4 text-lg font-semibold text-gray-700">Quick Access</h2>
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-6">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
         <Link
           href="/admin/categories"
           className="flex flex-col items-center rounded-lg border bg-white p-4 text-center shadow-sm transition-colors hover:bg-orange-50"
@@ -48,13 +48,7 @@ export default function QuickAccess() {
           <TicketCheck className="mb-2 h-8 w-8 text-orange-500" />
           <span className="text-sm font-medium text-gray-700">Support</span>
         </Link>
-        <Link
-          href="/admin/analytics"
-          className="flex flex-col items-center rounded-lg border bg-white p-4 text-center shadow-sm transition-colors hover:bg-orange-50"
-        >
-          <TrendingUp className="mb-2 h-8 w-8 text-orange-500" />
-          <span className="text-sm font-medium text-gray-700">Analytics</span>
-        </Link>
+        
       </div>
     </div>
   );

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Header from "../../components/layout/header";
-import { stores, Stores } from "../../../lib/stores";
+import { fetchStores, Stores} from "../../../lib/stores";
 import MobileMenuButton from "../../components/layout/MobileMenuButton";
 import MobileMenu from "../../components/layout/MobileMenuButton";
 import AlphabetFilter from "../_components/alphabet-filter";
@@ -30,6 +30,21 @@ export default function StoresClient() {
   const [showFilters, setShowFilters] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [ stores, setStores ] = useState<Stores[]>([]);
+  const [ setloading, isSetLoading] = useState();
+  
+    useEffect(() => {
+       const loadStores = async () => {
+      
+        const data = await fetchStores();
+        console.log(data);
+        setStores(data);
+     
+      };
+  
+      loadStores();
+  
+    },[])
 
   useEffect(() => {
     const letterParam = searchParams.get("letter");
@@ -101,7 +116,7 @@ export default function StoresClient() {
             href="/partners/affiliate"
             className="px-3 py-1 font-medium hover:border-b-2 hover:border-white"
           >
-            AFFILIATE PARTNERS
+            POPULAR PARTNER
           </Link>
           <Link
             href="/stores"

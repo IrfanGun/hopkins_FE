@@ -13,7 +13,7 @@ export default function FeaturedAffiliatePartner() {
       const loadPartner = async() => {
         const response = await fetchPartner();
         setPartners(response);
-        console.log(response);
+      
       }
       
       loadPartner();
@@ -41,7 +41,7 @@ export default function FeaturedAffiliatePartner() {
   };
 
   if (!singlePartner) {
-    return <p>Partner not found je</p>;
+    return <p>Partner not found </p>;
   }
 
   return (

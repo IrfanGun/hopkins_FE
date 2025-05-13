@@ -5,10 +5,12 @@ import { fetchPartner, Partner } from "../../../lib/partners";
 
 interface FilterPartnersProps {
   onFilterChange: (filteredPartners: Partner[]) => void;
+  isPopularFilter ? :boolean;
+
 }
 
 
-export default function FilterPartners({ onFilterChange }: FilterPartnersProps){
+export default function FilterPartners({ onFilterChange, isPopularFilter= false }: FilterPartnersProps){
   const [partners, setPartners] = useState<Partner[]>([]);
   const [filteredPartners, setFilteredPartners] = useState<Partner[]>([]);
   const [selectedState, setSelectedState] = useState("");
@@ -16,16 +18,35 @@ export default function FilterPartners({ onFilterChange }: FilterPartnersProps){
   const [selectedTag, setSelectedTag] = useState("");
   const [isPopular, setIsPopular] = useState(false);
   const [showAll, setShowAll] = useState(false);
+  const [isActiveFilter, setIsActiveFilter] = useState(false);
+  const [OriginFiltered,setOriginFiltered] = useState<Partner[]>([]);
+  
 
   // Fetch data dari API
-  useEffect(() => {
-    const loadPartner = async () => {
-      const response = await fetchPartner();
+useEffect(() => {
+  const loadPartner = async () => {
+    const response = await fetchPartner();
+    if (filteredPartners.length === 0) {
+      // Jika belum ada hasil filter, set hasil fetch pertama kali
+    
       setPartners(response);
-      setFilteredPartners(response);
-    };
-    loadPartner();
-  }, []);
+
+      const initialFilter = isPopularFilter
+        ? response.filter((item) => item.isPopular)
+        : response;
+
+      setIsActiveFilter(false);
+      setFilteredPartners(initialFilter);
+      setOriginFiltered(initialFilter);
+      if (isActiveFilter === true) {
+        onFilterChange(initialFilter);
+      }
+     
+    }
+  };
+  loadPartner();
+}, [isPopularFilter, onFilterChange, filteredPartners]);
+
 
   // Handler Apply Filter
 const handleFilterChange = () => {
@@ -50,9 +71,11 @@ const handleFilterChange = () => {
     // ✅ Cocokkan popular
     const popularMatch = isPopular ? partner.isPopular === isPopular : true;
 
+    setIsActiveFilter(true);
     return stateMatch && categoryMatch && tagMatch && popularMatch;
   });
 
+  setIsActiveFilter(true);
   setFilteredPartners(filtered);
   onFilterChange(filtered);
   setShowAll(false); // Reset pagination saat filter berubah
@@ -82,7 +105,7 @@ const handleFilterChange = () => {
           onChange={(e) => setSelectedState(e.target.value)}
         >
           <option value="">Select State</option>
-          {Array.from(new Set(partners.map((partner) => partner.states)))
+          {Array.from(new Set(OriginFiltered.map((partner) => partner.states)))
             .filter(Boolean)
             .map((state, index) => (
               <option key={index} value={state}>
@@ -101,7 +124,7 @@ const handleFilterChange = () => {
           onChange={(e) => setSelectedCategory(e.target.value)}
         >
           <option value="">Select Category</option>
-          {Array.from(new Set(partners.map((partner) => partner.category)))
+          {Array.from(new Set(OriginFiltered.map((partner) => partner.category)))
             .filter(Boolean)
             .map((category, index) => (
               <option key={index} value={category}>
@@ -120,7 +143,7 @@ const handleFilterChange = () => {
           onChange={(e) => setSelectedTag(e.target.value)}
         >
           <option value="">Select Tag</option>
-          {Array.from(new Set(partners.map((partner) => partner.tags)))
+          {Array.from(new Set(OriginFiltered.map((partner) => partner.tags)))
             .filter(Boolean)
             .map((tag, index) => (
               <option key={index} value={tag}>

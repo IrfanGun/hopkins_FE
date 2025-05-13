@@ -2,6 +2,7 @@ import Link from "next/link";
 import { fetchCategories as categories } from "../../../lib/categories";
 import React from "react";
 import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 type Category = {
   name: string;
@@ -10,6 +11,7 @@ type Category = {
 
 export default function AllCategories() {
   const [groupedCategories, setGroupedCategories] = React.useState<Category[][]>([]);
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchAndGroupCategories() {
@@ -47,14 +49,14 @@ export default function AllCategories() {
               </h3>
               <ul className="space-y-2">
                 {category.subcategories.map((subcategory) => (
-                  <li key={subcategory}>
-                    <Link
-                      href={`/category/${category.name.toLowerCase()}/${subcategory.toLowerCase().replace(/\s+/g, "-")}`}
-                      className="text-sm font-normal text-gray-500 transition-all hover:text-gray-800"
-                    >
-                      {subcategory}
-                    </Link>
-                  </li>
+                 <li key={subcategory}>
+  <Link href={`/partners/${category.name.toLowerCase()}/${subcategory.toLowerCase().replace(/\s+/g, "-")}`}>
+  {subcategory}
+</Link>
+
+
+</li>
+
                 ))}
               </ul>
             </div>

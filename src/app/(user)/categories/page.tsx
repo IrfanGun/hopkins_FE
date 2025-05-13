@@ -173,7 +173,7 @@ export default function Categories() {
             href="/partners/affiliate"
             className="px-3 py-1 font-medium hover:border-b-2 hover:border-white"
           >
-            AFFILIATE PARTNERS
+           POPULAR PARTNER
           </Link>
           <Link
             href="/stores"

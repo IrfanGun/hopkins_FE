@@ -13,28 +13,50 @@ import {
   Sofa,
   Home,
 } from "lucide-react";
-import { stores, type Stores } from "../../../lib/stores";
+import { fetchStores, Stores} from "../../../lib/stores";
+import { useEffect, useState } from "react";
+import { ThemeProvider, Spinner } from "flowbite-react";
+import customTheme from "src/components/ui/spinner-custom";
 
 // Category data
-const categories = [
-  { id: 1, name: "Automotive", icon: <Car className="h-8 w-8" /> },
-  { id: 2, name: "Trades & Services", icon: <Building2 className="h-8 w-8" /> },
-  { id: 3, name: "Services", icon: <Settings className="h-8 w-8" /> },
-  { id: 4, name: "Retail", icon: <ShoppingCart className="h-8 w-8" /> },
-  { id: 5, name: "Beauty", icon: <Sparkles className="h-8 w-8" /> },
-  { id: 6, name: "Health & Fitness", icon: <Heart className="h-8 w-8" /> },
-  { id: 7, name: "Food & Beverages", icon: <Utensils className="h-8 w-8" /> },
-  { id: 8, name: "Pets", icon: <PawPrint className="h-8 w-8" /> },
-  {
-    id: 9,
-    name: "Detailing & Car Care",
-    icon: <CarIcon className="h-8 w-8" />,
-  },
-  { id: 10, name: "Furniture & Homeware", icon: <Sofa className="h-8 w-8" /> },
-  { id: 11, name: "Property", icon: <Home className="h-8 w-8" /> },
-];
+// const categories = [
+//   { id: 1, name: "Automotive", icon: <Car className="h-8 w-8" /> },
+//   { id: 2, name: "Trades & Services", icon: <Building2 className="h-8 w-8" /> },
+//   { id: 3, name: "Services", icon: <Settings className="h-8 w-8" /> },
+//   { id: 4, name: "Retail", icon: <ShoppingCart className="h-8 w-8" /> },
+//   { id: 5, name: "Beauty", icon: <Sparkles className="h-8 w-8" /> },
+//   { id: 6, name: "Health & Fitness", icon: <Heart className="h-8 w-8" /> },
+//   { id: 7, name: "Food & Beverages", icon: <Utensils className="h-8 w-8" /> },
+//   { id: 8, name: "Pets", icon: <PawPrint className="h-8 w-8" /> },
+//   {
+//     id: 9,
+//     name: "Detailing & Car Care",
+//     icon: <CarIcon className="h-8 w-8" />,
+//   },
+//   { id: 10, name: "Furniture & Homeware", icon: <Sofa className="h-8 w-8" /> },
+//   { id: 11, name: "Property", icon: <Home className="h-8 w-8" /> },
+// ];
 
 export default function FeaturedSections() {
+  
+const [ stores, setStores ] = useState<Stores[]>([]);
+const [ isLoading, isSetLoading] = useState(false);
+
+  useEffect(() => {
+     const loadStores = async () => {
+
+      isSetLoading(true)
+      const data = await fetchStores();
+      console.log(data);
+      setStores(data);
+      isSetLoading(false)
+   
+    };
+
+    loadStores();
+
+  },[])
+
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Featured Stores Section */}
@@ -51,31 +73,40 @@ export default function FeaturedSections() {
             <hr className="my-8 h-px border-0 bg-gray-200 dark:bg-gray-700"></hr>
           </Link>
         </div>
+        { isLoading ? (
+          <div className="text-center">
+            <ThemeProvider theme={customTheme}>
+              <Spinner color="base"/>
+            </ThemeProvider>
+          </div>
+        ) : (
 
-        <div className="grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-5">
+          <div className="grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-5">
           {stores.map((store: Stores) => (
             <Link
               key={store.id}
               href="#"
-              className="flex items-center space-x-3 rounded-lg p-2 transition duration-150 hover:bg-gray-50"
+              className="flex items-center space-x-2 rounded-lg p-2 transition duration-150 hover:bg-gray-50"
             >
               <div
-                className={`flex h-12 w-12 items-center justify-center rounded-md ${store.bgColor}`}
+                className={`flex h-10 w-8 items-center justify-center rounded-md ${store.bgColor}`}
               >
-                <Image
+                <img
                   src={store.logo || "/placeholder.svg"}
                   alt={store.name}
-                  width={40}
-                  height={40}
-                  className="object-contain"
+                  className="object-contain w-10 h-10"
                 />
               </div>
-              <span className="text-sm font-medium text-gray-800">
+              <span className="text-[12px] font-medium text-gray-800">
                 {store.name}
               </span>
             </Link>
           ))}
         </div>
+        )
+
+        }
+        
       </div>
 
       {/* Featured Categories Section

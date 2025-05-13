@@ -39,37 +39,11 @@ export default function AnalyticsPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold text-gray-800">
-        Analytics Dashboard
+      <h1 className="mb-4 text-lg font-semibold text-gray-700">
+        Analytics 
       </h1>
 
-      <div className="mb-10 grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
-        <Card>
-          <CardContent className="py-6">
-            <h3 className="text-sm text-gray-500">Total Users</h3>
-            <p className="text-2xl font-semibold text-gray-800">5,830</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="py-6">
-            <h3 className="text-sm text-gray-500">Active Giveaways</h3>
-            <p className="text-2xl font-semibold text-gray-800">3</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="py-6">
-            <h3 className="text-sm text-gray-500">Open Tickets</h3>
-            <p className="text-2xl font-semibold text-gray-800">12</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="py-6">
-            <h3 className="text-sm text-gray-500">Revenue</h3>
-            <p className="text-2xl font-semibold text-gray-800">$14,000</p>
-          </CardContent>
-        </Card>
-      </div>
-
+  
       {/* Line Chart: User Growth */}
       <div className="mb-10 rounded-lg border bg-white p-4 shadow-sm">
         <h2 className="mb-4 text-lg font-semibold text-gray-700">

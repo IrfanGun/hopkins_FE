@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Menu } from "lucide-react";
 import Sidebar from "./_components/SidebarAdmin";
 
+
 export default function AdminLayout({
   children,
 }: {
@@ -47,8 +48,12 @@ export default function AdminLayout({
           </div>
         </header>
 
-        <main className="flex-1 overflow-auto p-4 lg:p-6">{children}</main>
+        <main className="flex-1 overflow-auto p-4 lg:p-6">{children}
+
+
+        </main>
       </div>
+
     </div>
   );
 }
