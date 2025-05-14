@@ -21,6 +21,7 @@ import axiosInstance from "src/api/axiosInstance";
 import { Category, fetchCategories } from "src/lib/categories";
 import { ThemeProvider,Spinner } from "flowbite-react";
 import customTheme from "src/components/ui/spinner-custom";
+import Link from "next/link";
 
 
 export default function CategoriesCarousel() {
@@ -108,13 +109,15 @@ export default function CategoriesCarousel() {
       <div className="grid grid-cols-1 gap-6 md:grid-cols-4">
         {/* Categories sidebar */}
         <div className="rounded-lg bg-white p-4 shadow">
-          <ul className="space-y-3">
+          <ul className="">
             {category.map((category, index) => (
               <li key={index}>
-                <button className="flex w-full items-center rounded-md p-2 transition-colors hover:bg-gray-50">
-                  {/* <category.icon className="mr-3 h-5 w-5 text-gray-600" /> */}
-                  <span className="font-medium">{category.name}</span>
-                </button>
+                
+
+                <Link href={`/partners/${category?.name?.toLowerCase()}`} className="flex w-full items-center rounded-md p-2 transition-colors hover:bg-gray-50">
+                 {/* <category.icon className="mr-3 h-5 w-5 text-gray-600" /> */}
+                    <span className="font-medium">{category?.name}</span>
+                  </Link>
               </li>
             ))}
           </ul>

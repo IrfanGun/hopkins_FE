@@ -78,19 +78,19 @@ export default function Partners() {
   );
 
 useEffect(() => {
-    if (!category || !subcategory) return;
+    if (!category ) return;
 
     const loadPartners = async () => {
       try {
         setIsLoading(true);
         const response = await fetchPartner();
         const filteredData = response.filter((partner: Partner) =>
-          partner.category.toLowerCase() === (category as string).toLowerCase() &&
-          partner.subcategory?.toLowerCase().replace(/\s+/g, "-") === (subcategory as string).toLowerCase()
+          partner.category.toLowerCase() === (category as string).toLowerCase()
         );
+    
         setPartners(response); // Simpan semua partner yang diterima
         setFilteredPartners(filteredData);
-        console.log(displayedPartners, partners); // Hanya update filtered data
+             // Hanya update filtered data
       } catch (error) {
         console.error("Error loading partners", error);
       } finally {
@@ -99,7 +99,7 @@ useEffect(() => {
     };
 
     loadPartners();
-  }, [subcategory, category]);
+  }, [category]);
 
 
 

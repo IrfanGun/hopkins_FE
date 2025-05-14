@@ -170,9 +170,7 @@ export default function PopupsForm({reloadData, editPartner} : PopupsFormProps) 
       });
       }
 
-  
 
-      console.log("sukses");
 
     } catch (error) {
     

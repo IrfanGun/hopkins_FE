@@ -10,6 +10,9 @@ import Cookies from 'js-cookie';
 import axiosInstance from "src/api/axiosInstance";
 import { ThemeProvider, Spinner } from "flowbite-react";
 import customTheme from "src/components/ui/spinner-custom";
+import { getStates, States } from "src/lib/states";
+import { AxiosError } from "axios";
+import ShowModal from "src/components/ui/custom-modal";
 
 function getCookie(name: string): string | null {
   const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
@@ -19,28 +22,71 @@ function getCookie(name: string): string | null {
 
 
 export default function RegisterForm() {
- const [email, setEmail] = useState("");
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [country, setCountry] = useState("Australia"); // Default ke AU
+
+  const [state, setStates] = useState<States[]>([]);// Default ke AU
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-   const [error, setError] = useState("");
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-      const router = useRouter();
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+   const [Notification, setNotification] = useState < string[]>([]);
+  const [showNotification, setShowNotification] = useState(false);
+  const router = useRouter();
+  const defaultForm = {
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    city : "",
+    states : "",
+    country : "Australia",
+    password : ""
+
+  };
+
+  const [form, setForm] = useState(defaultForm);
 
 
   useEffect(() => {
-   
+   const loadStates = async () => {
+      try {
+        const fetchStates = await getStates()
+        setStates(fetchStates);
+    
+      } catch (error) {
+        console.error("Error loading states:", error);
+      }
+    }
+    loadStates();
   }, []);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+
+  // Handler untuk password
+const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  setPassword(e.target.value);
+
+  // Cek kecocokan password
+  if (confirmPassword && e.target.value !== confirmPassword) {
+    setError("Passwords do not match");
+  } else {
+    setError("");
+  }
+};
+
+// Handler untuk confirm password
+const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  setConfirmPassword(e.target.value);
+
+  // Cek kecocokan password
+  if (password && e.target.value !== password) {
+    setError("Passwords do not match");
+  } else {
+    setError("");
+  }
+};
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,36 +98,64 @@ export default function RegisterForm() {
     }
 
     try {
+      console.log(form);
 
       setIsLoading(true);
-      // Baru kirim data login
+   
       await axiosInstance.get('/sanctum/csrf-cookie');
       await axiosInstance.post(
         "api/register",
-        { email, password },
+        { name : form.name,
+          email : form.email,
+          phone : form.phone,
+          address : form.address,
+          city : form.city,
+          states : form.states,
+          country : form.country,
+          password : password
+ },
+        { withCredentials: true } // <- PENTING: pastikan di sini juga
+      );
+
+      await axiosInstance.post(
+        "api/login",
+        { email : form.email, password: password },
         { withCredentials: true } // <- PENTING: pastikan di sini juga
       ).then((response) => {
         
         Cookies.set('token', response.data.token);
         localStorage.setItem('token', response.data.token);
         const userData = response.data.data;
-        if (userData?.role === "admin") {
-          router.push("/admin");
-        } else {
-          router.push("/user");
-        }
+        router.push("/user");
+        
 
       });
+      
 
-    } catch (err: any) {
-      setError("Invalid email or password");
-      console.error(err);
+
+    } catch (error) {
+   const err = error as AxiosError;
+              if (err.response) {
+                const errorData = err.response.data  as Record<string, string[]>;
+                const allMessages: string[] = Object.values(errorData).flat();
+                console.log(allMessages);
+                setNotification(allMessages);
+                setShowNotification(true);
+              } 
     } finally {
       setIsLoading(false);
     }
   };
 
-
+  const handleChange = (e: React.ChangeEvent<any>) => {
+    
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+    
+  };
 
 
   const [isCaptchaChecked, setIsCaptchaChecked] = useState(false);
@@ -97,13 +171,27 @@ export default function RegisterForm() {
   }, []);
 
   return (
+    <div>
+       {showNotification  && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                      <ShowModal
+                        setMessage={Notification}
+                        setClose={() => setShowNotification(false)}
+                        isLoading = {isLoading}
+                      />
+                  </div>
+                  ) }
+
+  
+
     <form onSubmit={handleSubmit} className="w-full">
         <div className="mb-4">
         <label className="block mb-1 text-gray-700">Name:</label>
         <input
           type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
+          name="name"
+          value={form.name}
+          onChange={handleChange}
           placeholder="Enter your name"
           className="w-full rounded-md border border-gray-200 p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
           required
@@ -114,8 +202,9 @@ export default function RegisterForm() {
         <label className="block mb-1 text-gray-700">Email:</label>
         <input
           type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          name="email"
+          value={form.email}
+          onChange={handleChange}
           placeholder="Enter your email"
           className="w-full rounded-md border border-gray-200 p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
           required
@@ -125,9 +214,10 @@ export default function RegisterForm() {
       <div className="mb-4">
         <label className="block mb-1 text-gray-700">Phone:</label>
         <input
-          type="text"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
+          type="number"
+          name="phone"
+          value={form.phone}
+          onChange={handleChange}
           placeholder="Enter your phone number"
           className="w-full rounded-md border border-gray-200 p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
         />
@@ -137,8 +227,9 @@ export default function RegisterForm() {
         <label className="block mb-1 text-gray-700">Address:</label>
         <input
           type="text"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
+          name="address"
+          value={form.address}
+          onChange={handleChange}
           placeholder="Enter your address"
           className="w-full rounded-md border border-gray-200 p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
         />
@@ -148,8 +239,9 @@ export default function RegisterForm() {
         <label className="block mb-1 text-gray-700">City:</label>
         <input
           type="text"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
+          name="city"
+          value={form.city}
+          onChange={handleChange}
           placeholder="Enter your city"
           className="w-full rounded-md border border-gray-200 p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
         />
@@ -157,33 +249,42 @@ export default function RegisterForm() {
 
       <div className="mb-4">
         <label className="block mb-1 text-gray-700">State:</label>
-        <input
-          type="text"
-          value={state}
-          onChange={(e) => setState(e.target.value)}
-          placeholder="Enter your state"
+        <select
+          name="states"
+          value={form.states ?? ""}
+          onChange={handleChange}
           className="w-full rounded-md border border-gray-200 p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
-        />
+          required
+        >
+          <option value="">States</option>
+          {state.map((e) => (
+            <option key={e.id} value={e.id}>
+              {e.name} | {e.shortName}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div className="mb-4">
         <label className="block mb-1 text-gray-700">Country:</label>
         <input
           type="text"
-          value={country}
+          name="country"
+          value={form.country}
           disabled
           className="w-full bg-gray-100 cursor-not-allowed rounded-md border border-gray-200 p-3 shadow-sm"
         />
       </div>
 
-      <div className="mb-4">
+     <div className="mb-4">
         <label className="block mb-1 text-gray-700">Password:</label>
         <div className="relative">
           <input
             type={showPassword ? "text" : "password"}
+            name="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Generate new password"
+            onChange={handlePasswordChange}
+            placeholder="Enter your password"
             className="w-full rounded-md border border-gray-200 p-3 pr-10 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
             required
           />
@@ -201,13 +302,20 @@ export default function RegisterForm() {
         <label className="block mb-1 text-gray-700">Confirm Password:</label>
         <input
           type="password"
+          name="confirmPassword"
           value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
+          onChange={handleConfirmPasswordChange}
           placeholder="Confirm your password"
           className="w-full rounded-md border border-gray-200 p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
           required
         />
       </div>
+
+      {/* Error Message */}
+      {error && (
+        <p className="text-red-500 mb-2">{error}</p>
+      )}
+
 
       <div className="mb-6">
         <label className="mb-1 block text-gray-700">
@@ -232,16 +340,22 @@ export default function RegisterForm() {
       <button
         type="submit"
         className={`w-full rounded-md px-4 py-3 font-medium text-white transition-colors duration-300 ${
-        isLoading ? "bg-orange-600" : "bg-primary-color hover:bg-orange-600"
-         }`} 
+          isLoading ? "bg-orange-600 cursor-not-allowed" : "bg-primary-color hover:bg-orange-600"
+        }`}
+        disabled={isLoading || !!error}
       >
-        { isLoading ? (<ThemeProvider theme={customTheme}>
-          <Spinner color="base-secondary" />
-        </ThemeProvider>) : ' Register' } 
-       
+        {isLoading ? (
+          <ThemeProvider theme={customTheme}>
+            <Spinner color="base-secondary" />
+          </ThemeProvider>
+        ) : (
+          "Register"
+        )}
       </button>
+
 
     
     </form>
+    </div>
   );
 }
