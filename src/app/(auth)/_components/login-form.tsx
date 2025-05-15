@@ -183,7 +183,7 @@ export default function LoginForm() {
 
       <div className="mt-6 text-center text-gray-600">
         Do not have an account?{" "}
-        <Link href="/signup" className="text-orange-600 hover:text-orange-800">
+        <Link href="https://buy.stripe.com/test_00g3dxgwLdc99VK6oo" className="text-orange-600 hover:text-orange-800">
           Sign Up
         </Link>
       </div>
