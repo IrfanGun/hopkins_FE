@@ -10,6 +10,8 @@ import Cookies from 'js-cookie';
 import axiosInstance from "src/api/axiosInstance";
 import { ThemeProvider, Spinner } from "flowbite-react";
 import customTheme from "src/components/ui/spinner-custom";
+import stripeInstance from "src/api/stripeInstance";
+import axios, { AxiosResponse } from 'axios';
 
 function getCookie(name: string): string | null {
   const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
@@ -22,9 +24,12 @@ export default function LoginForm() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
+  const [emailStripe, setEmailStripe] = useState("");
+  const [idStripe, setIdStripe] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  
 
   // const [axiosInstance, setAxiosInstance] = useState<AxiosInstance>(() =>
   //   axios.create({
@@ -36,9 +41,38 @@ export default function LoginForm() {
   //     },
   //   })
   // );
+  interface Customer {
+  id: string;
+  email: string;
+  name?: string;
+}
 
+const getCustomerByIdAndEmail = async (id_customer: string, email: string): Promise<Customer | null> => {
+  try {
+    // Ambil customer berdasarkan id_customer langsung
+    const response: AxiosResponse<Customer> = await stripeInstance.get(`/customers/${id_customer}`);
+
+    const customer = response.data;
+
+    // Cek apakah email sama
+    if (customer.email?.toLowerCase() === email.toLowerCase()) {
+      
+      console.log(customer);
+      router.push("/user");
+      return customer;
+      
+     
+    } else {
+      console.log('Email tidak cocok dengan id_customer');
+      return null;
+    }
+  } catch (error: any) {
+    console.error('Error fetching customer:', error.message);
+    return null;
+  }
+};
   useEffect(() => {
-   
+    
   }, []);
 
   const togglePasswordVisibility = () => {
@@ -68,10 +102,17 @@ export default function LoginForm() {
         Cookies.set('token', response.data.token);
         localStorage.setItem('token', response.data.token);
         const userData = response.data.data;
+        
         if (userData?.role === "admin") {
-          router.push("/admin");
+          // router.push("/admin");
         } else {
-          router.push("/user");
+
+          localStorage.setItem('customer-hopkins', JSON.stringify(response.data));
+          setEmailStripe(response.data.email);
+          setIdStripe(response.data.id_stripe);
+          getCustomerByIdAndEmail(emailStripe, idStripe);
+          
+          // console.log(userData);
         }
 
       });

@@ -12,13 +12,55 @@ import AffilliatePartner from "../../_components/affilliate-partner";
 import FeaturedStores from "../../_components/featured-stores";
 import AllCategories from "../../_components/all-categories";
 import FooterUser from "../../../components/ui/footer-user";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MobileMenu from "../../../components/layout/MobileMenuButton";
 import MobileMenuButton from "../../../components/layout/MobileMenuButton";
 import MobileBottomNavigationBar from "../../../components/layout/MobileBottomNavigationBar";
+import getCustomerDetails from "src/lib/getCustomerDetails";
+import getSubscriptionDetails from "src/lib/getSubscriptionDetails";
+
+
+interface Customer {
+ data: {
+    email: string;
+    id: number;
+    id_stripe: string;
+    name: string;
+    role: string;
+  }
+}
+
 
 export default function Dashboard() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [customerData, setCustomerData] = useState<any>(null);
+
+
+  useEffect(() => {
+
+    const storedCustomer : Customer | null = JSON.parse(localStorage.getItem('customer-hopkins') || 'null');
+
+    if(storedCustomer && storedCustomer?.data['id_stripe']) {
+      const fetchData = async () => {
+        const customerData = await getCustomerDetails(storedCustomer?.data.id_stripe);
+        const subscriptionData = await getSubscriptionDetails(storedCustomer?.data.id_stripe);
+
+         setCustomerData({
+          customer: customerData,
+          subscription: subscriptionData
+        });
+        console.log(customerData, subscriptionData);
+      }
+
+         fetchData();
+       
+
+    }
+
+      console.log(storedCustomer?.data.id_stripe);
+ 
+
+  },[])
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!mobileMenuOpen);
@@ -58,9 +100,9 @@ export default function Dashboard() {
         </div>
         <div className="ml-4">
           <h1 className="text-2xl font-bold text-white">
-            Welcome Jay Hopkins!
+           Welcome, {customerData?.customer?.name || "Loading..."}!
           </h1>
-          <p className="text-orange-100">admin@rsg-wa.com.au</p>
+          <p className="text-orange-100">    Welcome, {customerData?.customer?.name || "Loading..."}!</p>
         </div>
       </section>
 
