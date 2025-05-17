@@ -12,6 +12,7 @@ import { ThemeProvider, Spinner } from "flowbite-react";
 import customTheme from "src/components/ui/spinner-custom";
 import stripeInstance from "src/api/stripeInstance";
 import axios, { AxiosResponse } from 'axios';
+import getSubscriptionDetails from "src/lib/getSubscriptionDetails";
 
 function getCookie(name: string): string | null {
   const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
@@ -29,6 +30,7 @@ export default function LoginForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [Data, setData] = useState("");
   
 
   // const [axiosInstance, setAxiosInstance] = useState<AxiosInstance>(() =>
@@ -47,24 +49,19 @@ export default function LoginForm() {
   name?: string;
 }
 
-const getCustomerByIdAndEmail = async (id_customer: string, email: string): Promise<Customer | null> => {
+const getCustomerByIdAndEmail = async (id_customer: string): Promise<Customer | null | undefined> => {
   try {
-    // Ambil customer berdasarkan id_customer langsung
-    const response: AxiosResponse<Customer> = await stripeInstance.get(`/customers/${id_customer}`);
 
-    const customer = response.data;
-
-    // Cek apakah email sama
-    if (customer.email?.toLowerCase() === email.toLowerCase()) {
-      
-      console.log(customer);
+    const stripeCustomer = await getSubscriptionDetails(id_customer);   
+    console.log(stripeCustomer['status']); 
+  if (stripeCustomer['status'] === "active") {
       router.push("/user");
-      return customer;
-      
+  // Arahkan user ke halaman dashboard
+
      
     } else {
       console.log('Email tidak cocok dengan id_customer');
-      return null;
+      
     }
   } catch (error: any) {
     console.error('Error fetching customer:', error.message);
@@ -102,15 +99,14 @@ const getCustomerByIdAndEmail = async (id_customer: string, email: string): Prom
         Cookies.set('token', response.data.token);
         localStorage.setItem('token', response.data.token);
         const userData = response.data.data;
+        console.log(userData);
         
         if (userData?.role === "admin") {
-          // router.push("/admin");
+          router.push("/admin");
         } else {
 
-          localStorage.setItem('customer-hopkins', JSON.stringify(response.data));
-          setEmailStripe(response.data.email);
-          setIdStripe(response.data.id_stripe);
-          getCustomerByIdAndEmail(emailStripe, idStripe);
+          setData(response.data.data);
+          getCustomerByIdAndEmail(userData.id_stripe);
           
           // console.log(userData);
         }
@@ -130,15 +126,6 @@ const getCustomerByIdAndEmail = async (id_customer: string, email: string): Prom
 
   const [isCaptchaChecked, setIsCaptchaChecked] = useState(false);
 
-  useEffect(() => {
-
-    //check token
-    if (Cookies.get('token')) {
-
-      //redirect page dashboard
-      router.push('/user');
-    }
-  }, []);
 
   return (
     <form onSubmit={handleSubmit} className="w-full">
