@@ -146,11 +146,11 @@ export default function Header() {
                     Purchase history
                   </Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                {/* <DropdownMenuItem>
                   <Link href="/support" className="w-full">
                     Get Support
                   </Link>
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
                 <DropdownMenuItem onClick={handleLogout}>
                   <span className="w-full text-left">
                     Logout

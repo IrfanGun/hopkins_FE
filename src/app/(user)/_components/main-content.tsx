@@ -1,6 +1,15 @@
 import { Clock, UserCheck } from "lucide-react";
 
-export default function MainContent() {
+const MainContent = ({ customerData } : any) => {
+
+const formatDate = (timestamp: number) => {
+  return new Date(timestamp * 1000).toLocaleDateString("id-ID", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+};
+
   return (
     <main className="container mx-auto p-4">
       <div className="flex max-w-xl flex-col space-y-6">
@@ -14,7 +23,7 @@ export default function MainContent() {
       Hopkins Loyalty
     </h3>
     <p className="mt-1 text-xl font-semibold text-gray-800">
-      Active (x 1)
+      { customerData?.subscription.plan_name }
     </p>
   </div>
 </div>
@@ -32,10 +41,14 @@ export default function MainContent() {
             <h3 className="text-lg font-medium text-gray-500">
               Once off Package Access
             </h3>
-            <p className="mt-1 text-xl font-semibold text-gray-800">810 Days</p>
+            <p className="mt-1 text-xl font-semibold text-gray-800">
+              
+              {  formatDate(customerData?.subscription.start_date) }</p>
           </div>
         </div>
       </div>
     </main>
   );
 }
+
+export default MainContent;

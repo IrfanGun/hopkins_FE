@@ -68,10 +68,21 @@ const getCustomerByIdAndEmail = async (id_customer: string): Promise<Customer | 
     return null;
   }
 };
-  useEffect(() => {
-    
-  }, []);
 
+
+  useEffect(() => {
+    const handleComplete = () => {
+      setIsLoading(false);
+    };
+
+    // Event Listener Router
+    window.addEventListener('popstate', handleComplete);
+
+    // Cleanup Listener saat komponen di-unmount
+    return () => {
+      window.removeEventListener('popstate', handleComplete);
+    };
+  }, []);
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -102,7 +113,7 @@ const getCustomerByIdAndEmail = async (id_customer: string): Promise<Customer | 
         console.log(userData);
         
         if (userData?.role === "admin") {
-          router.push("/admin");
+         router.push("/admin");
         } else {
 
           setData(response.data.data);
@@ -116,9 +127,8 @@ const getCustomerByIdAndEmail = async (id_customer: string): Promise<Customer | 
     } catch (err: any) {
       setError("Invalid email or password");
       console.error(err);
-    } finally {
       setIsLoading(false);
-    }
+    } 
   };
 
 

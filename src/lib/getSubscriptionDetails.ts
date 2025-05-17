@@ -1,18 +1,31 @@
 import axios, { AxiosResponse } from "axios";
 import stripeInstance from "src/api/stripeInstance";
 
+interface SubscriptionItem {
+  id: string;
+  plan: {
+    id: string;
+    nickname: string;
+    product: string;
+  };
+}
+
 interface Subscription {
   id: string;
   status: string;
-  current_period_end: number;
-  current_period_start: number;
+  ended_at: number;
+  start_date: number;
+  plan_name: string;
+  items: {
+    data: SubscriptionItem[];
+  };
 }
 
 interface SubscriptionListResponse {
   data: Subscription[];
 }
 
-const getSubscriptionDetails = async (id_customer:string) : Promise<any | null > => {
+const getSubscriptionDetails = async (id_customer:string) : Promise<Subscription | null> => {
 
     try {
 
@@ -23,16 +36,23 @@ const getSubscriptionDetails = async (id_customer:string) : Promise<any | null >
         });
 
         const subscription = response.data?.data[0];
+        console.log(subscription);
 
         if (subscription) {
+             const planName = subscription?.items?.data[0]?.plan?.nickname || "Unknown Plan";
             return {
-                id:subscription.id,
+                id: subscription.id,
                 status: subscription.status,
-                start_date: new Date(subscription.current_period_start * 1000).toLocaleString(),
-                end_date: new Date(subscription.current_period_end * 1000).toLocaleString(),
+                ended_at: subscription.ended_at,
+                start_date: subscription.start_date,
+                items: subscription.items,
+                plan_name: planName,
 
             };
-        }
+        } else {
+      console.warn("No subscription found for this customer.");
+         }
+
 
         return null;
 

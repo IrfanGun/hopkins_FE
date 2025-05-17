@@ -120,18 +120,18 @@ export default function ProfilePage() {
 
               {/* Navigation */}
               <nav className="flex flex-col">
-                <Link
+                {/* <Link
                   href="/profile"
                   className="border-l-4 border-orange-500 bg-gray-100 px-4 py-3 font-medium text-gray-700 transition hover:bg-gray-200"
                 >
                   My Profile
-                </Link>
-                <Link
+                </Link> */}
+                {/* <Link
                   href="/support"
                   className="border-l-4 border-transparent px-4 py-3 text-gray-600 transition hover:bg-gray-50"
                 >
                   Get Support
-                </Link>
+                </Link> */}
               </nav>
             </div>
           </div>

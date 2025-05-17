@@ -107,7 +107,7 @@ export default function Dashboard() {
       </section>
 
       {/* Main content */}
-      <MainContent />
+      <MainContent customerData={customerData} />
 
       {/* Bottom navigation - visible only on desktop */}
       <div className="mt-auto hidden bg-orange-600 py-4 text-white lg:block">
