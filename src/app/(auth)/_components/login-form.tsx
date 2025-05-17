@@ -31,18 +31,7 @@ export default function LoginForm() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [Data, setData] = useState("");
-  
 
-  // const [axiosInstance, setAxiosInstance] = useState<AxiosInstance>(() =>
-  //   axios.create({
-  //     baseURL: process.env.NEXT_PUBLIC_API_URL,
-  //     withCredentials: true,
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       "Accept": "application/json",
-  //     },
-  //   })
-  // );
   interface Customer {
   id: string;
   email: string;
@@ -52,13 +41,11 @@ export default function LoginForm() {
 const getCustomerByIdAndEmail = async (id_customer: string): Promise<Customer | null | undefined> => {
   try {
 
-    const stripeCustomer = await getSubscriptionDetails(id_customer);   
-    console.log(stripeCustomer['status']); 
-  if (stripeCustomer['status'] === "active") {
-      router.push("/user");
-  // Arahkan user ke halaman dashboard
+  const stripeCustomer = await getSubscriptionDetails(id_customer);
 
-     
+
+    if (stripeCustomer && stripeCustomer.status === "active") {
+  router.push("/user");
     } else {
       console.log('Email tidak cocok dengan id_customer');
       
