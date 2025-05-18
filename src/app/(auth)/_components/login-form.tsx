@@ -4,7 +4,7 @@ import type React from "react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, User } from "lucide-react";
 import { useEffect } from "react";
 import Cookies from 'js-cookie';
 import axiosInstance from "src/api/axiosInstance";
@@ -31,6 +31,7 @@ export default function LoginForm() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [Data, setData] = useState("");
+  const [UserData, setUserData] = useState("")
 
   interface Customer {
   id: string;
@@ -42,10 +43,9 @@ const getCustomerByIdAndEmail = async (id_customer: string): Promise<Customer | 
   try {
 
   const stripeCustomer = await getSubscriptionDetails(id_customer);
-
-
     if (stripeCustomer && stripeCustomer.status === "active") {
-  router.push("/user");
+    localStorage.setItem('customer-hopkins',  JSON.stringify(UserData) );
+    router.push("/user");
     } else {
       console.log('Email tidak cocok dengan id_customer');
       
@@ -97,7 +97,9 @@ const getCustomerByIdAndEmail = async (id_customer: string): Promise<Customer | 
         Cookies.set('token', response.data.token);
         localStorage.setItem('token', response.data.token);
         const userData = response.data.data;
-        console.log(userData);
+        setUserData(userData);
+       
+ 
         
         if (userData?.role === "admin") {
          router.push("/admin");

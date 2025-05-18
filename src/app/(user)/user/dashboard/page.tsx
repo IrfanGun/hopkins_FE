@@ -57,7 +57,7 @@ export default function Dashboard() {
 
     }
 
-      console.log(storedCustomer?.data.id_stripe);
+    
  
 
   },[])
