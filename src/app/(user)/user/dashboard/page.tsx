@@ -48,8 +48,9 @@ export default function Dashboard() {
          setCustomerData({
           customer: customerData,
           subscription: subscriptionData
+
         });
-        console.log(customerData, subscriptionData);
+       
       }
 
          fetchData();
