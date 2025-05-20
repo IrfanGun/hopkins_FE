@@ -259,12 +259,7 @@ export default function Dashboard() {
             >
               POPULAR PARTNERS
             </Link>
-            <Link
-              href="/stores"
-              className="flex-1 px-4 py-3 text-center font-medium text-gray-600 hover:text-orange-500"
-            >
-              STORE SEARCH
-            </Link>
+           
             <Link
               href="/categories"
               className="flex-1 px-4 py-3 text-center font-medium text-gray-600 hover:text-orange-500"

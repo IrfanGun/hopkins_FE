@@ -13,6 +13,7 @@ import {
 import { ChevronDown } from "lucide-react";
 import axiosInstance from "src/api/axiosInstance";
 import Cookies from 'js-cookie';
+import Image from "next/image";
 
 
 
@@ -66,13 +67,15 @@ export default function Header() {
         <div className="mx-auto flex max-w-7xl items-center justify-between">
           {/* Logo */}
           <div className="flex">
-            <Link href="/user" className="text-2xl font-bold text-white">
-              <img
-                src="/img/hopkins_img.png"
-                alt="MCH+"
-                className="hidden h-10 bg-white md:block"
-              />
-            </Link>
+             <Image
+                            
+                            src="/img/hopkins_img.png"
+                            alt="Hopkins+"
+                            width={140}
+                            height={40}
+                            priority
+                            style={{ filter: "brightness(0) invert(1)" }}
+                          />
           </div>
 
           {/* Desktop Navigation */}

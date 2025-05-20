@@ -155,40 +155,33 @@ export default function Categories() {
         toggleMobileMenu={toggleMobileMenu}
       />
       {/* Desktop Navigation */}
-      <div className="hidden bg-orange-600 py-4 text-white lg:block">
-        <div className="container mx-auto flex justify-center space-x-6 overflow-x-auto">
-          <Link
-            href="/user"
-            className="px-3 py-1 font-medium hover:border-b-2 hover:border-white"
-          >
-            DASHBOARD
-          </Link>
-          <Link
-            href="/partners"
-            className="px-3 py-1 font-medium hover:border-b-2 hover:border-white"
-          >
-            PARTNER SEARCH
-          </Link>
-          <Link
-            href="/partners/affiliate"
-            className="px-3 py-1 font-medium hover:border-b-2 hover:border-white"
-          >
-           POPULAR PARTNER
-          </Link>
-          <Link
-            href="/stores"
-            className="px-3 py-1 font-medium hover:border-b-2 hover:border-white"
-          >
-            STORE SEARCH
-          </Link>
-          <Link
-            href="/categories"
-            className="border-b-2 border-white px-3 py-1 font-medium"
-          >
-            CATEGORIES
-          </Link>
+        {/* Desktop Navigation Tabs */}
+        <div className=" hidden rounded-lg bg-white p-1 shadow-sm lg:block">
+          <div className="flex">
+            <Link href="/user" className="flex-1 px-4 py-3 text-center font-medium text-gray-600 hover:text-orange-500">
+              DASHBOARD
+            </Link>
+            <Link
+              href="/partners"
+              className="flex-1 px-4 py-3 text-center font-medium text-gray-600 hover:text-orange-500"
+            >
+              PARTNER SEARCH
+            </Link>
+            <Link
+              href="/partners/affiliate"
+              className="flex-1 px-4 py-3 text-center font-medium text-gray-600 hover:text-orange-500"
+            >
+              POPULAR PARTNERS
+            </Link>
+           
+            <Link
+              href="/categories"
+              className="flex-1 rounded-md bg-orange-500 px-4 py-3 text-center font-medium text-white"
+            >
+              CATEGORIES
+            </Link>
+          </div>
         </div>
-      </div>
       <div className="container mx-auto px-4 py-8">
         {/* Featured Categories Section */}
         {/* <section>

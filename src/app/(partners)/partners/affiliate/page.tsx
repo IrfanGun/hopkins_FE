@@ -122,41 +122,33 @@ export default function AffiliatePage() {
         toggleMobileMenu={toggleMobileMenu}
       />
 
-      {/* Desktop Navigation */}
-      <div className="hidden bg-orange-600 py-4 text-white lg:block">
-        <div className="container mx-auto flex justify-center space-x-6 overflow-x-auto">
-          <Link
-            href="/user"
-            className="px-3 py-1 font-medium hover:border-b-2 hover:border-white"
-          >
-            DASHBOARD
-          </Link>
-          <Link
-            href="/partners"
-            className="px-3 py-1 font-medium hover:border-b-2 hover:border-white"
-          >
-            PARTNER SEARCH
-          </Link>
-          <Link
-            href="/partners-affiliate"
-            className="border-b-2 border-white px-3 py-1 font-medium"
-          >
-            POPULAR PARTNERS
-          </Link>
-          <Link
-            href="/stores"
-            className="px-3 py-1 font-medium hover:border-b-2 hover:border-white"
-          >
-            STORE SEARCH
-          </Link>
-          <Link
-            href="/categories"
-            className="px-3 py-1 font-medium hover:border-b-2 hover:border-white"
-          >
-            CATEGORIES
-          </Link>
+      {/* Desktop Navigation Tabs */}
+        <div className=" hidden rounded-lg bg-white p-1 shadow-sm lg:block">
+          <div className="flex">
+            <Link href="/user" className="flex-1 px-4 py-3 text-center font-medium text-gray-600 hover:text-orange-500">
+              DASHBOARD
+            </Link>
+            <Link
+              href="/partners"
+              className="flex-1 px-4 py-3 text-center font-medium text-gray-600 hover:text-orange-500 "
+            >
+              PARTNER SEARCH
+            </Link>
+            <Link
+              href="/partners/affiliate"
+              className="flex-1 px-4 py-3 text-center font-medium bg-orange-500 text-white rounded-md"
+            >
+              POPULAR PARTNERS
+            </Link>
+        
+            <Link
+              href="/categories"
+              className="flex-1 px-4 py-3 text-center font-medium text-gray-600 hover:text-orange-500"
+            >
+              CATEGORIES
+            </Link>
+          </div>
         </div>
-      </div>
 
       {/* Main Content */}
       <div className="flex-grow">
@@ -199,53 +191,56 @@ export default function AffiliatePage() {
               </div>
 
               {/* Partner Results */}
-               {displayedPartners?.length > 0 ? (
-  displayedPartners.map((partner, index) => (
-    <div
-      key={`${partner.id}-${index}`}
-      className="flex flex-col rounded bg-white p-4 shadow-md sm:flex-row sm:items-center"
-    >
-      {/* Partner Logo */}
-      <div className="mb-4 flex justify-center sm:mb-0 sm:mr-4 sm:justify-start">
-        <img
-          src={partner.logo || "/placeholder.svg"}
-          alt={partner.name}
-          className="h-16 w-20 sm:h-20 sm:w-28 "
-        />
-      </div>
+                   {isLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <ThemeProvider theme={customTheme}>
+                    <Spinner color="base" />
+                  </ThemeProvider>
+                </div>
+              ) : displayedPartners?.length > 0 ? (
+                <div className="space-y-4">
+                  {paginatedPartners.map((partner, index) => (
+                    <div
+                      key={`${partner.id}-${index}`}
+                      className="flex flex-col rounded-lg bg-white p-4 shadow-md transition-all hover:shadow-lg sm:flex-row sm:items-center"
+                    >
+                      {/* Partner Logo */}
+                      <div className="mb-4 flex justify-center sm:mb-0 sm:mr-4 sm:justify-start">
+                        <img
+                          src={partner.logo || "/placeholder.svg"}
+                          alt={partner.name}
+                          className="h-16 w-20 object-contain sm:h-20 sm:w-28"
+                        />
+                      </div>
 
-      {/* Partner Info */}
-      <div className="mb-4 flex-1 text-center sm:mb-0 sm:text-left">
-        <h4 className="font-semibold">{partner.name}</h4>
-        <p className="text-sm text-gray-600">{partner.category}</p>
-      </div>
+                      {/* Partner Info */}
+                      <div className="mb-4 flex-1 text-center sm:mb-0 sm:text-left">
+                        <h4 className="font-semibold">{partner.name}</h4>
+                        <p className="text-sm text-gray-600">{partner.category}</p>
+                        {partner.discount && (
+                          <p className="mt-1 text-sm font-medium text-orange-600">{partner.discount} OFF</p>
+                        )}
+                      </div>
 
-      {/* Action Button */}
-      <div className="flex flex-col items-center sm:items-end">
-        <button
-          className="w-full rounded-full bg-orange-500 px-4 py-2 text-white transition hover:bg-orange-600 sm:w-auto sm:min-w-[120px]"
-          onClick={() => openModal(partner)}
-        >
-          Get Code
-        </button>
-        {/* <button className="mt-2 text-sm text-blue-600 hover:text-blue-700">
-          Details
-        </button> */}
-      </div>
-    </div>
-        ))
-          ) : isLoading ? (
-            <div className="text-center">
-              <ThemeProvider theme={customTheme}>
-            <Spinner color="base"/>
-          </ThemeProvider>
-            </div>
-          
-          ) : (
-            <div className="text-center text-lg text-gray-500 mt-4">
-            Coupon Not Found
-            </div>
-          )}
+                      {/* Action Button */}
+                      <div className="flex flex-col items-center sm:items-end">
+                        <button
+                          className="w-full rounded-full bg-orange-500 px-4 py-2 text-white transition hover:bg-orange-600 sm:w-auto sm:min-w-[120px]"
+                          onClick={() => openModal(partner)}
+                        >
+                          Get Code
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="rounded-lg bg-white p-8 text-center shadow-md">
+                  <p className="text-lg text-gray-500">No partners found matching your criteria.</p>
+                 
+                </div>
+              )}
+      
               {/* Pagination */}
               <div className="mt-8">
                 <Pagination
@@ -260,186 +255,131 @@ export default function AffiliatePage() {
       </div>
 
       {/* Modal Popup */}
-      {showModal && selectedPartner && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white p-4 sm:p-6">
-            {/* Close button */}
-            <button
-              onClick={closeModal}
-              className="absolute right-3 top-3 text-gray-500 hover:text-gray-700 sm:right-4 sm:top-4"
-            >
-              <X className="h-5 w-5" />
-            </button>
-
-            {/* Partner logo */}
-            <div className="mb-4 flex justify-center sm:mb-6">
-              <img
-                src={selectedPartner.logo || "/placeholder.svg"}
-                alt={selectedPartner.name}
-                className="h-24 w-auto object-contain sm:h-32"
-              />
-            </div>
-
-            {/* Partner name and category */}
-            <h2 className="mb-1 text-center text-xl font-bold text-gray-800 sm:mb-2 sm:text-2xl">
-              {selectedPartner.name}
-            </h2>
-            <p className="mb-4 text-center text-gray-600 sm:mb-6">
-              {selectedPartner.category}
-            </p>
-
-            {/* Discount information */}
-            <p className="mb-4 text-center font-medium text-gray-800">
-            {
-                `${selectedPartner.discount } OFF`}   {selectedPartner.discountText} 
-            </p>
-
-            {/* Promo code */}
-            <div className="mb-6 flex flex-col items-center justify-center gap-2 sm:mb-8 sm:flex-row">
-              <div className="w-full rounded-full bg-gray-100 px-4 py-3 text-center font-mono font-bold text-gray-800 sm:w-auto sm:px-6">
-                {selectedPartner.promoCode || "HopkinsCODE"}
-              </div>
+         {showModal && selectedPartner && (
+        <div className="fixed inset-0 no-scrollbar z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="relative max-h-[90vh]  no-scrollbar w-full max-w-2xl overflow-y-auto rounded-lg bg-white shadow-xl">
+            {/* Orange header with logo and title */}
+            <div className="relative bg-orange-500 p-6 text-white">
               <button
-                onClick={() =>
-                  copyCode(selectedPartner.promoCode || "HopkinsCODE")
-                }
-                className="w-full rounded-full bg-orange-500 px-4 py-3 font-medium text-white hover:bg-orange-600 sm:w-auto sm:px-6"
+                onClick={closeModal}
+                className="absolute right-4 top-4 rounded-full bg-white/20 p-1 text-white hover:bg-white/30"
               >
-                {isCopied ? "Copied" : "Copy"}
+                <X className="h-5 w-5" />
               </button>
-            </div>
 
-            {/* Divider */}
-            <hr className="mb-6" />
-
-            {/* Partner description */}
-            <div className="mb-6 text-sm text-gray-700 sm:text-base">
-              <p>
-                {selectedPartner.description ||
-                  `${selectedPartner.name} is a unique marketplace 100% Australian owned and operated. With a strong focus on developing and maintaining a humanised, warm and sincere customer experience, ${selectedPartner.name} aims to provide customers with a distinct selection of products at affordable prices.`}
-              </p>
-            </div>
-
-            {/* Social media links */}
-            <div className="mb-6 flex justify-center gap-2">
-              <a
-                href={selectedPartner.facebook || "#"}
-                className="flex h-9 w-9 items-center justify-center rounded-md bg-orange-600 text-white hover:bg-orange-700 sm:h-10 sm:w-10"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Facebook className="h-4 w-4 sm:h-5 sm:w-5" />
-              </a>
-              <a
-                href={selectedPartner.instagram || "#"}
-                className="flex h-9 w-9 items-center justify-center rounded-md bg-pink-600 text-white hover:bg-pink-700 sm:h-10 sm:w-10"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Instagram className="h-4 w-4 sm:h-5 sm:w-5" />
-              </a>
-              <a
-                href={selectedPartner.website || "#"}
-                className="flex h-9 w-9 items-center justify-center rounded-md bg-orange-500 text-white hover:bg-orange-600 sm:h-10 sm:w-10"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Globe className="h-4 w-4 sm:h-5 sm:w-5" />
-              </a>
-            </div>
-
-            {/* Categories */}
-            <div className="mb-6 flex flex-wrap justify-center gap-2">
-              {selectedPartner.tags?.map((tag, index) => (
-                <span
-                  key={index}
-                  className="rounded-md bg-gray-100 px-3 py-1 text-xs text-gray-800 sm:px-4 sm:py-2 sm:text-sm"
-                >
-                  {tag}
-                </span>
-              )) || (
-                <>
-                  <span className="rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-800 sm:px-4 sm:py-2 sm:text-sm">
-                    {selectedPartner.category}
-                  </span>
-                  <span className="rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-800 sm:px-4 sm:py-2 sm:text-sm">
-                    Products
-                  </span>
-                </>
-              )}
-            </div>
-
-            {/* Store information */}
-            {selectedPartner.storeAddress && (
-              <div className="mb-4 flex items-start gap-2 text-sm text-gray-700 sm:text-base">
-                <svg
-                  className="h-5 w-5 shrink-0 text-gray-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+              <div className="flex items-center">
+                <div className="mr-4 h-16 w-16 overflow-hidden rounded-full bg-white ">
+                  <img
+                    src={selectedPartner.logo || "/placeholder.svg"}
+                    alt={selectedPartner.name}
+                    className="h-full w-full object-contain"
                   />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-                <span>{selectedPartner.storeAddress}</span>
-              </div>
-            )}
-
-            {/* Contact information */}
-            {selectedPartner.email && (
-              <div className="mb-2 flex items-center gap-2 text-gray-700">
-                <span className="text-xs font-normal text-secondary-color sm:text-sm">
-                  Email:
-                </span>
-                <a
-                  href={`mailto:${selectedPartner.email}`}
-                  className="text-xs font-normal text-orange-600 hover:underline sm:text-sm"
-                >
-                  {selectedPartner.email}
-                </a>
-              </div>
-            )}
-            {selectedPartner.phone && (
-              <div className="mb-2 flex items-center gap-2 text-gray-700">
-                <span className="text-xs font-normal text-secondary-color sm:text-sm">
-                  Call:
-                </span>
-                <a
-                  href={`tel:${selectedPartner.phone}`}
-                  className="text-xs font-normal text-orange-600 hover:underline sm:text-sm"
-                >
-                  {selectedPartner.phone}
-                </a>
-              </div>
-            )}
-
-            {/* Map placeholder */}
-            {selectedPartner.hasMap && (
-              <div className="mt-4 rounded border border-gray-200 bg-gray-50 p-2 text-center text-xs text-orange-600 hover:underline sm:text-sm">
-                <div className="mt-2">
-                 <iframe
-                  src={selectedPartner.hasMap}
-                   title="Map Location"
-                  className="mx-auto mt-4 w-full h-[400px] rounded-lg border border-gray-300"
-                  allowFullScreen
-                loading="lazy"
-                ></iframe>
                 </div>
-                <a href="/user" onClick={(e) => e.preventDefault()}>
-                  View larger map
-                </a>
+                <div>
+                  <h2 className="text-2xl font-bold">{selectedPartner.name}</h2>
+                  <p className="text-white/80">{selectedPartner.category}</p>
+                </div>
               </div>
-            )}
+            </div>
+
+            {/* Content area */}
+            <div className="p-6">
+              {/* Discount banner */}
+              <div className="mb-6 rounded-md bg-orange-50 p-4 text-center text-lg font-medium text-orange-800">
+                {selectedPartner.discountText ||
+                  `${selectedPartner.discount || "20%"} OFF - must use link and code provided`}
+              </div>
+
+              {/* Promo code section */}
+              <div className="mb-6">
+                <p className="mb-2 text-gray-600">Your Promo Code:</p>
+                <div className="flex">
+                  <div className="flex-1 rounded-l-md border border-gray-300 bg-gray-50 px-4 py-3 font-mono font-bold text-gray-800">
+                    {selectedPartner.promoCode || "HopkinsCODE"}
+                  </div>
+                  <button
+                    onClick={() => copyCode(selectedPartner.promoCode || "HopkinsCODE")}
+                    className="rounded-r-md bg-orange-500 px-6 py-3 font-medium text-white transition hover:bg-orange-600"
+                  >
+                    {isCopied ? "Copied" : "Copy"}
+                  </button>
+                </div>
+              </div>
+
+              {/* Divider */}
+              <hr className="mb-6" />
+
+              {/* About section */}
+              <div className="mb-6">
+                <h3 className="mb-3 text-lg font-medium text-gray-800">About {selectedPartner.name}</h3>
+                <p className="text-gray-600">
+                  {selectedPartner.description ||
+                    `${selectedPartner.name} is a unique marketplace 100% Australian owned and operated. With a strong focus on developing and maintaining a humanised, warm and sincere customer experience, ${selectedPartner.name} aims to provide customers with a distinct selection of products at affordable prices.`}
+                </p>
+              </div>
+
+              {/* Social and contact sections in two columns */}
+              <div className="mb-6 grid gap-6 md:grid-cols-2">
+                {/* Social links */}
+                <div>
+                  <h3 className="mb-3 text-gray-500">Connect with {selectedPartner.name}</h3>
+                  <div className="flex gap-2">
+                    <a
+                      href={selectedPartner.facebook || "#"}
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Facebook className="h-5 w-5" />
+                    </a>
+                    <a
+                      href={selectedPartner.instagram || "#"}
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Instagram className="h-5 w-5" />
+                    </a>
+                    <a
+                      href={selectedPartner.website || "#"}
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Globe className="h-5 w-5" />
+                    </a>
+                  </div>
+                </div>
+
+                {/* Contact information */}
+                <div>
+                  <h3 className="mb-3 text-gray-500">Contact Information</h3>
+                  {selectedPartner.email && <p className="mb-1 text-sm text-gray-600">{selectedPartner.email}</p>}
+                  {selectedPartner.phone && <p className="mb-1 text-sm text-gray-600">{selectedPartner.phone}</p>}
+                  {selectedPartner.storeAddress && (
+                    <p className="text-sm text-gray-600">{selectedPartner.storeAddress}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Categories */}
+              <div>
+                <h3 className="mb-3 text-gray-500">Categories</h3>
+                <div className="flex flex-wrap gap-2">
+                  {selectedPartner.tags?.map((tag, index) => (
+                    <span key={index} className="rounded-full bg-gray-100 px-4 py-2 text-sm text-gray-700">
+                      {tag}
+                    </span>
+                  )) || (
+                    <>
+                      <span className="rounded-full bg-gray-100 px-4 py-2 text-sm text-gray-700">
+                        {selectedPartner.category}
+                      </span>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
