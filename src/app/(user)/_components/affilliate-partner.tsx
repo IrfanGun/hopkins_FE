@@ -6,6 +6,7 @@ import Link from "next/link";
 import Partners from "src/app/(partners)/partners/page";
 import { ThemeProvider,Spinner } from "flowbite-react";
 import customTheme from "src/components/ui/spinner-custom";
+import { ExternalLink, Star } from "lucide-react"
 
 
 
@@ -33,55 +34,55 @@ export default function AffiliatePartner() {
 
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-6 flex items-center justify-between border-b pb-2">
-        <h2 className="text-xl font-semibold text-secondary-color">
-          Popular Partners
-        </h2>
-        <a
-          href="/partners"
-          className="flex items-center text-sm text-gray-600 hover:text-gray-800"
-        >
-          View All <span className="ml-1">›</span>
-        </a>
-      </div>
-      {
-        isLoading ? (
-          <div className="text-center items-center mt-4 mb-4">
-            <ThemeProvider theme={customTheme}>
-              <Spinner color="base"/>
-            </ThemeProvider>
-          </div>
-        ) : (
-
-          <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {partners.filter((partner) => partner.isPopular === true).map((partner, index) => (
-          <div
-            key={`${partner.id}-${index}`}
-            className="overflow-hidden rounded-lg bg-white shadow"
-          >
-            <div className="flex h-48 items-center justify-center bg-white p-6">
-              <img
-                src={partner.logo || "/placeholder.svg"}
-                alt={partner.name}
-                className="max-h-full max-w-full object-contain"
-              />
-            </div>
-            <div className="p-4">
-              <h3 className="text-lg font-semibold text-gray-800">
-                {partner.name}
-              </h3>
-              <p className="text-sm text-gray-600">{partner.category}</p>
-              <button className="mt-4 w-full justify-between rounded-full bg-orange-500 px-4 py-2 text-center text-white transition hover:bg-orange-600">
-                <Link href={partner.url || "#"}>Visit Site</Link>
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-        )
-      }
-      
+    <div>
+      {isLoading ? (
+        <div className="flex justify-center items-center py-8">
+          <ThemeProvider theme={customTheme}>
+          <Spinner color="base" />
+          </ThemeProvider>
+        </div>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {partners
+            .filter((partner) => partner.isPopular === true)
+            .map((partner, index) => (
+              <div
+                key={`${partner.id}-${index}`}
+                className="group relative overflow-hidden rounded-xl bg-white shadow-sm transition-all hover:shadow-md"
+              >
+                {partner.isPopular && (
+                  <div className="absolute right-2 top-2 rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-800">
+                    <Star className="mr-1 inline-block h-3 w-3" /> Popular
+                  </div>
+                )}
+                <div className="flex h-32 items-center justify-center bg-gray-50 p-4">
+                  <img
+                    src={partner.logo || "/placeholder.svg"}
+                    alt={partner.name}
+                    className="max-h-full max-w-full object-contain"
+                  />
+                </div>
+                <div className="p-4">
+                  <h3 className="font-medium text-gray-800">{partner.name}</h3>
+                  <p className="text-xs text-gray-500">{partner.category}</p>
+                  <div className="mt-3 flex items-center justify-between">
+                    <Link href={partner.url || "#"} className="text-xs font-medium text-orange-600 hover:underline">
+                      View Details
+                    </Link>
+                    <a
+                      href={partner.url || "#"}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="rounded-full bg-gray-100 p-1 text-gray-600 transition hover:bg-gray-200"
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            ))}
+        </div>
+      )}
     </div>
-  );
+  )
 }

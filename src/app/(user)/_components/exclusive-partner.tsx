@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { fetchPartner, Partner } from "../../../lib/partners";
-import { X, Facebook, Instagram, Globe } from "lucide-react";
+import { X, Facebook, Instagram, Globe, Star, ExternalLink } from "lucide-react";
 import baseTheme from "src/components/ui/spinner-custom-base";
 import customTheme from "src/components/ui/spinner-custom";
 import { ThemeProvider, Spinner} from "flowbite-react";
@@ -49,260 +49,197 @@ export default function ExclusivePartner() {
     });
   };
 
-          return (
-            <div className="container mx-auto p-4">
-              <div className="mb-6 flex items-center justify-between border-b pb-2">
-                <h2 className="text-xl font-semibold text-secondary-color">
-                  Partners
-                </h2>
-                <a
-                  href="/partners"
-                  className="text-sm text-secondary-color hover:underline"
-                >
-                  View All &rarr;
-                </a>
-              </div>
-
-        
-            {isLoading ? (
-          <div className="flex justify-center items-center text-center">
-            <ThemeProvider theme={customTheme}>
-              <Spinner color="base" />
-            </ThemeProvider>
+ return (
+    <div>
+      {isLoading ? (
+        <div className="flex justify-center items-center py-8">
+              <ThemeProvider theme={customTheme}>
+          <Spinner color="base" />
+          </ThemeProvider>        
           </div>
-        ) : (
-          <div className="grid gap-6 md:grid-cols-2">
-            {partners.map((partner, index) => (
-              <div
-                key={`${partner.id}-${index}`}
-                className="flex overflow-hidden rounded-xl bg-white shadow-lg shadow-black/10 hover:shadow-black/30"
-              >
-                <div className="flex w-1/2 items-center justify-center bg-white p-6">
+      ) : (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {partners.map((partner, index) => (
+            <div
+              key={`${partner.id}-${index}`}
+              className="group overflow-hidden rounded-xl bg-white shadow-md transition-all hover:shadow-lg"
+            >
+              <div className="relative h-40 bg-gray-50 p-4">
+                <div className="absolute inset-0 flex items-center justify-center p-6">
                   <img
                     src={partner.logo || "/placeholder.svg"}
                     alt={partner.name}
-                    className="h-30 w-30 object-contain"
+                    className="max-h-full max-w-full object-contain"
                   />
                 </div>
-                <div className="flex w-2/3 flex-col justify-between p-6">
+                {partner.isPopular && (
+                  <span className="absolute right-3 top-3 rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-800">
+                    <Star className="mr-1 inline-block h-3 w-3" /> Popular
+                  </span>
+                )}
+              </div>
+              <div className="p-4">
+                <div className="mb-2 flex items-start justify-between">
                   <div>
-                    {partner.isPopular && (
-                      <span className="mb-2 inline-block rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-800">
-                        ⭐ Popular
-                      </span>
-                    )}
-                    <h3 className="text-lg font-semibold text-gray-800">
-                      {partner.name}
-                    </h3>
-                    <p className="text-sm text-gray-600">{partner.category}</p>
+                    <h3 className="text-lg font-semibold text-gray-800">{partner.name}</h3>
+                    <p className="text-sm text-gray-500">{partner.category}</p>
                   </div>
+                  <span className="rounded-full bg-orange-100 px-2 py-1 text-xs font-medium text-orange-800">
+                    {partner.discount || "10%"} OFF
+                  </span>
+                </div>
+                <div className="mt-4 flex space-x-2">
                   <button
-                    className="mt-4 w-full rounded-full bg-orange-500 px-4 py-2 text-white transition hover:bg-orange-600"
+                    className="flex-1 rounded-lg bg-orange-500 px-3 py-2 text-sm font-medium text-white transition hover:bg-orange-600"
                     onClick={() => openModal(partner)}
                   >
                     Get Code
                   </button>
+                  <a
+                    href={partner.url || "#"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
+            </div>
+          ))}
+        </div>
+      )}
 
-              
-            
-
-      {/* Modal Popup */}
+      {/* Modal Popup - Redesigned and map removed */}
       {showModal && selectedPartner && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="relative mx-4 max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white p-6">
-            {/* Close button */}
-            <button
-              onClick={closeModal}
-              className="absolute right-4 top-4 text-gray-500 hover:text-gray-700"
-            >
-              <X className="h-5 w-5" />
-            </button>
-
-            {/* Partner logo */}
-            <div className="mb-6 flex justify-center">
-              <img
-                src={selectedPartner.logo || "/placeholder.svg"}
-                alt={selectedPartner.name}
-                className="h-32 w-32 object-contain"
-              />
-            </div>
-
-            {/* Partner name and category */}
-            <h2 className="mb-2 text-center text-2xl font-bold text-gray-800">
-              {selectedPartner.name}
-            </h2>
-            <p className="mb-6 text-center text-gray-600">
-              {selectedPartner.category}
-            </p>
-
-            {/* Discount information */}
-            <p className="mb-4 text-center font-medium text-gray-800">
-              {selectedPartner.discountText ||
-                `${selectedPartner.discount || "20%"} OFF - must use link and code provided`}
-            </p>
-
-            {/* Promo code */}
-            <div className="mb-8 flex items-center justify-center gap-2">
-              <div className="rounded-full bg-gray-100 px-6 py-3 font-mono font-bold text-gray-800">
-                {selectedPartner.promoCode || "HopkinsCODE"}
-              </div>
+        <div className="  fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="relative max-h-[90vh] w-full no-scrollbar max-w-2xl overflow-y-auto rounded-lg bg-white shadow-xl">
+            {/* Orange header with logo and title */}
+            <div className="relative bg-orange-500 p-6 text-white">
               <button
-                onClick={() =>
-                  copyCode(selectedPartner.promoCode || "HopkinsCODE")
-                }
-                className="rounded-full bg-orange-500 px-6 py-3 font-medium text-white hover:bg-orange-600"
+                onClick={closeModal}
+                className="absolute right-4 top-4 rounded-full bg-white/20 p-1 text-white hover:bg-white/30"
               >
-                {isCopied ? "Copied" : "Copy"}{" "}
-                {/* Menampilkan 'Copied' setelah disalin */}
+                <X className="h-5 w-5" />
               </button>
-            </div>
 
-            {/* Divider */}
-            <hr className="mb-6" />
-
-            {/* Partner description */}
-            <div className="mb-6 text-gray-700">
-              <p>
-                {selectedPartner.description ||
-                  `${selectedPartner.name} is a unique marketplace 100% Australian owned and operated. With a strong focus on developing and maintaining a humanised, warm and sincere customer experience, ${selectedPartner.name} aims to provide customers with a distinct selection of products at affordable prices.`}
-              </p>
-            </div>
-
-            {/* Social media links */}
-            <div className="mb-6 flex justify-center gap-2">
-              <a
-                href={selectedPartner.facebook || "#"}
-                className="flex h-10 w-10 items-center justify-center rounded-md bg-orange-600 text-white hover:bg-orange-700"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Facebook className="h-5 w-5" />
-              </a>
-              <a
-                href={selectedPartner.instagram || "#"}
-                className="flex h-10 w-10 items-center justify-center rounded-md bg-pink-600 text-white hover:bg-pink-700"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Instagram className="h-5 w-5" />
-              </a>
-              <a
-                href={selectedPartner.website || "#"}
-                className="flex h-10 w-10 items-center justify-center rounded-md bg-orange-500 text-white hover:bg-orange-600"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Globe className="h-5 w-5" />
-              </a>
-            </div>
-
-            {/* Categories */}
-            <div className="mb-6 flex flex-wrap justify-center gap-2">
-              {selectedPartner.tags?.map((tag, index) => (
-                <span
-                  key={index}
-                  className="rounded-md bg-gray-100 px-4 py-2 text-sm text-gray-800"
-                >
-                  {tag}
-                </span>
-              )) || (
-                  <>
-                    <span className="rounded-full bg-gray-100 px-4 py-2 text-sm text-gray-800">
-                      {selectedPartner.category}
-                    </span>
-                    <span className="rounded-full bg-gray-100 px-4 py-2 text-sm text-gray-800">
-                      Products
-                    </span>
-                  </>
-                )}
-            </div>
-
-            {/* Store information */}
-            {selectedPartner.storeAddress && (
-              <div className="mb-4 flex items-start gap-2 text-gray-700">
-                <svg
-                  className="h-5 w-5 shrink-0 text-gray-500"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+              <div className="flex items-center">
+                <div className="mr-4 h-16 w-16 overflow-hidden rounded-full bg-white ">
+                  <img
+                    src={selectedPartner.logo || "/placeholder.svg"}
+                    alt={selectedPartner.name}
+                    className="   object-contain"
+   
                   />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-                <span>{selectedPartner.storeAddress}</span>
-              </div>
-            )}
-
-            {/* Contact information */}
-            {selectedPartner.phone && (
-              <div className="mb-2 flex items-center gap-2 text-gray-700">
-                <span className="text-sm font-normal text-secondary-color">
-                  Email:
-                </span>
-                <a
-                  href={`mailto:${selectedPartner.email}`}
-                  className="hoverhover:underline text-sm font-normal text-orange-600"
-                >
-                  {selectedPartner.email}
-                </a>
-              </div>
-            )}
-            {selectedPartner.phone && (
-              <div className="mb-2 flex items-center gap-2 text-gray-700">
-                <span className="text-sm font-normal text-secondary-color">
-                  Call:
-                </span>
-                <a
-                  href={`mailto:${selectedPartner.phone}`}
-                  className="text-sm font-normal text-orange-600 hover:underline"
-                >
-                  {selectedPartner.phone}
-                </a>
-              </div>
-            )}
-            {/* Map placeholder */}
-            {selectedPartner.hasMap && (
-              <div className="mt-4 rounded border border-gray-200 bg-gray-50 p-2 text-center text-sm text-orange-600 hover:underline">
-                {/* Display uploaded map image */}
-                <div className="mt-2">
-                  <iframe
-                    src={ selectedPartner.hasMap }
-                    width="600"
-                    height="450"
-                    style={{ border: 0 }}
-                    allowFullScreen
-                    loading="lazy"
-                    referrerPolicy="no-referrer-when-downgrade"
-                  ></iframe>
-                  {/* <img
-                    src={selectedPartner.hasMap}
-                    alt="Map Location"
-                    className="mx-auto mt-4 w-full rounded-lg"
-                  /> */}
                 </div>
-                <a href="/user" onClick={(e) => e.preventDefault()}>
-                  View larger map
-                </a>
+                <div>
+                  <h2 className="text-2xl font-bold">{selectedPartner.name}</h2>
+                  <p className="text-white/80">{selectedPartner.category}</p>
+                </div>
               </div>
-            )}
+            </div>
+
+            {/* Content area */}
+            <div className="p-6">
+              {/* Discount banner */}
+              <div className="mb-6 rounded-md bg-orange-50 p-4 text-center text-lg font-medium text-orange-800">
+                {selectedPartner.discountText ||
+                  `${selectedPartner.discount || "20%"} OFF - must use link and code provided`}
+              </div>
+
+              {/* Promo code section */}
+              <div className="mb-6">
+                <p className="mb-2 text-gray-600">Your Promo Code:</p>
+                <div className="flex">
+                  <div className="flex-1 rounded-l-md border border-gray-300 bg-gray-50 px-4 py-3 font-mono font-bold text-gray-800">
+                    {selectedPartner.promoCode || "HopkinsCODE"}
+                  </div>
+                  <button
+                    onClick={() => copyCode(selectedPartner.promoCode || "HopkinsCODE")}
+                    className="rounded-r-md bg-orange-500 px-6 py-3 font-medium text-white transition hover:bg-orange-600"
+                  >
+                    {isCopied ? "Copied" : "Copy"}
+                  </button>
+                </div>
+              </div>
+
+              {/* Divider */}
+              <hr className="mb-6" />
+
+              {/* About section */}
+              <div className="mb-6">
+                <h3 className="mb-3 text-lg font-medium text-gray-800">About {selectedPartner.name}</h3>
+                <p className="text-gray-600">
+                  {selectedPartner.description ||
+                    `${selectedPartner.name} is a unique marketplace 100% Australian owned and operated. With a strong focus on developing and maintaining a humanised, warm and sincere customer experience, ${selectedPartner.name} aims to provide customers with a distinct selection of products at affordable prices.`}
+                </p>
+              </div>
+
+              {/* Social and contact sections in two columns */}
+              <div className="mb-6 grid gap-6 md:grid-cols-2">
+                {/* Social links */}
+                <div>
+                  <h3 className="mb-3 text-gray-500">Connect with {selectedPartner.name}</h3>
+                  <div className="flex gap-2">
+                    <a
+                      href={selectedPartner.facebook || "#"}
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Facebook className="h-5 w-5" />
+                    </a>
+                    <a
+                      href={selectedPartner.instagram || "#"}
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Instagram className="h-5 w-5" />
+                    </a>
+                    <a
+                      href={selectedPartner.website || "#"}
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Globe className="h-5 w-5" />
+                    </a>
+                  </div>
+                </div>
+
+                {/* Contact information */}
+                <div>
+                  <h3 className="mb-3 text-gray-500">Contact Information</h3>
+                  {selectedPartner.email && <p className="mb-1 text-sm text-gray-600">{selectedPartner.email}</p>}
+                  {selectedPartner.phone && <p className="mb-1 text-sm text-gray-600">{selectedPartner.phone}</p>}
+                  {selectedPartner.storeAddress && (
+                    <p className="text-sm text-gray-600">{selectedPartner.storeAddress}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Categories */}
+              <div>
+                <h3 className="mb-3 text-gray-500">Categories</h3>
+                <div className="flex flex-wrap gap-2">
+                  {selectedPartner.tags?.map((tag, index) => (
+                    <span key={index} className="rounded-full bg-gray-100 px-4 py-2 text-sm text-gray-700">
+                      {tag}
+                    </span>
+                  )) || (
+                    <>
+                      <span className="rounded-full bg-gray-100 px-4 py-2 text-sm text-gray-700">
+                        {selectedPartner.category}
+                      </span>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
     </div>
-  );
+  )
 }

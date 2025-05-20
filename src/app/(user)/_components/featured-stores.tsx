@@ -17,6 +17,8 @@ import { fetchStores, Stores} from "../../../lib/stores";
 import { useEffect, useState } from "react";
 import { ThemeProvider, Spinner } from "flowbite-react";
 import customTheme from "src/components/ui/spinner-custom";
+import { ExternalLink } from "lucide-react"
+
 
 // Category data
 // const categories = [
@@ -58,100 +60,36 @@ const [ isLoading, isSetLoading] = useState(false);
   },[])
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Featured Stores Section */}
-      <div className="mb-12">
-        <div className="mb-6 flex items-center justify-between border-b pb-2">
-          <h2 className="text-xl font-semibold text-gray-800">
-            Featured Stores
-          </h2>
-          <Link
-            href="#"
-            className="flex items-center text-sm text-gray-600 hover:text-gray-900"
-          >
-            View All
-            <hr className="my-8 h-px border-0 bg-gray-200 dark:bg-gray-700"></hr>
-          </Link>
-        </div>
-        { isLoading ? (
-          <div className="text-center">
+    <div>
+      {isLoading ? (
+        <div className="flex justify-center items-center py-8">
             <ThemeProvider theme={customTheme}>
-              <Spinner color="base"/>
-            </ThemeProvider>
-          </div>
-        ) : (
-
-          <div className="grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-5">
-          {stores.map((store: Stores) => (
+          <Spinner color="base" />
+          </ThemeProvider>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {stores.map((store) => (
             <Link
               key={store.id}
               href="#"
-              className="flex items-center space-x-2 rounded-lg p-2 transition duration-150 hover:bg-gray-50"
+              className="group flex flex-col items-center rounded-xl bg-white p-4 text-center shadow-sm transition-all hover:shadow-md"
             >
-              <div
-                className={`flex h-10 w-8 items-center justify-center rounded-md ${store.bgColor}`}
-              >
+              <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-gray-50 p-3">
                 <img
                   src={store.logo || "/placeholder.svg"}
                   alt={store.name}
-                  className="object-contain w-10 h-10"
+                  className="max-h-full max-w-full object-contain"
                 />
               </div>
-              <span className="text-[12px] font-medium text-gray-800">
-                {store.name}
-              </span>
+              <span className="text-sm font-medium text-gray-800">{store.name}</span>
+              <div className="mt-2 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
+                <ExternalLink className="h-4 w-4 text-orange-500" />
+              </div>
             </Link>
           ))}
         </div>
-        )
-
-        }
-        
-      </div>
-
-      {/* Featured Categories Section
-      <div>
-        <div className="mb-6 flex items-center justify-between border-b pb-2">
-          <h2 className="text-xl font-semibold text-gray-800">
-            Featured Categories
-          </h2>
-          <Link
-            href="#"
-            className="flex items-center text-sm text-gray-600 hover:text-gray-900"
-          >
-            View All
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="ml-1 h-4 w-4"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </Link>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-          {categories.map((category) => (
-            <Link
-              key={category.id}
-              href="#"
-              className="flex flex-col items-center justify-center rounded-lg border p-6 text-center transition duration-150 hover:shadow-md"
-            >
-              <div className="mb-3">{category.icon}</div>
-              <span className="text-sm font-medium text-gray-800">
-                {category.name}
-              </span>
-            </Link>
-          ))}
-        </div>
-      </div> */}
+      )}
     </div>
-  );
+  )
 }
