@@ -39,22 +39,6 @@ export default function LoginForm() {
   name?: string;
 }
 
-const getCustomerByIdAndEmail = async (id_customer: string): Promise<Customer | null | undefined> => {
-  try {
-
-  const stripeCustomer = await getSubscriptionDetails(id_customer);
-    if (stripeCustomer && stripeCustomer.status === "active") {
-    localStorage.setItem('customer-hopkins',  JSON.stringify(UserData) );
-    router.push("/user");
-    } else {
-      console.log('Email tidak cocok dengan id_customer');
-      
-    }
-  } catch (error: any) {
-    console.error('Error fetching customer:', error.message);
-    return null;
-  }
-};
 
 
   useEffect(() => {
@@ -73,52 +57,61 @@ const getCustomerByIdAndEmail = async (id_customer: string): Promise<Customer | 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
+  if (!isCaptchaChecked) {
+    setError("Please complete the captcha verification");
+    return;
+  }
 
-    if (!isCaptchaChecked) {
-      setError("Please complete the captcha verification");
-      return;
-    }
+  setIsLoading(true);
 
-    try {
+  try {
+    await axiosInstance.get('/sanctum/csrf-cookie');
 
-      setIsLoading(true);
-      // Baru kirim data login
-      await axiosInstance.get('/sanctum/csrf-cookie');
-      await axiosInstance.post(
-        "api/login",
-        { email, password },
-        { withCredentials: true } // <- PENTING: pastikan di sini juga
-      ).then((response) => {
-        
-        Cookies.set('token', response.data.token);
-        localStorage.setItem('token', response.data.token);
-        const userData = response.data.data;
-        setUserData(userData);
-       
- 
-        
-        if (userData?.role === "admin") {
-         router.push("/admin");
+    const response = await axiosInstance.post(
+      "/api/login",
+      { email, password },
+      { withCredentials: true }
+    );
+
+    const token = response.data.token;
+    const userData = response.data.data;
+
+    Cookies.set('token', token);
+    localStorage.setItem('token', token);
+    setUserData(userData);
+
+    if (userData?.role === "admin") {
+      router.push("/admin");
+    } else {
+      setData(userData); // jika ingin simpan data user
+
+      try {
+        const stripeCustomer = await getSubscriptionDetails(userData.id_customer);
+
+        if (stripeCustomer && stripeCustomer.status === "active") {
+          localStorage.setItem('customer-hopkins', JSON.stringify(userData));
+          router.push("/user");
         } else {
-
-          setData(response.data.data);
-          getCustomerByIdAndEmail(userData.id_stripe);
-          
-          // console.log(userData);
+          console.log('Subscription inactive or customer not found');
+          setError("Your subscription is inactive.");
         }
+      } catch (error: any) {
+        console.error('Error fetching Stripe customer:', error.message);
+        setError("Failed to fetch subscription details");
+      }
+    }
+  } catch (err: any) {
+    console.error(err);
+    setError("Invalid email or password");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
-      });
-
-    } catch (err: any) {
-      setError("Invalid email or password");
-      console.error(err);
-      setIsLoading(false);
-    } 
-  };
 
 
 

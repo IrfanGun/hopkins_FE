@@ -40,12 +40,12 @@ export default function Dashboard() {
 
   useEffect(() => {
 
-    const storedCustomer : Customer | null = JSON.parse(localStorage.getItem('customer-hopkins') || 'null');
-
-    if(storedCustomer && storedCustomer?.data['id_stripe']) {
+    const storedCustomer = JSON.parse(localStorage.getItem('customer-hopkins') || 'null');
+  
+    if( storedCustomer.id_stripe !== null) {
       const fetchData = async () => {
-        const customerData = await getCustomerDetails(storedCustomer?.data.id_stripe);
-        const subscriptionData = await getSubscriptionDetails(storedCustomer?.data.id_stripe);
+        const customerData = await getCustomerDetails(storedCustomer.id_stripe);
+        const subscriptionData = await getSubscriptionDetails(storedCustomer.id_stripe);
 
          setCustomerData({
           customer: customerData,
