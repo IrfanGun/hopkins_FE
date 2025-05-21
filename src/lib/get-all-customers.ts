@@ -13,57 +13,56 @@ interface StripeCustomerResponse {
   has_more: boolean;
 }
 
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === 'GET') {
-    const { email } = req.query;
+  if (req.method !== 'GET') {
+    res.setHeader('Allow', ['GET']);
+    return res.status(405).end(`Method ${req.method} Not Allowed`);
+  }
 
-    if (!email || typeof email !== 'string') {
-      return res.status(400).json({ error: 'Parameter email is required and must be a string.' });
-    }
+  const { email } = req.query;
 
-    try {
-      let hasMore = true;
-      let customers: Customer[] = [];
-      let startingAfter = null;
+  if (!email || typeof email !== 'string') {
+    return res.status(400).json({ error: 'Parameter email is required and must be a string.' });
+  }
 
-      while (hasMore) {
-        // ✅ Tentukan tipe data response secara eksplisit
-        const response: AxiosResponse<StripeCustomerResponse> = await stripeInstance.get('/customers', {
-          params: {
-            limit: 100,
-            starting_after: startingAfter,
-          },
-        });
+  try {
+    let hasMore = true;
+    let customers: Customer[] = [];
+    let startingAfter: string | null = null;
 
-        // 🔹 Cek apakah response.data dan response.data.data tidak undefined
-        if (response.data?.data) {
-          customers = customers.concat(response.data.data);
+    while (hasMore) {
+      const response: AxiosResponse<StripeCustomerResponse> = await stripeInstance.get('/customers', {
+        params: {
+          limit: 100,
+          starting_after: startingAfter ?? undefined,
+        },
+      });
 
-          hasMore = response.data.has_more ?? false;
+      const data = response?.data?.data;
+      const has_more = response?.data?.has_more ?? false;
 
-          // Cek apakah datanya ada, jika tidak ada, startingAfter tetap null
-          startingAfter = response.data.data.length > 0 ? response.data.data.slice(-1)[0].id : null;
-
-          // Cek kalau sudah ketemu emailnya, langsung return
-          const customer = customers.find(
-            (c: Customer) => c.email?.toLowerCase() === email.toLowerCase()
-          );
-
-          if (customer) {
-            return res.status(200).json(customer);
-          }
-        } else {
-          hasMore = false; // Kalau undefined, berhenti loop
-        }
+      if (!Array.isArray(data)) {
+        break;
       }
 
-      return res.status(404).json({ error: 'Customer not found' });
-    } catch (error: any) {
-      return res.status(500).json({ error: error.message });
+      customers = customers.concat(data);
+      hasMore = has_more;
+
+      const found = data.find(
+        (c: Customer) => c.email?.toLowerCase() === email.toLowerCase()
+      );
+
+      if (found) {
+        return res.status(200).json(found);
+      }
+
+  startingAfter = data.length > 0 ? data[data.length - 1]?.id ?? null : null;
     }
-  } else {
-    res.setHeader('Allow', ['GET']);
-    res.status(405).end(`Method ${req.method} Not Allowed`);
+
+    return res.status(404).json({ error: 'Customer not found' });
+
+  } catch (error: any) {
+    console.error('Error in get-all-customers:', error);
+    return res.status(500).json({ error: error.message || 'Internal server error' });
   }
 }
