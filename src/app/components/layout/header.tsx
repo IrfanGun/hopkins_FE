@@ -58,45 +58,43 @@ export default function Header() {
     <div className="sticky top-0 z-50 w-full">
       {/* Main Header */}
       <header
-        className={`py-3 transition-all duration-300 md:px-6 ${
-          isScrolled
-            ? "bg-white shadow-md"
-            : "bg-gradient-to-r from-amber-800 via-orange-500 to-orange-700"
-        }`}
+        className="py-3 transition-all duration-300 md:px-6 bg-gradient-to-r from-amber-800 via-orange-500 to-orange-700 px-4 "
+        
       >
-        <div className="mx-auto flex max-w-7xl items-center justify-between">
+        <div className="mx-auto  flex max-w-7xl items-center justify-between">
           {/* Logo */}
           <div className="flex">
-             <Image
-                            
-                            src="/img/hopkins_img.png"
-                            alt="Hopkins+"
-                            width={140}
-                            height={40}
-                            priority
-                            style={{ filter: "brightness(0) invert(1)" }}
-                          />
-          </div>
+              <Link href="/user">
+              <Image
+                src="/img/hopkins_img.png"
+                alt="Hopkins+"
+                width={140}
+                height={40}
+                priority
+                style={{ filter: "brightness(0) invert(1)" }}
+              />
+            </Link>
+              </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden items-center space-x-8 md:flex">
             <Link
               href="/membership"
-              className={`transition ${isScrolled ? "text-orange-500 hover:text-orange-700" : "text-white hover:text-orange-200"}`}
+              className="text-white hover:text-orange-200"
             >
               Membership
             </Link>
 
             <Link
               href="/partners"
-              className={`transition ${isScrolled ? "text-orange-500 hover:text-orange-700" : "text-white hover:text-orange-200"}`}
+              className="text-white hover:text-orange-200"
             >
               Discounts
             </Link>
 
             <DropdownMenu>
               <DropdownMenuTrigger
-                className={`flex items-center transition ${isScrolled ? "text-orange-500 hover:text-orange-700" : "text-white hover:text-orange-200"}`}
+                className="flex items-center text-white hover:text-orange-200"
               >
                 Giveaways
                 <ChevronDown className="ml-1 h-4 w-4" />

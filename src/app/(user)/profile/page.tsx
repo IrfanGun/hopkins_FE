@@ -2,7 +2,7 @@
 
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import Link from "next/link";
-import { Home, MapPin, Phone, Lock, LogOut } from "lucide-react";
+import {  Home, MapPin, Phone, Lock, User, Shield, Settings, Mail, Calendar, Edit3 } from "lucide-react";
 import PasswordChangeForm from "../_components/password-change-form";
 import ChangeEmailForm from "../_components/email-change-form";
 import ProfileEditForm from "../_components/profile-edit-form";
@@ -28,7 +28,7 @@ export default function ProfilePage() {
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
   const [showChangeEmailModal, setShowChangeEmailModal] = useState(false);
   const [newEmail, setNewEmail] = useState(user.email);
-
+  const [activeTab, setActiveTab] = useState("profile")
   const [profileFormData, setProfileFormData] = useState({ ...user });
   const [passwordFormData, setPasswordFormData] = useState({
     password: "",
@@ -81,169 +81,237 @@ export default function ProfilePage() {
     throw new Error("Function not implemented.");
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50">
+   return (
+    <div className="min-h-screen bg-gradient-to-b from-orange-50 to-white">
       <Header />
 
-      {/* Breadcrumb */}
-      <div className="container mx-auto px-6 py-4">
-        <div className="flex items-center gap-2 text-sm text-gray-600">
-          <Link
-            href="/user"
-            className="flex items-center transition hover:text-orange-500"
-          >
-            <Home className="mr-1 h-4 w-4" />
-          </Link>
-          <span>›</span>
-          <span className="text-gray-500">Profile</span>
+      {/* Hero Banner */}
+      <div className="bg-gradient-to-r from-orange-600 to-orange-400 py-12 text-white">
+        <div className="container mx-auto px-6">
+          <div className="flex items-center gap-2 text-sm text-white/80">
+            <Link href="/user" className="flex items-center transition hover:text-white">
+              <Home className="mr-1 h-4 w-4" />
+              <span>Home</span>
+            </Link>
+            <span>›</span>
+            <span>Profile</span>
+          </div>
+
+          <div className="mt-6 flex items-center gap-6">
+            <div className="relative">
+              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-white text-3xl font-bold text-orange-600 shadow-lg">
+                {user.initials}
+              </div>
+              <button
+                onClick={() => setShowEditModal(true)}
+                className="absolute -bottom-2 -right-2 rounded-full bg-orange-500 p-2 text-white shadow-md hover:bg-orange-600"
+              >
+                <Edit3 className="h-4 w-4" />
+              </button>
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold">{user.name}</h1>
+              <p className="text-white/90">{user.email}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Tab Navigation */}
+      <div className="border-b border-gray-200 bg-white shadow-sm">
+        <div className="container mx-auto px-6">
+          <div className="flex overflow-x-auto">
+            <button
+              onClick={() => setActiveTab("profile")}
+              className={`flex items-center gap-2 border-b-2 px-4 py-4 font-medium transition ${
+                activeTab === "profile"
+                  ? "border-orange-500 text-orange-600"
+                  : "border-transparent text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              <User className="h-4 w-4" />
+              <span>Profile</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("security")}
+              className={`flex items-center gap-2 border-b-2 px-4 py-4 font-medium transition ${
+                activeTab === "security"
+                  ? "border-orange-500 text-orange-600"
+                  : "border-transparent text-gray-600 hover:text-gray-900"
+              }`}
+            >
+              <Shield className="h-4 w-4" />
+              <span>Security</span>
+            </button>
+            
+          </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="container mx-auto px-6 pb-12">
-        <h1 className="mb-8 text-3xl font-bold text-gray-800">PROFILE</h1>
-
-        <div className="grid gap-6 md:grid-cols-3">
-          {/* Sidebar */}
-          <div className="md:col-span-1">
-            <div className="overflow-hidden rounded-lg bg-white shadow-lg">
-              {/* User Header */}
-              <div className="flex items-center gap-3 bg-orange-500 p-4 text-white">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/30 text-xl font-semibold text-white">
-                  {user.initials}
-                </div>
-                <div className="flex-1 text-lg font-semibold">{user.name}</div>
-                <button className="rounded-md p-2 transition hover:bg-white/20">
-                  <LogOut className="h-5 w-5" />
-                </button>
-              </div>
-
-              {/* Navigation */}
-              <nav className="flex flex-col">
-                {/* <Link
-                  href="/profile"
-                  className="border-l-4 border-orange-500 bg-gray-100 px-4 py-3 font-medium text-gray-700 transition hover:bg-gray-200"
-                >
-                  My Profile
-                </Link> */}
-                {/* <Link
-                  href="/support"
-                  className="border-l-4 border-transparent px-4 py-3 text-gray-600 transition hover:bg-gray-50"
-                >
-                  Get Support
-                </Link> */}
-              </nav>
-            </div>
-          </div>
-
-          {/* Main Profile Content */}
-          <div className="md:col-span-2">
-            <div className="mb-6 overflow-hidden rounded-lg bg-white p-6 shadow-lg">
-              <div className="flex flex-col items-center">
-                {/* Avatar */}
-                <div className="mb-4 flex h-28 w-28 items-center justify-center rounded-full bg-orange-200 text-3xl font-semibold text-orange-800">
-                  {user.initials}
-                </div>
-
-                {/* User Info */}
-                <h2 className="mb-1 text-2xl font-semibold text-gray-800">
-                  {user.name}
+      <div className="container mx-auto px-6 py-8">
+        {activeTab === "profile" && (
+          <div className="grid gap-6 md:grid-cols-3">
+            {/* Contact Information */}
+            <div className="md:col-span-2">
+              <div className="rounded-lg bg-white p-6 shadow-md transition hover:shadow-lg">
+                <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-gray-800">
+                  <User className="h-5 w-5 text-orange-500" />
+                  Contact Information
                 </h2>
-                <a
-                  href={`mailto:${user.email}`}
-                  className="mb-6 text-orange-500 transition hover:underline"
-                >
-                  {user.email}
-                </a>
 
-                {/* Contact Info */}
-                <div className="w-full space-y-4">
-                  <div className="flex items-start gap-3">
-                    <Phone className="mt-1 h-5 w-5 text-orange-500 transition" />
-                    <div>
-                      <div className="text-sm font-medium text-orange-500">
-                        Phone
-                      </div>
-                      <div>{user.phone}</div>
+                <div className="grid gap-6 md:grid-cols-2">
+                  <div className="space-y-1">
+                    <div className="text-sm font-medium text-gray-500">Full Name</div>
+                    <div className="text-lg font-medium">{user.name}</div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="text-sm font-medium text-gray-500">Email</div>
+                    <div className="flex items-center gap-2">
+                      <Mail className="h-4 w-4 text-gray-400" />
+                      <a href={`mailto:${user.email}`} className="text-orange-500 hover:underline">
+                        {user.email}
+                      </a>
                     </div>
                   </div>
 
-                  <div className="flex items-start gap-3">
-                    <MapPin className="mt-1 h-5 w-5 text-orange-500 transition" />
-                    <div>
-                      <div className="text-sm font-medium text-orange-500">
-                        Location
-                      </div>
-                      <div>
-                        {user.location}
-                        <br />
-                        {user.country}
-                      </div>
+                  <div className="space-y-1">
+                    <div className="text-sm font-medium text-gray-500">Phone</div>
+                    <div className="flex items-center gap-2">
+                      <Phone className="h-4 w-4 text-gray-400" />
+                      <span>{user.phone}</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1">
+                    <div className="text-sm font-medium text-gray-500">Location</div>
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-gray-400" />
+                      <span>
+                        {user.location}, {user.country}
+                      </span>
                     </div>
                   </div>
                 </div>
 
-                {/* Edit Button */}
-                <button
-                  onClick={() => setShowEditModal(true)}
-                  className="mt-6 rounded-md border border-gray-300 bg-white px-8 py-2 font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
-                >
-                  Edit
-                </button>
-              </div>
-            </div>
-
-            {/* Profile Settings */}
-            <div className="overflow-hidden rounded-lg bg-white p-6 shadow-lg">
-              <h3 className="mb-6 text-xl font-semibold text-gray-700">
-                Profile Settings
-              </h3>
-
-              <div className="space-y-4">
-                <div>
-                  <label
-                    htmlFor="password"
-                    className="mb-1 block text-sm font-medium text-gray-700"
-                  >
-                    Password
-                  </label>
-                  <div className="flex gap-2">
-                    <div className="relative flex-1">
-                      <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
-                      <input
-                        type="password"
-                        id="password"
-                        value="••••••••"
-                        readOnly
-                        className="w-full rounded-md border border-gray-300 py-2 pl-10 pr-3"
-                      />
-                    </div>
-                    <button
-                      onClick={() => setShowChangePasswordModal(true)}
-                      className="rounded-md border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
-                    >
-                      Change
-                    </button>
-                  </div>{" "}
-                  <hr className="my-8 h-px border-0 bg-gray-200 dark:bg-gray-700" />
+                <div className="mt-6 flex justify-end">
                   <button
-                    onClick={() => setShowChangeEmailModal(true)}
-                    className="rounded-md border border-gray-300 bg-white px-4 py-2 font-medium text-gray-700 shadow-sm transition hover:bg-gray-50"
+                    onClick={() => setShowEditModal(true)}
+                    className="rounded-md bg-orange-500 px-4 py-2 font-medium text-white shadow-sm transition hover:bg-orange-600"
                   >
-                    Change Email
+                    Edit Profile
                   </button>
                 </div>
               </div>
             </div>
+
+            {/* Account Summary */}
+            <div>
+              <div className="rounded-lg bg-white p-6 shadow-md transition hover:shadow-lg">
+                <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-gray-800">
+                  <Calendar className="h-5 w-5 text-orange-500" />
+                  Account Summary
+                </h2>
+
+                <div className="space-y-4">
+                  <div className="rounded-md bg-orange-50 p-4">
+                    <div className="text-sm font-medium text-gray-500">Member Since</div>
+                    <div className="text-lg font-medium">January 2023</div>
+                  </div>
+
+                  <div className="rounded-md bg-green-50 p-4">
+                    <div className="text-sm font-medium text-gray-500">Account Status</div>
+                    <div className="flex items-center gap-2 text-lg font-medium text-green-600">
+                      <span className="h-2 w-2 rounded-full bg-green-500"></span>
+                      Active
+                    </div>
+                  </div>
+
+                  <div className="rounded-md bg-blue-50 p-4">
+                    <div className="text-sm font-medium text-gray-500">Membership Type</div>
+                    <div className="text-lg font-medium">Premium</div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
+
+        {activeTab === "security" && (
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* Password Settings */}
+            <div className="rounded-lg bg-white p-6 shadow-md transition hover:shadow-lg">
+              <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-gray-800">
+                <Lock className="h-5 w-5 text-orange-500" />
+                Password
+              </h2>
+
+              <div className="mb-4">
+                <div className="text-sm text-gray-600">
+                  Your password was last changed 3 months ago. We recommend changing your password regularly for
+                  security.
+                </div>
+              </div>
+
+              <div className="relative mb-6">
+                <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+                <input
+                  type="password"
+                  value="••••••••"
+                  readOnly
+                  className="w-full rounded-md border border-gray-300 bg-gray-50 py-2 pl-10 pr-3"
+                />
+              </div>
+
+              <button
+                onClick={() => setShowChangePasswordModal(true)}
+                className="w-full rounded-md bg-orange-500 py-2 font-medium text-white shadow-sm transition hover:bg-orange-600"
+              >
+                Change Password
+              </button>
+            </div>
+
+            {/* Email Settings */}
+            <div className="rounded-lg bg-white p-6 shadow-md transition hover:shadow-lg">
+              <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-gray-800">
+                <Mail className="h-5 w-5 text-orange-500" />
+                Email Address
+              </h2>
+
+              <div className="mb-4">
+                <div className="text-sm text-gray-600">
+                  Your email address is used for login and receiving important notifications about your account.
+                </div>
+              </div>
+
+              <div className="relative mb-6">
+                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+                <input
+                  type="email"
+                  value={user.email}
+                  readOnly
+                  className="w-full rounded-md border border-gray-300 bg-gray-50 py-2 pl-10 pr-3"
+                />
+              </div>
+
+              <button
+                onClick={() => setShowChangeEmailModal(true)}
+                className="w-full rounded-md bg-orange-500 py-2 font-medium text-white shadow-sm transition hover:bg-orange-600"
+              >
+                Change Email
+              </button>
+            </div>
+          </div>
+        )}
+
       </div>
 
       {/* Edit Profile Modal */}
       <Modal
         isOpen={showEditModal}
         onClose={() => setShowEditModal(false)}
-        title="Profile Details"
+        title="Edit Profile"
         position="bottom-right"
       >
         <ProfileEditForm
@@ -279,7 +347,7 @@ export default function ProfilePage() {
         width="max-w-md"
       >
         <ChangeEmailForm
-          email={newEmail} // Kirimkan email baru ke form
+          email={newEmail}
           onChange={handleProfileInputChange}
           onSubmit={handleChangeEmailSubmit}
           onCancel={() => setShowChangeEmailModal(false)}
@@ -288,5 +356,5 @@ export default function ProfilePage() {
 
       <FooterUser />
     </div>
-  );
+  )
 }

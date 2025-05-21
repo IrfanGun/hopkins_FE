@@ -271,7 +271,7 @@ export default function Dashboard() {
 
         {/* Partner section */}
         <div className="mb-8 rounded-xl bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-xl font-bold text-gray-800">Exclusive Partners</h2>
+          <h2 className="mb-4 text-xl font-bold text-gray-800">Partners</h2>
           <ExclusivePartner />
         </div>
 

@@ -283,7 +283,7 @@ useEffect(() => {
                 <X className="h-5 w-5" />
               </button>
 
-              <div className="flex items-center">
+              <div className="flex items-center px-5 py-5 ">
                 <div className="mr-4 h-16 w-16 overflow-hidden rounded-full bg-white ">
                   <img
                     src={selectedPartner.logo || "/placeholder.svg"}

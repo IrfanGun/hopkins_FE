@@ -15,6 +15,7 @@ import { Giveaway } from "../../../lib/giveaway";
 export default function GiveawaysPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [giveaways, setGiveaways] = useState<Giveaway[]>([]);
+  const [loading, setLoading] = useState(true)
 
 
   const toggleMobileMenu = () => {
@@ -24,8 +25,18 @@ export default function GiveawaysPage() {
   useEffect(() => {
 
     const loadGiveaways = async() => {
-      const response = await  fetchGiveaway();
+      try {
+        setLoading(true); 
+         const response = await  fetchGiveaway();
       setGiveaways(response);
+      } 
+        catch (error) {
+
+        console.error("Error fetching giveaways:", error);
+      } finally {
+        setLoading(false);
+      }
+     
     }
     
     loadGiveaways();
@@ -36,14 +47,7 @@ export default function GiveawaysPage() {
       <Header />
 
       {/* Mobile Menu */}
-      <MobileMenuButton
-        mobileMenuOpen={mobileMenuOpen}
-        toggleMobileMenu={toggleMobileMenu}
-      />
-      <MobileMenu
-        mobileMenuOpen={mobileMenuOpen}
-        toggleMobileMenu={toggleMobileMenu}
-      />
+      <MobileMenuButton mobileMenuOpen={mobileMenuOpen} toggleMobileMenu={toggleMobileMenu} />
 
       {/* Breadcrumb */}
       <div className="container mx-auto px-4 py-4">
@@ -62,26 +66,32 @@ export default function GiveawaysPage() {
           <span className="text-orange-500">LIVE</span> & UPCOMING GIVEAWAYS
         </h1>
 
-        {/* Giveaways Grid */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {giveaways.map((giveaway : any) => (
-            <GiveawayCard
-              key={giveaway.id}
-              id={giveaway.id}
-              title={giveaway.title}
-              image={giveaway.image}
-              status={giveaway.status}
-              dateText={giveaway.dateText}
-              tbd={giveaway.tbd}
-              addressURL={giveaway.addressURL}
-              url={giveaway.url ?? ""} // <- pastikan dikirim
-            />
-          ))}
-        </div>
+        {loading ? (
+          <div className="flex justify-center py-12">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-orange-500 border-t-transparent"></div>
+          </div>
+        ) : (
+          /* Giveaways Grid - Two columns on larger screens */
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            {giveaways.map((giveaway : any) => (
+              <GiveawayCard
+                key={giveaway.id}
+                id={giveaway.id}
+                title={giveaway.title}
+                image={giveaway.image}
+                status={giveaway.status}
+                dateText={giveaway.dateText}
+                tbd={giveaway.tbd}
+                addressURL={giveaway.addressURL}
+                url={giveaway.url || ""}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       <MobileBottomNavigationBar />
       <FooterUser />
     </div>
-  );
+  )
 }
