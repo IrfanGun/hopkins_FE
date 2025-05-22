@@ -1,26 +1,81 @@
+'use client'
 import { Gift, Users, DollarSign, AlertCircle } from "lucide-react";
 import QuickAccess from "./_components/QuickAccess";
 import AnalyticsPage from "./analytics/page";
+import stripeInstance from "src/api/stripeInstance";
+import { useState, useEffect } from "react";
+import { getStripeStats } from "src/lib/stats";
+import { ThemeProvider,Spinner } from "flowbite-react";
+import baseTheme from "src/components/ui/spinner-custom-base";
+
+
+type StatsItem = {
+  title: string;
+  value: string;
+  change: string;
+  icon: JSX.Element;
+};
 
 export default function AdminDashboard() {
+
+  const [currentRevenue, setCurrentRevenue] = useState<number>(0);
+  const [lastWeekRevenue, setLastWeekRevenue] = useState<number>(0);
+  const [currency, setCurrency] = useState<string>('USD');
+  const [totalSubscribers, setTotalSubscribers] = useState<number>(0);
+  const [activeSubscribers, setActiveSubscribers] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  
+
+   useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const stats = await getStripeStats();
+        setCurrentRevenue(stats.currentRevenue);
+        setLastWeekRevenue(stats.lastWeekRevenue);
+        setCurrency(stats.currency.toUpperCase());
+        setTotalSubscribers(stats.totalSubscribers ?? 0);
+        setActiveSubscribers(stats.activeSubscribers ?? 0);
+        console.log('Total Subscribers:', stats.totalSubscribers);
+        console.log('Active Subscribers:', stats.activeSubscribers);
+      } catch (err) {
+        setError('Failed to load revenue');
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
+
+  if (loading) return <div className="text-center">  <ThemeProvider theme={baseTheme}>
+          <Spinner color="base" />
+          </ThemeProvider>.</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  const delta = lastWeekRevenue
+    ? ((currentRevenue - lastWeekRevenue) / lastWeekRevenue) * 100
+    : 0;
+
   const stats = [
     {
-      title: "Total Users",
-      value: "12,345",
-      change: "+12%",
+      title: "Revenue",
+      value: `${currency} ${currentRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}`,
+      change: `${delta >= 0 ? "+" : ""}${delta.toFixed(1)}%`,
+      icon: <DollarSign className="h-6 w-6 text-green-500" />,
+    },
+    {
+      title: "Total Subscribers",
+      value: totalSubscribers.toLocaleString(),
+      change: "-", // Bisa kamu hitung jika mau
       icon: <Users className="h-6 w-6 text-blue-500" />,
     },
     {
-      title: "Active Giveaways",
-      value: "8",
-      change: "+2",
+      title: "Active Subscribers",
+      value: activeSubscribers.toLocaleString(),
+      change: "-", // Bisa kamu hitung jika mau
       icon: <Gift className="h-6 w-6 text-purple-500" />,
-    },
-    {
-      title: "Revenue",
-      value: "$24,567",
-      change: "+18%",
-      icon: <DollarSign className="h-6 w-6 text-green-500" />,
     },
     {
       title: "Open Tickets",
@@ -29,6 +84,33 @@ export default function AdminDashboard() {
       icon: <AlertCircle className="h-6 w-6 text-red-500" />,
     },
   ];
+
+  // const stats = [
+  //   {
+  //     title: "Total Users",
+  //     value: "12,345",
+  //     change: "+12%",
+  //     icon: <Users className="h-6 w-6 text-blue-500" />,
+  //   },
+  //   {
+  //     title: "Active Giveaways",
+  //     value: "8",
+  //     change: "+2",
+  //     icon: <Gift className="h-6 w-6 text-purple-500" />,
+  //   },
+  //   {
+  //     title: "Revenue",
+  //     value: "$24,567",
+  //     change: "+18%",
+  //     icon: <DollarSign className="h-6 w-6 text-green-500" />,
+  //   },
+  //   {
+  //     title: "Open Tickets",
+  //     value: "23",
+  //     change: "-5",
+  //     icon: <AlertCircle className="h-6 w-6 text-red-500" />,
+  //   },
+  // ];
 
   // Sample recent activities
   // const recentActivities = [
