@@ -1,6 +1,8 @@
 "use client";
 
-import type { ChangeEvent, FormEvent } from "react";
+import { use, type ChangeEvent, type FormEvent } from "react";
+import { useState, useEffect } from "react";
+import axiosInstance from "src/api/axiosInstance";
 
 interface ProfileFormData {
   name: string;
@@ -25,7 +27,23 @@ export default function ProfileEditForm({
   onChange,
   onSubmit,
   onCancel,
-}: ProfileEditFormProps) {
+}: ProfileEditFormProps)  : JSX.Element {
+  useEffect(() => {
+    // efek samping jika ada
+    const getData = async () => {
+      // Simulasi pengambilan data dari API
+      const storedCustomer = JSON.parse(localStorage.getItem('customer-hopkins') || 'null');
+      console.log(storedCustomer);
+      const userId = storedCustomer?.id;
+
+
+      const response = await axiosInstance.get("/user-update/{userId}");
+
+      console.log(response);
+    }
+
+  }, []);
+
   return (
     <div className="p-6">
       <form onSubmit={onSubmit}>

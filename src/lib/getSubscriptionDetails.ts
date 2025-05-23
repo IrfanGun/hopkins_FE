@@ -7,6 +7,7 @@ interface SubscriptionItem {
     id: string;
     nickname: string;
     product: string;
+    amount: number;
   };
 }
 
@@ -16,6 +17,7 @@ interface Subscription {
   ended_at: number;
   start_date: number;
   plan_name: string;
+  entries: number;
   items: {
     data: SubscriptionItem[];
   };
@@ -36,10 +38,32 @@ const getSubscriptionDetails = async (id_customer:string) : Promise<Subscription
         });
 
         const subscription = response.data?.data[0];
-        console.log(subscription);
 
+        console.log("Subscription Data:", subscription);
         if (subscription) {
-             const planName = subscription?.items?.data[0]?.plan?.nickname || "Unknown Plan";
+          const amount = subscription?.items?.data[0]?.plan?.amount;
+          let planName;
+          let entries;
+
+          switch (amount) {
+            case 1999:
+              planName = "Supporter";
+              entries = 1;
+              break;
+            case 8999:
+              planName = "Foundation";
+              entries = 2;
+              break;
+            case 3999:
+              planName = "Advocate";
+              entries = 3;
+              break;
+            default:
+              planName = "Unknown Plan";
+              entries = 0;
+              break;
+          }
+
             return {
                 id: subscription.id,
                 status: subscription.status,
@@ -47,6 +71,7 @@ const getSubscriptionDetails = async (id_customer:string) : Promise<Subscription
                 start_date: subscription.start_date,
                 items: subscription.items,
                 plan_name: planName,
+                entries: entries,
 
             };
         } else {

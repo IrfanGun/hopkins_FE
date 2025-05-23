@@ -16,11 +16,16 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import FooterUser from "../../components/ui/footer-user";
 import { fetchBanner } from "src/lib/banners";
+import getCustomerDetails from "src/lib/getCustomerDetails";
+import getSubscriptionDetails from "src/lib/getSubscriptionDetails";
+
 
 export default function Membership() {
   const [isCopied, setIsCopied] = useState(false);
   const [isBanner, setIsBanner] = useState<null | string >('');
-  const [expandedSection, setExpandedSection] = useState("stats")
+  const [expandedSection, setExpandedSection] = useState("stats");
+  const [isLoading, setIsLoading] = useState(true);
+  const [customerData, setCustomerData] = useState<any>(null);
 
   // Fungsi untuk menyalin kode ke clipboard
   const copyCode = (code: string) => {
@@ -38,9 +43,40 @@ export default function Membership() {
       setExpandedSection(section)
     }
   }
+  
+  const getData = () => {
+
+    
+    const storedCustomer = JSON.parse(localStorage.getItem('customer-hopkins') || 'null');
+  
+    if( storedCustomer.id_stripe !== null) {
+      const fetchData = async () => {
+        const customerDetails = await getCustomerDetails(storedCustomer.id_stripe);
+        const subscriptionData = await getSubscriptionDetails(storedCustomer.id_stripe);
+
+         setCustomerData({
+          customer: customerDetails,
+          subscription: subscriptionData
+
+        });
+     
+         setIsLoading(false);
+       
+      }
+
+         fetchData();
+           
+
+       
+
+    }
+
+  }
+
 
   useEffect(() => {
     loadSlider();
+    getData();
     
   },[])
 
@@ -165,7 +201,7 @@ export default function Membership() {
                       <div className="stats-hexagon bg-orange-500">
                         <div className="stats-content">
                           <Award className="h-8 w-8 text-orange-200" />
-                          <div className="mt-2 text-3xl font-bold">2</div>
+                          <div className="mt-2 text-3xl font-bold">{customerData?.subscription.entries}</div>
                           <div className="text-xs">Current Entries</div>
                         </div>
                       </div>
@@ -249,32 +285,25 @@ export default function Membership() {
                   )}
                 </div>
 
-                {expandedSection === "options" && (
-                  <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+               {expandedSection === "options" && (
+                <div className="mt-4 space-y-3">
+                  {/* Baris pertama: 1 item */}
+                  <div className="grid grid-cols-1 ">
                     <Link href="/upgrade">
-                      <div className="flex cursor-pointer items-center rounded-lg border border-gray-200 bg-white p-4 transition-all hover:border-orange-300 hover:shadow-md">
+                      <div className="flex cursor-pointer justify-center  items-center rounded-lg border border-gray-200 bg-white p-4 transition-all hover:border-orange-300 hover:shadow-md">
                         <div className="mr-4 rounded-full bg-orange-100 p-3 text-orange-500">
                           <Zap className="h-5 w-5" />
                         </div>
-                        <div>
-                          <h3 className="font-semibold text-gray-800">Upgrade Plan</h3>
+                        <div >
+                          <h3 className="font-semibold text-gray-800">Changes Plan</h3>
                           <p className="text-sm text-gray-600">Get more entries and benefits</p>
                         </div>
                       </div>
                     </Link>
+                  </div>
 
-                    <Link href="/downgrade">
-                      <div className="flex cursor-pointer items-center rounded-lg border border-gray-200 bg-white p-4 transition-all hover:border-orange-300 hover:shadow-md">
-                        <div className="mr-4 rounded-full bg-orange-100 p-3 text-orange-500">
-                          <CreditCard className="h-5 w-5" />
-                        </div>
-                        <div>
-                          <h3 className="font-semibold text-gray-800">Downgrade Plan</h3>
-                          <p className="text-sm text-gray-600">Reduce your subscription cost</p>
-                        </div>
-                      </div>
-                    </Link>
-
+                  {/* Baris kedua: 2 item */}
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <Link href="/purchase-history">
                       <div className="flex cursor-pointer items-center rounded-lg border border-gray-200 bg-white p-4 transition-all hover:border-orange-300 hover:shadow-md">
                         <div className="mr-4 rounded-full bg-orange-100 p-3 text-orange-500">
@@ -299,7 +328,9 @@ export default function Membership() {
                       </div>
                     </Link>
                   </div>
-                )}
+                </div>
+              )}
+
               </div>
 
               {/* Return to Profile Button */}

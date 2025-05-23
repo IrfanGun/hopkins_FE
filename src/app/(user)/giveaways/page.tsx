@@ -56,7 +56,7 @@ export default function GiveawaysPage() {
             <Home className="mr-1 h-4 w-4" />
           </Link>
           <span>›</span>
-          <span className="text-gray-500">LIVE & Upcoming Giveaways</span>
+          <span className="text-gray-500">LIVE & Upcoming Giveaways 1 </span>
         </div>
       </div>
 

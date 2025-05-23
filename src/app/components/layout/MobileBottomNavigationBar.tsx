@@ -1,4 +1,4 @@
-import { Home, Users, Store, ShoppingCart } from "lucide-react";
+import { Home, Users, Gift, Trophy } from "lucide-react";
 import Link from "next/link";
 
 const MobileBottomNavigationBar: React.FC = () => {
@@ -29,25 +29,25 @@ const MobileBottomNavigationBar: React.FC = () => {
           className="flex flex-col items-center py-2 text-white/80 hover:text-white"
         >
           <Users className="h-5 w-5" />
-          <span className="mt-1 text-xs">Affiliates</span>
+          <span className="mt-1 text-xs">Popular</span>
         </Link>
 
         {/* Store Search Link */}
         <Link
-          href="/store-search"
+          href="/giveaways"
           className="flex flex-col items-center py-2 text-white/80 hover:text-white"
         >
-          <Store className="h-5 w-5" />
-          <span className="mt-1 text-xs">Stores</span>
+          <Gift className="h-5 w-5" />
+          <span className="mt-1 text-xs">Giveaways</span>
         </Link>
 
         {/* Categories Link */}
         <Link
-          href="/categories"
+          href="/major-draw-winners"
           className="flex flex-col items-center py-2 text-white/80 hover:text-white"
         >
-          <ShoppingCart className="h-5 w-5" />
-          <span className="mt-1 text-xs">Categories</span>
+          <Trophy className="h-5 w-5" />
+          <span className="mt-1 text-xs">Winners</span>
         </Link>
       </div>
     </div>

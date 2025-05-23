@@ -9,19 +9,22 @@ import ProfileEditForm from "../_components/profile-edit-form";
 import Modal from "../../components/layout/Modal";
 import FooterUser from "../../components/ui/footer-user";
 import Header from "../../components/layout/header";
+import MobileBottomNavigationBar from "../../components/layout/MobileBottomNavigationBar";
+import { useEffect } from "react";
+import axiosInstance from "src/api/axiosInstance";
 
 export default function ProfilePage() {
   const [user, setUser] = useState({
-    name: "Jay Hopkins",
-    email: "admin@rsg-wa.com.au",
-    phone: "0478 454 963",
-    location: "Perth WA",
+    name: "",
+    email: "",
+    phone: "",
+    location: "",
     country: "AU",
-    initials: "JH",
+    initials: "",
     address: "",
     postcode: "",
-    city: "Perth",
-    state: "WA",
+    city: "",
+    state: "",
   });
 
   const [showEditModal, setShowEditModal] = useState(false);
@@ -76,6 +79,26 @@ export default function ProfilePage() {
       setShowChangeEmailModal(false);
     };
   };
+
+    useEffect(() => {
+    // efek samping jika ada
+    const getData = async () => {
+      // Simulasi pengambilan data dari API
+      const storedCustomer = JSON.parse(localStorage.getItem('customer-hopkins') || 'null');
+      console.log(storedCustomer.id);
+      const userId = storedCustomer?.id;
+      
+
+      const response = await axiosInstance.get(`api/edit-user/${userId}`);
+      console.log("User Data:", response.data);
+
+      console.log(response);
+    }
+
+    getData();
+
+  }, []);
+
 
   function handleChangeEmailSubmit(e: FormEvent<Element>): void {
     throw new Error("Function not implemented.");
@@ -353,7 +376,8 @@ export default function ProfilePage() {
           onCancel={() => setShowChangeEmailModal(false)}
         />
       </Modal>
-
+        
+      <MobileBottomNavigationBar />
       <FooterUser />
     </div>
   )

@@ -11,6 +11,8 @@ import Pagination from "src/app/components/layout/pagination";
 import FooterUser from "../../../components/ui/footer-user";
 import { ThemeProvider, Spinner } from "flowbite-react";
 import customTheme from "src/components/ui/spinner-custom";
+import MobileBottomNavigationBar from "src/app/components/layout/MobileBottomNavigationBar";
+
 
 export default function AffiliatePage() {
   const [selectedPartner, setSelectedPartner] = useState<Partner | null>(null);
@@ -383,7 +385,8 @@ export default function AffiliatePage() {
           </div>
         </div>
       )}
-
+  
+      <MobileBottomNavigationBar />
       <FooterUser />
     </div>
   );

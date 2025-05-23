@@ -399,6 +399,9 @@ useEffect(() => {
           </div>
         </div>
       )}
+
+      
+      <MobileBottomNavigationBar />
       <FooterUser />
     </div>
   );

@@ -388,6 +388,8 @@ export default function Partners() {
           </div>
         </div>
       )}
+      
+      <MobileBottomNavigationBar />
 
       <FooterUser />
     </div>

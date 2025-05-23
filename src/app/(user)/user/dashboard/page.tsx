@@ -19,6 +19,7 @@ import MobileBottomNavigationBar from "../../../components/layout/MobileBottomNa
 import getCustomerDetails from "src/lib/getCustomerDetails";
 import getSubscriptionDetails from "src/lib/getSubscriptionDetails";
 import { Star, TrendingUp, Clock, Award, ChevronRight } from "lucide-react"
+import { set } from "zod";
 
 
 interface Customer {
@@ -35,7 +36,8 @@ interface Customer {
 export default function Dashboard() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [customerData, setCustomerData] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(true);
+  const [Subscription, setSubscription] = useState<any>(null);
 
 
   useEffect(() => {
@@ -44,26 +46,23 @@ export default function Dashboard() {
   
     if( storedCustomer.id_stripe !== null) {
       const fetchData = async () => {
-        const customerData = await getCustomerDetails(storedCustomer.id_stripe);
+        const customerDetails = await getCustomerDetails(storedCustomer.id_stripe);
         const subscriptionData = await getSubscriptionDetails(storedCustomer.id_stripe);
 
          setCustomerData({
-          customer: customerData,
+          customer: customerDetails,
           subscription: subscriptionData
 
         });
-         setIsLoading(false)
+     
+         setIsLoading(false);
        
       }
 
          fetchData();
-       
-
+           
     }
-
-    
- 
-
+   
   },[])
 
   const toggleMobileMenu = () => {
@@ -209,7 +208,7 @@ export default function Dashboard() {
                 <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white/90">
                   <Clock className="h-6 w-6 text-orange-500" />
                 </div>
-                <h3 className="text-3xl font-bold text-white">3</h3>
+                <h3 className="text-3xl font-bold text-white">{isLoading ? "..." : customerData?.subscription?.entries || "Guest"}</h3>
                 <p className="text-white/90">Recent Entries</p>
               </div>
 
@@ -218,8 +217,8 @@ export default function Dashboard() {
                 <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white/90">
                   <Award className="h-6 w-6 text-orange-500" />
                 </div>
-                <h3 className="text-3xl font-bold text-white">Gold</h3>
-                <p className="text-white/90">Member Status</p>
+                <h3 className="text-3xl font-bold text-white"> {isLoading ? "..." : customerData?.subscription?.plan_name || "Guest"}</h3>
+                <p className="text-white/90">Package</p>
               </div>
             </div>
           </div>

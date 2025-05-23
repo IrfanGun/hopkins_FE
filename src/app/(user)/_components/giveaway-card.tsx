@@ -38,8 +38,9 @@ export default function GiveawayCard({
   };
 
   return (
-    <div className="flex flex-col overflow-hidden rounded-lg bg-white shadow">
-      <div className="relative h-48 w-full overflow-hidden">
+    <div className="flex flex-col overflow-hidden rounded-lg bg-white shadow sm:flex-row">
+      {/* Image Section - Left side */}
+      <div className="relative h-48 w-full sm:h-auto sm:w-2/5">
         <Image
           src={image || "/placeholder.svg"}
           alt={title}
@@ -48,32 +49,32 @@ export default function GiveawayCard({
           unoptimized
         />
       </div>
-      <div className="flex flex-col p-4">
-        <h3 className="text-lg font-bold text-gray-800">{title}</h3>
-        <p className={`font-medium ${getStatusColor()}`}>{status}</p>
-        <p className="mt-1 text-sm text-gray-600">{dateText}</p>
-        {tbd && <p className="text-sm text-gray-500">tbd</p>}
+
+      {/* Content Section - Right side */}
+      <div className="flex flex-1 flex-col justify-between p-4 sm:p-5">
+        <div>
+          <h3 className="mb-1 text-lg font-bold text-gray-800">{title}</h3>
+          <p className={`text-sm font-medium ${getStatusColor()}`}>{status}</p>
+          <p className="mt-1 text-sm text-gray-600">{dateText}</p>
+          {tbd && <p className="text-xs text-gray-500">tbd</p>}
+        </div>
+
         <Link
           href={addressURL}
-          className="mt-4 flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+          className="mt-4 flex items-center justify-center rounded-md bg-orange-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-orange-600"
         >
           <svg
-            className="mr-2 h-4 w-4"
+            className="mr-1.5 h-3.5 w-3.5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
             xmlns="http://www.w3.org/2000/svg"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
           </svg>
           GRAB A PACKAGE
         </Link>
       </div>
     </div>
-  );
+  )
 }
