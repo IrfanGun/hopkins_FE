@@ -38,8 +38,8 @@ export default function RegisterPage() {
   Fill the form to create a new account.
 </p>
 
-
-            <RegisterForm />
+{/* 
+            <RegisterForm /> */}
           </div>
           <FooterAuth />
         </section>
