@@ -1,5 +1,15 @@
-import RegisterPage from './RegisterPage';
+import RegisterPageContent from './RegisterPage';
 
-export default function Page({ params }: { params: { token: string } }) {
-  return <RegisterPage token={params.token} />;
+type PageProps = {
+  params: {
+    token: string;
+  };
+};
+
+export default function RegisterPage({ params }: PageProps) {
+  const { token } = params;
+
+  return (
+    <RegisterPageContent token={token} />
+  );
 }
