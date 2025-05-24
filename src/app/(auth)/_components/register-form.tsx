@@ -14,14 +14,18 @@ import { getStates, States } from "src/lib/states";
 import { AxiosError } from "axios";
 import ShowModal from "src/components/ui/custom-modal";
 
-function getCookie(name: string): string | null {
-  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-  return match ? decodeURIComponent(match[2] || "") : null;
+// function getCookie(name: string): string | null {
+//   const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+//   return match ? decodeURIComponent(match[2] || "") : null;
+// }
+
+interface RegisterFormProps {
+  email: string | null;
+  token ?: string;
 }
 
 
-
-export default function RegisterForm() {
+export default function RegisterForm( { email, token }: RegisterFormProps ) {
 
   const [state, setStates] = useState<States[]>([]);// Default ke AU
   const [password, setPassword] = useState("");
@@ -34,7 +38,7 @@ export default function RegisterForm() {
   const router = useRouter();
   const defaultForm = {
     name: "",
-    email: "",
+    email: email,
     phone: "",
     address: "",
     city : "",
@@ -64,11 +68,9 @@ export default function RegisterForm() {
     setShowPassword(!showPassword);
   };
 
-  // Handler untuk password
 const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   setPassword(e.target.value);
 
-  // Cek kecocokan password
   if (confirmPassword && e.target.value !== confirmPassword) {
     setError("Passwords do not match");
   } else {
@@ -76,11 +78,9 @@ const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   }
 };
 
-// Handler untuk confirm password
 const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   setConfirmPassword(e.target.value);
 
-  // Cek kecocokan password
   if (password && e.target.value !== password) {
     setError("Passwords do not match");
   } else {
@@ -92,44 +92,55 @@ const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => 
     e.preventDefault();
     setError("");
 
-    if (!isCaptchaChecked) {
-      setError("Please complete the captcha verification");
-      return;
-    }
+      if (!isCaptchaChecked) {
+        setError("Please complete the captcha verification");
+        return;
+      }
 
     try {
-      console.log(form);
-
-      setIsLoading(true);
+ 
+       setIsLoading(true);
    
       await axiosInstance.get('/sanctum/csrf-cookie');
-      await axiosInstance.post(
-        "api/register",
-        { name : form.name,
-          email : form.email,
-          phone : form.phone,
-          address : form.address,
-          city : form.city,
-          states : form.states,
-          country : form.country,
-          password : password
- },
-        { withCredentials: true } // <- PENTING: pastikan di sini juga
-      );
+      
+       await axiosInstance.post(
+      "api/register",
+      {
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        address: form.address,
+        city: form.city,
+        states: form.states,
+        country: form.country,
+        password: password,
+        token: token,
+      },
+      { withCredentials: true }
+    );
 
-      await axiosInstance.post(
-        "api/login",
-        { email : form.email, password: password },
-        { withCredentials: true } // <- PENTING: pastikan di sini juga
-      ).then((response) => {
-        
-        Cookies.set('token', response.data.token);
-        localStorage.setItem('token', response.data.token);
-        const userData = response.data.data;
-        router.push("/user");
-        
+    // 2. Auto Login setelah register sukses
+    const loginResponse = await axiosInstance.post(
+      "api/login",
+      {
+        email: form.email,
+        password: password,
+      },
+      { withCredentials: true }
+    );
+    console.log(loginResponse.data);
 
-      });
+    // 3. Simpan token dan data user
+    Cookies.set("token", loginResponse.data.token);
+    localStorage.setItem("token", loginResponse.data.token);
+
+    // Optional: Simpan user data
+    const userData = loginResponse.data.data;
+    localStorage.setItem("customer-hopkins", JSON.stringify(userData));
+    
+    // 4. Redirect ke halaman user dashboard
+    router.push("/user");
+
       
 
 
@@ -198,7 +209,7 @@ const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => 
         />
       </div>
 
-      <div className="mb-4">
+      {/* <div className="mb-4">
         <label className="block mb-1 text-gray-700">Email:</label>
         <input
           type="email"
@@ -209,7 +220,7 @@ const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => 
           className="w-full rounded-md border border-gray-200 p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
           required
         />
-      </div>
+      </div> */}
 
       <div className="mb-4">
         <label className="block mb-1 text-gray-700">Phone:</label>
