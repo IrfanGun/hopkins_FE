@@ -26,6 +26,8 @@ export default function Membership() {
   const [expandedSection, setExpandedSection] = useState("stats");
   const [isLoading, setIsLoading] = useState(true);
   const [customerData, setCustomerData] = useState<any>(null);
+  const [initial, setInitial] = useState<string>("");
+  const [date, setDate] = useState<string>("");
 
   // Fungsi untuk menyalin kode ke clipboard
   const copyCode = (code: string) => {
@@ -48,7 +50,12 @@ export default function Membership() {
 
     
     const storedCustomer = JSON.parse(localStorage.getItem('customer-hopkins') || 'null');
-  
+    setDate(storedCustomer.created_at);
+    setInitial(storedCustomer.name
+        .split(" ")
+        .map((n: string) => n[0])
+        .join("")
+        .toUpperCase());
     if( storedCustomer.id_stripe !== null) {
       const fetchData = async () => {
         const customerDetails = await getCustomerDetails(storedCustomer.id_stripe);
@@ -65,9 +72,6 @@ export default function Membership() {
       }
 
          fetchData();
-           
-
-       
 
     }
 
@@ -151,7 +155,7 @@ export default function Membership() {
           <div className="relative mx-auto flex max-w-5xl flex-col items-center -translate-y-16">
             <div className="clip-hexagon relative mb-12 flex h-32 w-32 items-center justify-center bg-white shadow-lg">
               <div className="clip-hexagon-inner absolute inset-1 bg-gradient-to-br from-orange-500 to-orange-400 p-4">
-                <div className="flex h-full w-full items-center justify-center text-4xl font-bold text-white">J</div>
+                <div className="flex h-full w-full items-center justify-center text-4xl font-bold text-white">{initial}</div>
               </div>
             </div>
 
@@ -169,7 +173,7 @@ export default function Membership() {
               <h2 className="text-3xl font-bold text-gray-800">
                 <span className="text-orange-500">ENTRY</span> MEMBERSHIP
               </h2>
-              <p className="mt-2 text-gray-600">Member since November 2023</p>
+              <p className="mt-2 text-gray-600">Member since {date}</p>
             </div>
 
             {/* Interactive Tabs */}

@@ -37,12 +37,14 @@ export default function Dashboard() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [customerData, setCustomerData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [Name, setName] = useState<string | null>(null);
   const [Subscription, setSubscription] = useState<any>(null);
 
 
   useEffect(() => {
 
     const storedCustomer = JSON.parse(localStorage.getItem('customer-hopkins') || 'null');
+    setName(storedCustomer?.name || null);
   
     if( storedCustomer.id_stripe !== null) {
       const fetchData = async () => {
@@ -163,7 +165,7 @@ export default function Dashboard() {
             {/* Left side - Welcome message */}
             <div className="mb-10 md:mb-0 md:w-1/2">
               <h1 className="mb-2 text-5xl font-bold text-white">
-                Welcome back, {isLoading ? "..." : customerData?.customer?.name || "Guest"}!
+                Welcome back, {isLoading ? "..." : Name|| "Guest"}!
               </h1>
               <p className="mb-8 text-xl text-white/90">Discover today's exclusive offers and rewards</p>
 

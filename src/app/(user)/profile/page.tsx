@@ -78,9 +78,10 @@ export default function ProfilePage() {
         state_id: profileFormData.state_id,
       });
 
-      console.log("Data berhasil dikirim:", response.data);
     } catch (error) {
+
       console.error("Gagal mengirim data:", error);
+      
     } finally {
       console.log(profileFormData);
       // Reload halaman setelah proses selesai
@@ -138,6 +139,7 @@ const handlePasswordSubmit = async (e: FormEvent) => {
       // Simulasi pengambilan data dari API
       const storedCustomer = JSON.parse(localStorage.getItem('customer-hopkins') || 'null');
       setUserId(storedCustomer?.id);
+      setUserData(storedCustomer);
       const userId = storedCustomer?.id;
       
       const response = await axiosInstance.get(`api/edit-user/${userId}`);
@@ -309,7 +311,7 @@ const handlePasswordSubmit = async (e: FormEvent) => {
                 <div className="space-y-4">
                   <div className="rounded-md bg-orange-50 p-4">
                     <div className="text-sm font-medium text-gray-500">Member Since</div>
-                    <div className="text-lg font-medium">January 2023</div>
+                    <div className="text-lg font-medium">{userData?.created_at}</div>
                   </div>
 
                   <div className="rounded-md bg-green-50 p-4">
@@ -324,6 +326,7 @@ const handlePasswordSubmit = async (e: FormEvent) => {
                     <div className="text-sm font-medium text-gray-500">Membership Type</div>
                     <div className="text-lg font-medium">Premium</div>
                   </div>
+
                 </div>
               </div>
             </div>

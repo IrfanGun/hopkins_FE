@@ -14,6 +14,7 @@ import { ChevronDown } from "lucide-react";
 import axiosInstance from "src/api/axiosInstance";
 import Cookies from 'js-cookie';
 import Image from "next/image";
+import { set } from "zod";
 
 
 
@@ -21,6 +22,7 @@ export default function Header() {
 
   
   const [isScrolled, setIsScrolled] = useState(false);
+  const [initial, setInitial] = useState(true);
   const router = useRouter();
   
   const handleLogout = async () => {
@@ -39,6 +41,14 @@ export default function Header() {
 
 
   useEffect(() => {
+    const storedCustomer = JSON.parse(localStorage.getItem('customer-hopkins') || 'null');
+    setInitial(storedCustomer.name.split(" ")
+        .map((n: string) => n[0])
+        .join("")
+        .toUpperCase()
+  );
+   
+        
     const handleScroll = () => {
       if (window.scrollY > 50) {
         setIsScrolled(true);
@@ -133,7 +143,7 @@ export default function Header() {
             <DropdownMenu>
               <DropdownMenuTrigger className="focus:outline-none">
                 <Avatar className="h-9 w-9 bg-gray-100">
-                  <AvatarFallback>J</AvatarFallback>
+                  <AvatarFallback>{initial}</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
