@@ -1,24 +1,22 @@
 "use client";
 
-import { use, type ChangeEvent, type FormEvent } from "react";
-import { useState, useEffect } from "react";
-import axiosInstance from "src/api/axiosInstance";
-
-interface ProfileFormData {
-  name: string;
-  phone: string;
-  address: string;
-  postcode: string;
-  city: string;
-  state: string;
-  country: string;
-  [key: string]: string;
-}
+import { useEffect, type ChangeEvent, type FormEvent } from "react";
+import { useState } from "react";
+import { getStates, States } from "src/lib/states";
 
 interface ProfileEditFormProps {
-  formData: ProfileFormData;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  onSubmit: (e: FormEvent) => void;
+  formData: {
+    name: string;
+    phone: string;
+    address: string;
+    postcode: string;
+    city: string;
+    country: string;
+    state_id?: string | number;
+    [key: string]: any;
+  };
+  onChange: (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  onSubmit: (e: FormEvent<HTMLFormElement>) => void;
   onCancel: () => void;
 }
 
@@ -27,148 +25,145 @@ export default function ProfileEditForm({
   onChange,
   onSubmit,
   onCancel,
-}: ProfileEditFormProps)  : JSX.Element {
+}: ProfileEditFormProps): JSX.Element {
+  const [states, setStates] = useState<States[]>([]);
+
   useEffect(() => {
-    // efek samping jika ada
-    const getData = async () => {
-      // Simulasi pengambilan data dari API
-      const storedCustomer = JSON.parse(localStorage.getItem('customer-hopkins') || 'null');
-      console.log(storedCustomer);
-      const userId = storedCustomer?.id;
+    const loadStates = async () => {
+      try {
+        const fetchStates = await getStates();
+        setStates(fetchStates);
 
-
-      const response = await axiosInstance.get("/user-update/{userId}");
-
-      console.log(response);
-    }
-
+      } catch (error) {
+        console.error("Error loading states:", error);
+      }
+    };
+    loadStates();
   }, []);
 
   return (
-    <div className="p-6">
-      <form onSubmit={onSubmit}>
-        <div className="space-y-4">
-          {/* Name */}
-          <div>
-            <label htmlFor="name" className="mb-1 block text-sm font-medium">
-              Name: <span className="text-red-500">*</span>
+    <div className="px-4 py-6 sm:px-6 lg:px-8 max-w-3xl mx-auto">
+      <form onSubmit={onSubmit} className="space-y-6">
+        {/* Name */}
+        <div>
+          <label htmlFor="name" className="mb-1 block text-sm font-medium">
+            Name: <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            id="name"
+            name="name"
+            value={formData.name}
+            onChange={onChange}
+            required
+            className="w-full rounded-md border border-gray-300 p-2"
+          />
+        </div>
+
+        {/* Phone */}
+        <div>
+          <label htmlFor="phone" className="mb-1 block text-sm font-medium">
+            Phone: <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="number"
+            id="phone"
+            name="phone"
+            value={formData.phone}
+            onChange={onChange}
+            required
+            className="w-full rounded-md border border-gray-300 p-2"
+          />
+        </div>
+
+        {/* Address */}
+        <div>
+          <label htmlFor="address" className="mb-1 block text-sm font-medium">
+            Address: <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            id="address"
+            name="address"
+            value={formData.address}
+            onChange={onChange}
+            required
+            className="w-full rounded-md border border-gray-300 p-2"
+          />
+        </div>
+
+        {/* Postcode and City */}
+        <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
+          {/* <div>
+            <label htmlFor="postcode" className="mb-1 block text-sm font-medium">
+              Postcode: <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              id="name"
-              name="name"
-              value={formData.name}
+              id="postcode"
+              name="postcode"
+              value={formData.postcode}
               onChange={onChange}
               required
               className="w-full rounded-md border border-gray-300 p-2"
             />
-          </div>
-
-          {/* Phone */}
+          </div> */}
           <div>
-            <label htmlFor="phone" className="mb-1 block text-sm font-medium">
-              Phone: <span className="text-red-500">*</span>
+            <label htmlFor="city" className="mb-1 block text-sm font-medium">
+              City: <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              id="phone"
-              name="phone"
-              value={formData.phone}
+              id="city"
+              name="city"
+              value={formData.city}
               onChange={onChange}
               required
               className="w-full rounded-md border border-gray-300 p-2"
             />
-          </div>
-
-          {/* Address */}
-          <div>
-            <label htmlFor="address" className="mb-1 block text-sm font-medium">
-              Address: <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              id="address"
-              name="address"
-              value={formData.address}
-              onChange={onChange}
-              required
-              className="w-full rounded-md border border-gray-300 p-2"
-            />
-          </div>
-
-          {/* Postcode and City */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label
-                htmlFor="postcode"
-                className="mb-1 block text-sm font-medium"
-              >
-                Postcode: <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                id="postcode"
-                name="postcode"
-                value={formData.postcode}
-                onChange={onChange}
-                required
-                className="w-full rounded-md border border-gray-300 p-2"
-              />
-            </div>
-            <div>
-              <label htmlFor="city" className="mb-1 block text-sm font-medium">
-                City: <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                id="city"
-                name="city"
-                value={formData.city}
-                onChange={onChange}
-                required
-                className="w-full rounded-md border border-gray-300 p-2"
-              />
-            </div>
-          </div>
-
-          {/* State and Country */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="state" className="mb-1 block text-sm font-medium">
-                State: <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                id="state"
-                name="state"
-                value={formData.state}
-                onChange={onChange}
-                required
-                className="w-full rounded-md border border-gray-300 p-2"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="country"
-                className="mb-1 block text-sm font-medium"
-              >
-                Country: <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                id="country"
-                name="country"
-                value={formData.country}
-                onChange={onChange}
-                required
-                className="w-full rounded-md border border-gray-300 p-2"
-              />
-            </div>
           </div>
         </div>
 
-        {/* Form Footer */}
-        <div className="mt-6 flex justify-end gap-4">
+        {/* State and Country */}
+        <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
+          <div>
+            <label htmlFor="state_id" className="mb-1 block text-sm font-medium">
+              State: <span className="text-red-500">*</span>
+            </label>
+            <select
+              name="state_id"
+              id="state_id"
+              value={formData.state_id ?? ""}
+              onChange={onChange}
+              className="w-full rounded-md border border-gray-300 p-2"
+              required
+            >
+              <option value="">Select State</option>
+              {states.map((state) => (
+                <option key={state.id} value={state.id}>
+                  {state.name} | {state.shortName}
+                </option>
+              ))}
+            </select>
+          </div>
+          {/* <div>
+            <label htmlFor="country" className="mb-1 block text-sm font-medium">
+              Country: <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="country"
+              name="country"
+              value={formData.country}
+              onChange={onChange}
+              required
+              className="w-full rounded-md border border-gray-300 p-2"
+            />
+          </div> */}
+        </div>
+
+        {/* Footer Buttons */}
+        <div className="flex flex-col sm:flex-row justify-end gap-4 mt-6">
           <button
             type="button"
             onClick={onCancel}

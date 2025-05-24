@@ -135,8 +135,7 @@ export default function PopupsForm({reloadData, editPartner} : PopupsFormProps) 
         states: form.states
 
            });
-                 console.log(form);
-                 console.log('berhasil');
+                
         } catch (error){
           console.log(error);
 

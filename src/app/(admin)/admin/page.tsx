@@ -1,5 +1,5 @@
 'use client'
-import { Gift, Users, DollarSign, AlertCircle } from "lucide-react";
+import { Gift, Users, DollarSign, Package } from "lucide-react";
 import QuickAccess from "./_components/QuickAccess";
 import AnalyticsPage from "./analytics/page";
 import stripeInstance from "src/api/stripeInstance";
@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { getStripeStats } from "src/lib/stats";
 import { ThemeProvider,Spinner } from "flowbite-react";
 import baseTheme from "src/components/ui/spinner-custom-base";
+import axiosInstance from "src/api/axiosInstance";
 
 
 type StatsItem = {
@@ -25,9 +26,8 @@ export default function AdminDashboard() {
   const [activeSubscribers, setActiveSubscribers] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [countData, setCountData] = useState<any>(null);
   
-
-   useEffect(() => {
     const fetchStats = async () => {
       try {
         const stats = await getStripeStats();
@@ -36,17 +36,30 @@ export default function AdminDashboard() {
         setCurrency(stats.currency.toUpperCase());
         setTotalSubscribers(stats.totalSubscribers ?? 0);
         setActiveSubscribers(stats.activeSubscribers ?? 0);
-        console.log('Total Subscribers:', stats.totalSubscribers);
-        console.log('Active Subscribers:', stats.activeSubscribers);
+
       } catch (err) {
         setError('Failed to load revenue');
-        console.error(err);
+        
       } finally {
         setLoading(false);
       }
     };
 
+    const fetchProducts = async () => {
+      try {
+        const response = await axiosInstance.get("api/count-products");
+        const products = response.data;
+        setCountData(products);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    }
+
+   useEffect(() => {
+
+    fetchProducts();
     fetchStats();
+
   }, []);
 
   if (loading) return <div className="text-center">  <ThemeProvider theme={baseTheme}>
@@ -62,26 +75,26 @@ export default function AdminDashboard() {
     {
       title: "Revenue",
       value: `${currency} ${currentRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}`,
-      change: `${delta >= 0 ? "+" : ""}${delta.toFixed(1)}%`,
+      change:"",
       icon: <DollarSign className="h-6 w-6 text-green-500" />,
     },
     {
       title: "Total Subscribers",
       value: totalSubscribers.toLocaleString(),
-      change: "-", // Bisa kamu hitung jika mau
+      change: "",
       icon: <Users className="h-6 w-6 text-blue-500" />,
     },
     {
       title: "Active Subscribers",
       value: activeSubscribers.toLocaleString(),
-      change: "-", // Bisa kamu hitung jika mau
+      change: "", 
       icon: <Gift className="h-6 w-6 text-purple-500" />,
     },
     {
-      title: "Open Tickets",
-      value: "23",
-      change: "-5",
-      icon: <AlertCircle className="h-6 w-6 text-red-500" />,
+      title: "Total Products",
+      value: countData?.totalProducts.toLocaleString() || "0",
+      change: countData?.newProducts.toLocaleString() || "0",
+      icon:  <Package className="h-6 w-6 text-blue-500" />,
     },
   ];
 

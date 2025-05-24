@@ -12,6 +12,8 @@ import Header from "../../components/layout/header";
 import MobileBottomNavigationBar from "../../components/layout/MobileBottomNavigationBar";
 import { useEffect } from "react";
 import axiosInstance from "src/api/axiosInstance";
+import { number, set } from "zod";
+import { stat } from "fs";
 
 export default function ProfilePage() {
   const [user, setUser] = useState({
@@ -25,6 +27,7 @@ export default function ProfilePage() {
     postcode: "",
     city: "",
     state: "",
+    state_id: "",
   });
 
   const [showEditModal, setShowEditModal] = useState(false);
@@ -33,18 +36,24 @@ export default function ProfilePage() {
   const [newEmail, setNewEmail] = useState(user.email);
   const [activeTab, setActiveTab] = useState("profile")
   const [profileFormData, setProfileFormData] = useState({ ...user });
+  const [userData, setUserData] = useState<any | null>(null);
+  const [UserId, setUserId] = useState<any | null>(null);
   const [passwordFormData, setPasswordFormData] = useState({
     password: "",
     confirmPassword: "",
   });
 
-  const handleProfileInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setProfileFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+ const handleProfileInputChange = (
+  e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+) => {
+  const { name, value } = e.target;
+
+  setProfileFormData(prev => ({
+    ...prev,
+    [name]: value,
+  }));
+};
+
 
   const handlePasswordInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -58,41 +67,101 @@ export default function ProfilePage() {
     e.preventDefault();
     setUser({ ...profileFormData });
     setShowEditModal(false);
+
+   const sendData = async () => {
+    try {
+      const response = await axiosInstance.post(`api/user-update/${UserId}`, {
+        name: profileFormData.name,
+        phone_number: profileFormData.phone,
+        address: profileFormData.address,
+        city: profileFormData.city,
+        state_id: profileFormData.state_id,
+      });
+
+      console.log("Data berhasil dikirim:", response.data);
+    } catch (error) {
+      console.error("Gagal mengirim data:", error);
+    } finally {
+      console.log(profileFormData);
+      // Reload halaman setelah proses selesai
+      // window.location.reload();
+    }
   };
 
-  const handlePasswordSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    // Handle password change logic here
+// Panggil fungsi
+sendData();
+
+
+    //  const response = await axiosInstance.get(`api/edit-user/${userId}`);
+
+    
+  };
+
+const handlePasswordSubmit = async (e: FormEvent) => {
+  e.preventDefault();
+
+  // Cek apakah password dan konfirmasi password sama
+  if (passwordFormData.password !== passwordFormData.confirmPassword) {
+    // alert("Password dan konfirmasi password tidak sama.");
+    return;
+  }
+
+  try {
+
+    const response = await axiosInstance.post(`/api/change-password/${UserId}`, {
+      new_password: passwordFormData.password
+    });
+      // alert("Password berhasil diubah.");
     setShowChangePasswordModal(false);
     setPasswordFormData({
       password: "",
       confirmPassword: "",
     });
-    const handleEmailInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+
+    console.log("Password baru:", passwordFormData.password);
+  } catch (error) {
+    console.error("Terjadi kesalahan:", error);
+    alert("Terjadi kesalahan saat mengubah password.");
+  }
+};
+
+
+     const handleEmailInputChange = (e: ChangeEvent<HTMLInputElement>) => {
       setNewEmail(e.target.value);
     };
 
-    const handleChangeEmailSubmit = (e: FormEvent) => {
-      e.preventDefault();
-      console.log("Email baru: ", newEmail);
 
-      setShowChangeEmailModal(false);
-    };
-  };
 
     useEffect(() => {
     // efek samping jika ada
     const getData = async () => {
       // Simulasi pengambilan data dari API
       const storedCustomer = JSON.parse(localStorage.getItem('customer-hopkins') || 'null');
-      console.log(storedCustomer.id);
+      setUserId(storedCustomer?.id);
       const userId = storedCustomer?.id;
       
-
       const response = await axiosInstance.get(`api/edit-user/${userId}`);
-      console.log("User Data:", response.data);
+    
+      const data = response.data;
 
-      console.log(response);
+      const name = response.data.user.name || "";
+      const initials = name
+        .split(" ")
+        .map((n: string) => n[0])
+        .join("")
+        .toUpperCase();
+
+
+      setUser(prev => ({
+        ...prev,
+        initials: initials,
+        name: response.data.user.name,
+        email: response.data.user.email,
+        phone: response.data.user.phone_number,
+        city: response.data.user.city,
+        state: response.data.user.state.name,
+      }));
+
     }
 
     getData();
@@ -212,7 +281,7 @@ export default function ProfilePage() {
                     <div className="flex items-center gap-2">
                       <MapPin className="h-4 w-4 text-gray-400" />
                       <span>
-                        {user.location}, {user.country}
+                        {user.state}, {user.country}
                       </span>
                     </div>
                   </div>
@@ -262,7 +331,7 @@ export default function ProfilePage() {
         )}
 
         {activeTab === "security" && (
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-1">
             {/* Password Settings */}
             <div className="rounded-lg bg-white p-6 shadow-md transition hover:shadow-lg">
               <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-gray-800">
@@ -296,7 +365,7 @@ export default function ProfilePage() {
             </div>
 
             {/* Email Settings */}
-            <div className="rounded-lg bg-white p-6 shadow-md transition hover:shadow-lg">
+            {/* <div className="rounded-lg bg-white p-6 shadow-md transition hover:shadow-lg">
               <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-gray-800">
                 <Mail className="h-5 w-5 text-orange-500" />
                 Email Address
@@ -324,7 +393,7 @@ export default function ProfilePage() {
               >
                 Change Email
               </button>
-            </div>
+            </div> */}
           </div>
         )}
 
@@ -338,11 +407,12 @@ export default function ProfilePage() {
         position="bottom-right"
       >
         <ProfileEditForm
-          formData={profileFormData}
-          onChange={handleProfileInputChange}
-          onSubmit={handleProfileSubmit}
-          onCancel={() => setShowEditModal(false)}
-        />
+      formData={profileFormData}
+      onChange={handleProfileInputChange}
+      onSubmit={handleProfileSubmit}
+      onCancel={() => setShowEditModal(false)}
+    />
+
       </Modal>
 
       {/* Change Password Modal */}

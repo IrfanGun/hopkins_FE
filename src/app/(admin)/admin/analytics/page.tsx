@@ -1,5 +1,6 @@
 "use client";
-
+import { useEffect, useState } from "react";
+import axiosInstance from "src/api/axiosInstance";
 import { Card, CardContent } from "../../../components/ui/card";
 import {
   LineChart,
@@ -15,27 +16,37 @@ import {
 } from "recharts";
 
 export default function AnalyticsPage() {
-  const userGrowth = [
-    { month: "Jan", users: 120 },
-    { month: "Feb", users: 210 },
-    { month: "Mar", users: 290 },
-    { month: "Apr", users: 340 },
-    { month: "May", users: 420 },
-  ];
+  const [userGrowth, setUserGrowth] = useState([]);
+  const [revenueData, setRevenueData] = useState([]);
 
-  const ticketStats = [
-    { name: "Open", value: 12 },
-    { name: "Pending", value: 5 },
-    { name: "Closed", value: 17 },
-  ];
 
-  const revenueData = [
-    { month: "Jan", revenue: 300 },
-    { month: "Feb", revenue: 600 },
-    { month: "Mar", revenue: 900 },
-    { month: "Apr", revenue: 1200 },
-    { month: "May", revenue: 1400 },
-  ];
+  const getUserGrowth = async () => {
+    try {
+      const response = await axiosInstance.get("api/user-growth");
+      setUserGrowth(response.data);
+    } catch (error) {
+      console.error("Error fetching user growth data:", error);
+    }
+  }
+
+  const getRevenue = async () => {
+
+      axiosInstance.get("/api/analytics/monthly-revenue")
+      .then(res => {
+        setRevenueData(res.data);
+      })
+      .catch(err => {
+        console.error("Failed to fetch revenue data", err);
+      });
+
+  
+  }
+
+  useEffect(() => {
+    getUserGrowth();
+    getRevenue();
+  }, []);
+
 
   return (
     <div>
@@ -83,7 +94,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Bar Chart: Ticket Status */}
-      <div className="mb-10 rounded-lg border bg-white p-4 shadow-sm">
+      {/* <div className="mb-10 rounded-lg border bg-white p-4 shadow-sm">
         <h2 className="mb-4 text-lg font-semibold text-gray-700">
           Support Ticket Status
         </h2>
@@ -96,7 +107,7 @@ export default function AnalyticsPage() {
             <Bar dataKey="value" fill="#3b82f6" />
           </BarChart>
         </ResponsiveContainer>
-      </div>
+      </div> */}
     </div>
   );
 }
