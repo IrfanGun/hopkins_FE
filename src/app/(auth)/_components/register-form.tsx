@@ -4,7 +4,7 @@ import type React from "react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User, Phone, MapPin, Globe} from "lucide-react";
 import { useEffect } from "react";
 import Cookies from 'js-cookie';
 import axiosInstance from "src/api/axiosInstance";
@@ -20,7 +20,7 @@ import ShowModal from "src/components/ui/custom-modal";
 // }
 
 interface RegisterFormProps {
-  email: string | null;
+  email: string ;
   token ?: string;
 }
 
@@ -181,192 +181,240 @@ const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => 
     }
   }, []);
 
-  return (
+return (
     <div>
-       {showNotification  && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                      <ShowModal
-                        setMessage={Notification}
-                        setClose={() => setShowNotification(false)}
-                        isLoading = {isLoading}
-                      />
-                  </div>
-                  ) }
+    
 
-  
-
-    <form onSubmit={handleSubmit} className="w-full">
-        <div className="mb-4">
-        <label className="block mb-1 text-gray-700">Name:</label>
-        <input
-          type="text"
-          name="name"
-          value={form.name}
-          onChange={handleChange}
-          placeholder="Enter your name"
-          className="w-full rounded-md border border-gray-200 p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
-          required
-        />
-      </div>
-
-      {/* <div className="mb-4">
-        <label className="block mb-1 text-gray-700">Email:</label>
-        <input
-          type="email"
-          name="email"
-          value={form.email}
-          onChange={handleChange}
-          placeholder="Enter your email"
-          className="w-full rounded-md border border-gray-200 p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
-          required
-        />
-      </div> */}
-
-      <div className="mb-4">
-        <label className="block mb-1 text-gray-700">Phone:</label>
-        <input
-          type="number"
-          name="phone"
-          value={form.phone}
-          onChange={handleChange}
-          placeholder="Enter your phone number"
-          className="w-full rounded-md border border-gray-200 p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
-        />
-      </div>
-
-      <div className="mb-4">
-        <label className="block mb-1 text-gray-700">Address:</label>
-        <input
-          type="text"
-          name="address"
-          value={form.address}
-          onChange={handleChange}
-          placeholder="Enter your address"
-          className="w-full rounded-md border border-gray-200 p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
-        />
-      </div>
-
-      <div className="mb-4">
-        <label className="block mb-1 text-gray-700">City:</label>
-        <input
-          type="text"
-          name="city"
-          value={form.city}
-          onChange={handleChange}
-          placeholder="Enter your city"
-          className="w-full rounded-md border border-gray-200 p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
-        />
-      </div>
-
-      <div className="mb-4">
-        <label className="block mb-1 text-gray-700">State:</label>
-        <select
-          name="states"
-          value={form.states ?? ""}
-          onChange={handleChange}
-          className="w-full rounded-md border border-gray-200 p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
-          required
-        >
-          <option value="">States</option>
-          {state.map((e) => (
-            <option key={e.id} value={e.id}>
-              {e.name} | {e.shortName}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="mb-4">
-        <label className="block mb-1 text-gray-700">Country:</label>
-        <input
-          type="text"
-          name="country"
-          value={form.country}
-          disabled
-          className="w-full bg-gray-100 cursor-not-allowed rounded-md border border-gray-200 p-3 shadow-sm"
-        />
-      </div>
-
-     <div className="mb-4">
-        <label className="block mb-1 text-gray-700">Password:</label>
-        <div className="relative">
+      <form onSubmit={handleSubmit} className="w-full">
+        <div className="mb-5">
+          <div className="flex items-center mb-2">
+            <User size={18} className="text-gray-400 mr-2" />
+            <label htmlFor="name" className="block font-medium text-gray-700">
+              Full Name
+            </label>
+          </div>
           <input
-            type={showPassword ? "text" : "password"}
-            name="password"
-            value={password}
-            onChange={handlePasswordChange}
-            placeholder="Enter your password"
-            className="w-full rounded-md border border-gray-200 p-3 pr-10 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
+            id="name"
+            type="text"
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            placeholder="Enter your full name"
+            className="w-full rounded-lg border border-gray-300 bg-white p-3 shadow-sm transition-all duration-200 focus:border-orange-400 focus:outline-none focus:ring-1 focus:ring-orange-400"
             required
           />
-          <button
-            type="button"
-            onClick={togglePasswordVisibility}
-            className="absolute right-3 top-1/2 -translate-y-1/2 transform text-gray-500"
-          >
-            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-          </button>
         </div>
-      </div>
 
-      <div className="mb-4">
-        <label className="block mb-1 text-gray-700">Confirm Password:</label>
-        <input
-          type="password"
-          name="confirmPassword"
-          value={confirmPassword}
-          onChange={handleConfirmPasswordChange}
-          placeholder="Confirm your password"
-          className="w-full rounded-md border border-gray-200 p-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-400"
-          required
-        />
-      </div>
+        <div className="mb-5">
+          <div className="flex items-center mb-2">
+            <Mail size={18} className="text-gray-400 mr-2" />
+            <label htmlFor="email" className="block font-medium text-gray-700">
+              Email Address
+            </label>
+          </div>
+          <input
+            id="email"
+            type="email"
+            name="email"
+            value={form.email}
+            disabled
+            onChange={handleChange}
+            placeholder="Enter your email"
+            className="w-full rounded-lg border border-gray-300 bg-gray-100 p-3 opacity-75 cursor-not-allowed"
+            required
+          />
+        </div>
 
-      {/* Error Message */}
-      {error && (
-        <p className="text-red-500 mb-2">{error}</p>
-      )}
+        <div className="mb-5">
+          <div className="flex items-center mb-2">
+            <Phone size={18} className="text-gray-400 mr-2" />
+            <label htmlFor="phone" className="block font-medium text-gray-700">
+              Phone Number
+            </label>
+          </div>
+          <input
+            id="phone"
+            type="tel"
+            name="phone"
+            value={form.phone}
+            onChange={handleChange}
+            placeholder="Enter your phone number"
+            className="w-full rounded-lg border border-gray-300 bg-white p-3 shadow-sm transition-all duration-200 focus:border-orange-400 focus:outline-none focus:ring-1 focus:ring-orange-400"
+          />
+        </div>
 
+        <div className="mb-5">
+          <div className="flex items-center mb-2">
+            <MapPin size={18} className="text-gray-400 mr-2" />
+            <label htmlFor="address" className="block font-medium text-gray-700">
+              Address
+            </label>
+          </div>
+          <input
+            id="address"
+            type="text"
+            name="address"
+            value={form.address}
+            onChange={handleChange}
+            placeholder="Enter your address"
+            className="w-full rounded-lg border border-gray-300 bg-white p-3 shadow-sm transition-all duration-200 focus:border-orange-400 focus:outline-none focus:ring-1 focus:ring-orange-400"
+          />
+        </div>
 
-      <div className="mb-6">
-        <label className="mb-1 block text-gray-700">
-          Captcha: <span className="text-red-500">*</span>
-        </label>
-        <div className="rounded-md border border-gray-200 bg-gray-50 p-3">
-          <label className="flex cursor-pointer items-center space-x-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+          <div>
+            <label htmlFor="city" className="block font-medium text-gray-700 mb-2">
+              City
+            </label>
             <input
-              type="checkbox"
-              checked={isCaptchaChecked}
-              onChange={() => setIsCaptchaChecked(!isCaptchaChecked)}
-              className="h-5 w-5 accent-orange-500"
+              id="city"
+              type="text"
+              name="city"
+              value={form.city}
+              onChange={handleChange}
+              placeholder="Enter your city"
+              className="w-full rounded-lg border border-gray-300 bg-white p-3 shadow-sm transition-all duration-200 focus:border-orange-400 focus:outline-none focus:ring-1 focus:ring-orange-400"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="states" className="block font-medium text-gray-700 mb-2">
+              State
+            </label>
+            <select
+              id="states"
+              name="states"
+              value={form.states ?? ""}
+              onChange={handleChange}
+              className="w-full rounded-lg border border-gray-300 bg-white p-3 shadow-sm transition-all duration-200 focus:border-orange-400 focus:outline-none focus:ring-1 focus:ring-orange-400"
+              required
+            >
+              <option value="">Select State</option>
+              {state.map((e) => (
+                <option key={e.id} value={e.id}>
+                  {e.name} | {e.shortName}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="mb-5">
+          <div className="flex items-center mb-2">
+            <Globe size={18} className="text-gray-400 mr-2" />
+            <label htmlFor="country" className="block font-medium text-gray-700">
+              Country
+            </label>
+          </div>
+          <input
+            id="country"
+            type="text"
+            name="country"
+            value={form.country}
+            disabled
+            className="w-full rounded-lg border border-gray-300 bg-gray-100 p-3 opacity-75 cursor-not-allowed"
+          />
+        </div>
+
+        <div className="mb-5">
+          <div className="flex items-center mb-2">
+            <Lock size={18} className="text-gray-400 mr-2" />
+            <label htmlFor="password" className="block font-medium text-gray-700">
+              Password
+            </label>
+          </div>
+          <div className="relative">
+            <input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              name="password"
+              value={password}
+              onChange={handlePasswordChange}
+              placeholder="Create a password"
+              className="w-full rounded-lg border border-gray-300 bg-white p-3 pr-12 shadow-sm transition-all duration-200 focus:border-orange-400 focus:outline-none focus:ring-1 focus:ring-orange-400"
               required
             />
-            <span className="text-sm text-gray-600">I&apos;m not a robot</span>
-          </label>
+            <button
+              type="button"
+              onClick={togglePasswordVisibility}
+              className="absolute right-3 top-1/2 -translate-y-1/2 transform text-gray-500 hover:text-orange-500"
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </div>
         </div>
-      </div>
 
-      {error && <p className="mb-4 text-sm text-red-500">{error}</p>}
+        <div className="mb-5">
+          <label htmlFor="confirmPassword" className="block font-medium text-gray-700 mb-2">
+            Confirm Password
+          </label>
+          <input
+            id="confirmPassword"
+            type="password"
+            name="confirmPassword"
+            value={confirmPassword}
+            onChange={handleConfirmPasswordChange}
+            placeholder="Confirm your password"
+            className="w-full rounded-lg border border-gray-300 bg-white p-3 shadow-sm transition-all duration-200 focus:border-orange-400 focus:outline-none focus:ring-1 focus:ring-orange-400"
+            required
+          />
+        </div>
 
-      <button
-        type="submit"
-        className={`w-full rounded-md px-4 py-3 font-medium text-white transition-colors duration-300 ${
-          isLoading ? "bg-orange-600 cursor-not-allowed" : "bg-primary-color hover:bg-orange-600"
-        }`}
-        disabled={isLoading || !!error}
-      >
-        {isLoading ? (
-          <ThemeProvider theme={customTheme}>
-            <Spinner color="base-secondary" />
-          </ThemeProvider>
-        ) : (
-          "Register"
+        {error && (
+          <div className="mb-5 rounded-lg bg-red-50 p-4 text-sm text-red-600 border border-red-100">
+            <p>{error}</p>
+          </div>
         )}
-      </button>
 
+        <div className="mb-6">
+          <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 shadow-sm">
+            <label className="flex cursor-pointer items-center space-x-3">
+              <input
+                type="checkbox"
+                checked={isCaptchaChecked}
+                onChange={() => setIsCaptchaChecked(!isCaptchaChecked)}
+                className="h-5 w-5 rounded border-gray-300 text-orange-500 focus:ring-2 focus:ring-orange-200"
+                required
+              />
+              <div className="flex items-center">
+                <span className="text-sm text-gray-700">I'm not a robot</span>
+                {isCaptchaChecked && <span className="ml-2 text-green-500">✓</span>}
+              </div>
+            </label>
+          </div>
+        </div>
 
-    
-    </form>
+        <button
+          type="submit"
+          className={`w-full rounded-lg px-5 py-4 font-semibold text-white shadow-md transition-all duration-300 ${
+            isLoading || !!error
+              ? "bg-orange-400 cursor-not-allowed"
+              : "bg-orange-500 hover:bg-orange-600 hover:shadow-lg active:translate-y-0.5"
+          }`}
+          disabled={isLoading || !!error}
+        >
+          {isLoading ? (
+            <div className="flex items-center justify-center">
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+              <span className="ml-2">Creating Account...</span>
+            </div>
+          ) : (
+            "Create Account"
+          )}
+        </button>
+
+        <div className="mt-8 text-center">
+          <p className="text-gray-600">
+            Already have an account?{" "}
+            <Link
+              href="/login"
+              className="font-medium text-orange-500 transition-colors hover:text-orange-600 hover:underline"
+            >
+              Sign in here
+            </Link>
+          </p>
+        </div>
+      </form>
     </div>
-  );
+  )
 }
