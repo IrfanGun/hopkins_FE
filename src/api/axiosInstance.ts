@@ -7,7 +7,7 @@ const getCookie = (name: string): string | null => {
 };
 
 const axiosInstance = axios.create({
-  baseURL: 'https://api-hf.com',
+  baseURL: 'http://localhost:8000',
   withCredentials: true, // untuk cookie-based auth
   headers: {
     "Content-Type": "application/json",

@@ -330,7 +330,9 @@ const handlePasswordSubmit = async (e: FormEvent) => {
 
                   <div className="rounded-md bg-blue-50 p-4">
                     <div className="text-sm font-medium text-gray-500">Membership Type</div>
-                    <div className="text-lg font-medium">{Subscription.plan_name}</div>
+                    <div className="text-lg font-medium">{typeof Subscription?.plan_name === 'string' && Subscription.plan_name.trim() !== ''
+  ? Subscription.plan_name
+  : 'On Progress'}</div>
                   </div>
 
                 </div>
