@@ -14,6 +14,7 @@ import { useEffect } from "react";
 import axiosInstance from "src/api/axiosInstance";
 import { number, set } from "zod";
 import { stat } from "fs";
+import getSubscriptionDetails from "src/lib/getSubscriptionDetails";
 
 export default function ProfilePage() {
   const [user, setUser] = useState({
@@ -38,6 +39,7 @@ export default function ProfilePage() {
   const [profileFormData, setProfileFormData] = useState({ ...user });
   const [userData, setUserData] = useState<any | null>(null);
   const [UserId, setUserId] = useState<any | null>(null);
+  const [Subscription, setSubscription] =  useState<any>(null);
   const [passwordFormData, setPasswordFormData] = useState({
     password: "",
     confirmPassword: "",
@@ -81,11 +83,12 @@ export default function ProfilePage() {
     } catch (error) {
 
       console.error("Gagal mengirim data:", error);
-      
+
     } finally {
-      console.log(profileFormData);
+
       // Reload halaman setelah proses selesai
       // window.location.reload();
+
     }
   };
 
@@ -133,7 +136,7 @@ const handlePasswordSubmit = async (e: FormEvent) => {
 
 
 
-    useEffect(() => {
+  useEffect(() => {
     // efek samping jika ada
     const getData = async () => {
       // Simulasi pengambilan data dari API
@@ -141,6 +144,9 @@ const handlePasswordSubmit = async (e: FormEvent) => {
       setUserId(storedCustomer?.id);
       setUserData(storedCustomer);
       const userId = storedCustomer?.id;
+
+      const subscriptionData = await getSubscriptionDetails(storedCustomer.id_stripe);
+      setSubscription(subscriptionData);
       
       const response = await axiosInstance.get(`api/edit-user/${userId}`);
     
@@ -324,7 +330,7 @@ const handlePasswordSubmit = async (e: FormEvent) => {
 
                   <div className="rounded-md bg-blue-50 p-4">
                     <div className="text-sm font-medium text-gray-500">Membership Type</div>
-                    <div className="text-lg font-medium">Premium</div>
+                    <div className="text-lg font-medium">{Subscription.plan_name}</div>
                   </div>
 
                 </div>

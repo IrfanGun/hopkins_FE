@@ -145,15 +145,22 @@ const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => 
 
 
     } catch (error) {
+
    const err = error as AxiosError;
-              if (err.response) {
-                const errorData = err.response.data  as Record<string, string[]>;
-                const allMessages: string[] = Object.values(errorData).flat();
-                console.log(allMessages);
-                setNotification(allMessages);
-                setShowNotification(true);
-              } 
-    } finally {
+    if (err.response) {
+      const data = err.response.data as {
+        error?: string;
+        messages?: Record<string, string[]>;
+      };
+
+      const allMessages = data.messages
+        ? Object.values(data.messages).flat()
+        : [data.error ?? "Unknown error"];
+
+      setNotification(allMessages);
+      setShowNotification(true);
+    }
+} finally {
       setIsLoading(false);
     }
   };
@@ -183,7 +190,30 @@ const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => 
 
 return (
     <div>
-    
+{showNotification && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+    <div className="bg-white border text-orange-600 p-6 rounded shadow-lg max-w-md w-full">
+      <div className="flex justify-between items-center mb-4">
+        <strong className="text-lg font-bold text-center ">Validation Error</strong>
+        <button
+          onClick={() => setShowNotification(false)}
+          className="text-red-500 hover:text-red-700 text-xl font-bold"
+        >
+          &times;
+        </button>
+      </div>
+
+      <div className="space-y-2">
+        {Notification.map((msg, i) => (
+          <p key={i} className="text-sm text-gray-800">
+            {msg}
+          </p>
+        ))}
+      </div>
+    </div>
+  </div>
+)}
+
 
       <form onSubmit={handleSubmit} className="w-full">
         <div className="mb-5">
@@ -234,7 +264,7 @@ return (
           </div>
           <input
             id="phone"
-            type="tel"
+            type="number"
             name="phone"
             value={form.phone}
             onChange={handleChange}

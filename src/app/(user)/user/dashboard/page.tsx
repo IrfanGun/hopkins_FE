@@ -187,23 +187,7 @@ export default function Dashboard() {
 
             {/* Right side - Stats cards */}
             <div className="grid grid-cols-2 gap-4 md:ml-auto md:w-5/12">
-              {/* Card 1 - Available Rewards */}
-              <div className="rounded-lg bg-orange-300/30 p-6 backdrop-blur-sm">
-                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white/90">
-                  <Star className="h-6 w-6 text-orange-500" />
-                </div>
-                <h3 className="text-3xl font-bold text-white">12</h3>
-                <p className="text-white/90">Available Rewards</p>
-              </div>
-
-              {/* Card 2 - Loyalty Points */}
-              <div className="rounded-lg bg-orange-300/30 p-6 backdrop-blur-sm">
-                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white/90">
-                  <TrendingUp className="h-6 w-6 text-orange-500" />
-                </div>
-                <h3 className="text-3xl font-bold text-white">5,240</h3>
-                <p className="text-white/90">Loyalty Points</p>
-              </div>
+          
 
               {/* Card 3 - Recent Entries */}
               <div className="rounded-lg bg-orange-300/30 p-6 backdrop-blur-sm">

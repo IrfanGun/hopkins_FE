@@ -18,13 +18,15 @@ const getPaymentHistory = async (id_customer: string): Promise<PaymentHistory[] 
       },
     });
 
+
+
     const invoices = response.data?.data.map((invoice: any) => ({
       id: invoice.id,
       amount_paid: invoice.amount_paid / 100, // Stripe menggunakan cents
       currency: invoice.currency.toUpperCase(),
       status: invoice.status,
       date: invoice.created,
-      description: invoice.description || "No description"
+      description: invoice.lines.data[0].description || "No description"
     }));
 
     return invoices;
