@@ -26,6 +26,7 @@ interface Invoice {
     status : string,
     date : number,
     description : string,
+    url : string
 }
 
 
@@ -84,7 +85,7 @@ export default function PurchaseHistory() {
       <div className="container mx-auto px-6 pb-12">
         <div className="mb-8 bg-gradient-to-r from-orange-600 to-orange-500 rounded-xl p-8 text-white shadow-lg">
           <h1 className="text-3xl font-bold">Purchase History</h1>
-          <p className="mt-2 opacity-90">View and manage your subscription payments</p>
+          <p className="mt-2 opacity-90">View and manage your subscription payments history</p>
         </div>
 
         {/* Invoices Table */}
@@ -119,6 +120,7 @@ export default function PurchaseHistory() {
                       Status
                     </th>
                     <th className="whitespace-nowrap px-6 py-4 text-left text-sm font-medium text-orange-800">Date</th>
+                       <th className="whitespace-nowrap px-6 py-4 text-left text-sm font-medium text-orange-800">Invoice</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -148,6 +150,9 @@ export default function PurchaseHistory() {
                             day: "numeric",
                           })}
                         </td>
+                        <td className="px-6 py-4 text-sm text-gray-700"> <a href={invoice.url}   target="_blank"    rel="noopener noreferrer" className="hover:bg-orange-500 p-2 hover:text-white text-orange-500 border-2 border-orange-500 cursor-pointer transition-colors duration-200 ease-in-out rounded-md ">
+                          View 
+                        </a></td>
                       </tr>
                     ))
                   ) : (

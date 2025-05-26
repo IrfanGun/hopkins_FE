@@ -14,6 +14,7 @@ import {
   LogOut,
   Trophy,
   FileText,
+  User
 } from "lucide-react";
 
 import axiosInstance from "src/api/axiosInstance";
@@ -76,6 +77,11 @@ export default function Sidebar({
       name: "Support Tickets",
       href: "/admin/support",
       icon: <TicketCheck className="h-5 w-5" />,
+    },
+    {
+      name: "Profle",
+      href: "/admin/profile",
+      icon: <User className="h-5 w-5" />,
     },
   ];
 

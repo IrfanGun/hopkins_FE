@@ -1,16 +1,29 @@
-"use client";
-
-import type React from "react";
-import { LogOut } from "lucide-react";
+"use client"
 import { useState } from "react";
 import Image from "next/image";
+import { LogOut } from "lucide-react";
+import axiosInstance from "src/api/axiosInstance";
 
 export default function ResetPassword() {
   const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Password reset requested for:", email);
+    setMessage("");
+    setError("");
+
+    try {
+      const response = await axiosInstance.post("api/forgot-password", { email : email });
+      setMessage(response.data.message);
+    } catch (err: any) {
+      if (err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else {
+        setError("Terjadi kesalahan, silakan coba lagi nanti.");
+      }
+    }
   };
 
   return (
@@ -32,7 +45,7 @@ export default function ResetPassword() {
         <div className="relative bg-primary-color p-4 pb-16">
           <h1 className="text-xl font-medium text-slate-50">Reset Password</h1>
           <p className="text-sm text-slate-50">
-            Recover password with <strong>Hopkins+</strong>
+            Recover password with <strong>Hopkins members</strong>
           </p>
         </div>
 
@@ -66,6 +79,9 @@ export default function ResetPassword() {
           >
             Submit
           </button>
+
+          {message && <p className="mt-4 text-green-600">{message}</p>}
+          {error && <p className="mt-4 text-red-600">{error}</p>}
 
           <div className="mt-6 text-center">
             <a

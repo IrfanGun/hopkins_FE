@@ -1,7 +1,8 @@
 "use client";
 import Link from "next/link";
 import Header from "../../components/layout/header";
-import { ChevronRight,
+import {
+  ChevronRight,
   Home,
   Copy,
   Award,
@@ -12,17 +13,25 @@ import { ChevronRight,
   Clock,
   CreditCard,
   LogOut,
-} from "lucide-react" ;
+} from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FooterUser from "../../components/ui/footer-user";
 import { fetchBanner } from "src/lib/banners";
 import MobileBottomNavigationBar from "src/app/components/layout/MobileBottomNavigationBar";
+import axiosInstance from "src/api/axiosInstance";
+import getCustomerDetails from "src/lib/getCustomerDetails";
+import getSubscriptionDetails from "src/lib/getSubscriptionDetails";
 
 export default function MembershipMobile() {
   const [isCopied, setIsCopied] = useState(false);
-   const [isBanner, setIsBanner] = useState<null | string>("")
-  const [expandedSection, setExpandedSection] = useState("stats")
+  const [isBanner, setIsBanner] = useState<null | string>("");
+  const [expandedSection, setExpandedSection] = useState("stats");
+  const [customerData, setCustomerData] = useState<any>(null);
+  const [initial, setInitial] = useState<string>("");
+  const [date, setDate] = useState<string>("");
+  const [token, setToken] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(true);
 
   const copyCode = (code: string) => {
     navigator.clipboard.writeText(code).then(() => {
@@ -31,13 +40,103 @@ export default function MembershipMobile() {
     });
   };
 
-    const toggleSection = (section: string) => {
+  const toggleSection = (section: string) => {
     if (expandedSection === section) {
-      setExpandedSection("")
+      setExpandedSection("");
     } else {
-      setExpandedSection(section)
+      setExpandedSection(section);
     }
-  }
+  };
+
+  //Get Data from cookie
+  const getData = () => {
+    const storedCustomer = JSON.parse(
+      localStorage.getItem("customer-hopkins") || "null",
+    );
+    const storedToken = localStorage.getItem("token"); // ✅ ini benar
+
+    setToken(storedToken || "");
+    setDate(storedCustomer.created_at);
+    setInitial(
+      storedCustomer.name
+        .split(" ")
+        .map((n: string) => n[0])
+        .join("")
+        .toUpperCase(),
+    );
+    if (storedCustomer.id_stripe !== null) {
+      const fetchData = async () => {
+        const customerDetails = await getCustomerDetails(
+          storedCustomer.id_stripe,
+        );
+        const subscriptionData = await getSubscriptionDetails(
+          storedCustomer.id_stripe,
+        );
+
+        setCustomerData({
+          customer: customerDetails,
+          subscription: subscriptionData,
+        });
+
+        setIsLoading(false);
+      };
+
+      fetchData();
+    }
+  };
+
+  const loadSlider = async () => {
+    try {
+      const response = await fetchBanner();
+
+      const getBanner = response
+        .filter(
+          (banner) => banner.page === "Membership" && banner.active == true,
+        )
+        .map((banner) => banner.image);
+
+      setIsBanner(getBanner[0] ?? null);
+    } catch (error) {
+      // setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadSlider();
+    getData();
+  }, []);
+
+  const handleBillingClick = (action: "cancel" | "update") => {
+    const currentDomain = window.location.origin; // misal https://example.com
+    const returnUrl = `${currentDomain}/dashboard`;
+    const ManagerBilling = async () => {
+      try {
+        const res = await axiosInstance.post(
+          "api/stripe/portal",
+          {
+            return_url: returnUrl,
+            action: action, // kirim action ke backend
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        const billingUrl = res.data.url;
+        if (billingUrl) {
+          window.location.href = billingUrl;
+        } else {
+          alert("Failed to retrieve billing URL.");
+        }
+      } catch (error) {
+        alert("An error occurred while accessing the billing portal.");
+      }
+    };
+
+    ManagerBilling();
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -65,7 +164,11 @@ export default function MembershipMobile() {
 
           {/* Curved bottom edge */}
           <div className="absolute bottom-0 h-12 w-full">
-            <svg viewBox="0 0 1440 100" className="h-full w-full" preserveAspectRatio="none">
+            <svg
+              viewBox="0 0 1440 100"
+              className="h-full w-full"
+              preserveAspectRatio="none"
+            >
               <path
                 fill="rgb(249, 250, 251)"
                 fillOpacity="1"
@@ -89,16 +192,20 @@ export default function MembershipMobile() {
 
           {/* Banner Title */}
           <div className="absolute left-0 top-1/3 w-full transform px-4 text-center">
-            <h1 className="text-2xl font-bold text-white drop-shadow-md">Manage Subscription</h1>
+            <h1 className="text-2xl font-bold text-white drop-shadow-md">
+              Manage Subscription
+            </h1>
           </div>
         </div>
 
         {/* Hexagonal Profile Card */}
         <div className="container relative mx-auto px-4">
-          <div className="relative mx-auto flex flex-col items-center -translate-y-10">
+          <div className="relative mx-auto flex -translate-y-10 flex-col items-center">
             <div className="clip-hexagon relative mb-10 flex h-24 w-24 items-center justify-center bg-white shadow-lg">
               <div className="clip-hexagon-inner absolute inset-1 bg-gradient-to-br from-orange-500 to-orange-400 p-4">
-                <div className="flex h-full w-full items-center justify-center text-3xl font-bold text-white">J</div>
+                <div className="flex h-full w-full items-center justify-center text-3xl font-bold text-white">
+                  J
+                </div>
               </div>
             </div>
 
@@ -115,7 +222,9 @@ export default function MembershipMobile() {
             <h2 className="text-2xl font-bold text-gray-800">
               <span className="text-orange-500">ENTRY</span> MEMBERSHIP
             </h2>
-            <p className="mt-1 text-sm text-gray-600">Member since November 2023</p>
+            <p className="mt-1 text-sm text-gray-600">
+              Member since November 2023
+            </p>
           </div>
 
           {/* Collapsible Sections */}
@@ -175,7 +284,9 @@ export default function MembershipMobile() {
               onClick={() => toggleSection("discount")}
             >
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold text-gray-800">Discount Code</h2>
+                <h2 className="text-lg font-bold text-gray-800">
+                  Discount Code
+                </h2>
                 {expandedSection === "discount" ? (
                   <ChevronUp className="h-5 w-5 text-gray-500" />
                 ) : (
@@ -187,9 +298,11 @@ export default function MembershipMobile() {
                 <div className="mt-4">
                   <div className="relative overflow-hidden rounded-lg border-2 border-dashed border-orange-300 bg-orange-50 p-4">
                     <div className="absolute -right-4 -top-4 h-10 w-10 rotate-45 bg-orange-500"></div>
-                    <div className="absolute -left-4 -bottom-4 h-10 w-10 rotate-45 bg-orange-500"></div>
+                    <div className="absolute -bottom-4 -left-4 h-10 w-10 rotate-45 bg-orange-500"></div>
 
-                    <h3 className="mb-3 text-center text-base font-semibold text-gray-800">Hopkins+ Store Discount</h3>
+                    <h3 className="mb-3 text-center text-base font-semibold text-gray-800">
+                      Hopkins+ Store Discount
+                    </h3>
 
                     <div className="relative mx-auto mb-2 flex items-center justify-between overflow-hidden rounded-lg bg-white p-1 shadow-inner">
                       <div className="flex-1 px-3 py-2 text-center font-mono text-base font-bold text-orange-600">
@@ -197,8 +310,8 @@ export default function MembershipMobile() {
                       </div>
                       <button
                         onClick={(e) => {
-                          e.stopPropagation()
-                          copyCode("15ENTRYHopkins")
+                          e.stopPropagation();
+                          copyCode("15ENTRYHopkins");
                         }}
                         className="rounded-md bg-orange-500 px-3 py-2 text-white transition-all hover:bg-orange-600"
                       >
@@ -207,7 +320,9 @@ export default function MembershipMobile() {
                     </div>
 
                     {isCopied && (
-                      <div className="text-center text-xs font-medium text-green-600">Code copied to clipboard!</div>
+                      <div className="text-center text-xs font-medium text-green-600">
+                        Code copied to clipboard!
+                      </div>
                     )}
                   </div>
                 </div>
@@ -220,7 +335,9 @@ export default function MembershipMobile() {
               onClick={() => toggleSection("options")}
             >
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-bold text-gray-800">Membership Options</h2>
+                <h2 className="text-lg font-bold text-gray-800">
+                  Membership Options
+                </h2>
                 {expandedSection === "options" ? (
                   <ChevronUp className="h-5 w-5 text-gray-500" />
                 ) : (
@@ -230,53 +347,59 @@ export default function MembershipMobile() {
 
               {expandedSection === "options" && (
                 <div className="mt-4 space-y-3">
-                  <Link href="/upgrade">
-                    <div className="flex cursor-pointer items-center rounded-lg border border-gray-200 bg-white p-3 transition-all hover:border-orange-300 hover:shadow-md">
-                      <div className="mr-3 rounded-full bg-orange-100 p-2 text-orange-500">
-                        <Zap className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-gray-800">Upgrade Plan</h3>
-                        <p className="text-xs text-gray-600">Get more entries and benefits</p>
+                  {/* Baris pertama: 1 item */}
+                  <div className="grid grid-cols-1">
+                    <div onClick={() => handleBillingClick("update")}>
+                      <div className="flex cursor-pointer items-center  rounded-lg border border-gray-200 bg-white p-4 transition-all hover:border-orange-300 hover:shadow-md">
+                        <div className="mr-4 rounded-full bg-orange-100 p-3 text-orange-500">
+                          <Zap className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-gray-800">
+                            Changes Plan
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            Get more entries and benefits
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </Link>
+                  </div>
 
-                  <Link href="/downgrade">
-                    <div className="flex cursor-pointer items-center rounded-lg border border-gray-200 bg-white p-3 transition-all hover:border-orange-300 hover:shadow-md">
-                      <div className="mr-3 rounded-full bg-orange-100 p-2 text-orange-500">
-                        <CreditCard className="h-4 w-4" />
+                  {/* Baris kedua: 2 item */}
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <Link href="/purchase-history">
+                      <div className="flex cursor-pointer items-center rounded-lg border border-gray-200 bg-white p-4 transition-all hover:border-orange-300 hover:shadow-md">
+                        <div className="mr-4 rounded-full bg-orange-100 p-3 text-orange-500">
+                          <Clock className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-gray-800">
+                            Billing Details
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            Manage payment information
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-semibold text-gray-800">Downgrade Plan</h3>
-                        <p className="text-xs text-gray-600">Reduce your subscription cost</p>
-                      </div>
-                    </div>
-                  </Link>
+                    </Link>
 
-                  <Link href="/billing">
-                    <div className="flex cursor-pointer items-center rounded-lg border border-gray-200 bg-white p-3 transition-all hover:border-orange-300 hover:shadow-md">
-                      <div className="mr-3 rounded-full bg-orange-100 p-2 text-orange-500">
-                        <Clock className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-gray-800">Billing Details</h3>
-                        <p className="text-xs text-gray-600">Manage payment information</p>
-                      </div>
-                    </div>
-                  </Link>
-
-                  <Link href="/cancel">
-                    <div className="flex cursor-pointer items-center rounded-lg border border-gray-200 bg-white p-3 transition-all hover:border-red-300 hover:shadow-md">
-                      <div className="mr-3 rounded-full bg-red-100 p-2 text-red-500">
-                        <LogOut className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-gray-800">Cancel Plan</h3>
-                        <p className="text-xs text-red-600">End your subscription</p>
+                    <div onClick={() => handleBillingClick("cancel")}>
+                      <div className="flex cursor-pointer items-center rounded-lg border border-gray-200 bg-white p-4 transition-all hover:border-red-300 hover:shadow-md">
+                        <div className="mr-4 rounded-full bg-red-100 p-3 text-red-500">
+                          <LogOut className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-gray-800">
+                            Cancel Plan
+                          </h3>
+                          <p className="text-sm text-red-600">
+                            End your subscription
+                          </p>
+                        </div>
                       </div>
                     </div>
-                  </Link>
+                  </div>
                 </div>
               )}
             </div>
@@ -296,15 +419,29 @@ export default function MembershipMobile() {
       {/* Custom CSS for hexagon shapes */}
       <style jsx>{`
         .clip-hexagon {
-          clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+          clip-path: polygon(
+            50% 0%,
+            100% 25%,
+            100% 75%,
+            50% 100%,
+            0% 75%,
+            0% 25%
+          );
         }
-        
+
         .clip-hexagon-inner {
-          clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+          clip-path: polygon(
+            50% 0%,
+            100% 25%,
+            100% 75%,
+            50% 100%,
+            0% 75%,
+            0% 25%
+          );
         }
       `}</style>
-    <MobileBottomNavigationBar />
+      <MobileBottomNavigationBar />
       <FooterUser />
     </div>
-  )
+  );
 }

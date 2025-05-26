@@ -8,6 +8,7 @@ interface PaymentHistory{
     status : string,
     date : number,
     description : string,
+    url : string,
 }
 
 const getPaymentHistory = async (id_customer: string): Promise<PaymentHistory[] | null> => {
@@ -19,14 +20,14 @@ const getPaymentHistory = async (id_customer: string): Promise<PaymentHistory[] 
     });
 
 
-
     const invoices = response.data?.data.map((invoice: any) => ({
       id: invoice.id,
       amount_paid: invoice.amount_paid / 100, // Stripe menggunakan cents
       currency: invoice.currency.toUpperCase(),
       status: invoice.status,
       date: invoice.created,
-      description: invoice.lines.data[0].description || "No description"
+      description: invoice.lines.data[0].description || "No description",
+      url : invoice.hosted_invoice_url
     }));
 
     return invoices;

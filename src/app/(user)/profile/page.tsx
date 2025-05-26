@@ -15,6 +15,7 @@ import axiosInstance from "src/api/axiosInstance";
 import { number, set } from "zod";
 import { stat } from "fs";
 import getSubscriptionDetails from "src/lib/getSubscriptionDetails";
+import axios, { AxiosError } from 'axios';
 
 export default function ProfilePage() {
   const [user, setUser] = useState({
@@ -40,6 +41,9 @@ export default function ProfilePage() {
   const [userData, setUserData] = useState<any | null>(null);
   const [UserId, setUserId] = useState<any | null>(null);
   const [Subscription, setSubscription] =  useState<any>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+const [showErrorModal, setShowErrorModal] = useState(false);
   const [passwordFormData, setPasswordFormData] = useState({
     password: "",
     confirmPassword: "",
@@ -65,12 +69,12 @@ export default function ProfilePage() {
     }));
   };
 
-  const handleProfileSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    setUser({ ...profileFormData });
-    setShowEditModal(false);
+const handleProfileSubmit = (e: FormEvent) => {
+  e.preventDefault();
+  // setUser({ ...profileFormData });
+  setShowEditModal(false);
 
-   const sendData = async () => {
+  const sendData = async () => {
     try {
       const response = await axiosInstance.post(`api/user-update/${UserId}`, {
         name: profileFormData.name,
@@ -80,26 +84,28 @@ export default function ProfilePage() {
         state_id: profileFormData.state_id,
       });
 
-    } catch (error) {
+      // Jika berhasil, reload halaman
+      window.location.reload();
 
-      console.error("Gagal mengirim data:", error);
-
-    } finally {
-
-      // Reload halaman setelah proses selesai
-      // window.location.reload();
-
+    } catch (error: any) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 422) {
+          const errors = error.response.data.errors;
+          const messages = Object.values(errors).flat().join('\n');
+          setErrorMessage(messages);
+        } else {
+          setErrorMessage('An error occurred while sending the data.');
+        }
+      } else {
+        setErrorMessage('An unexpected error occurred.');
+      }
+      setShowErrorModal(true);
     }
   };
 
-// Panggil fungsi
-sendData();
-
-
-    //  const response = await axiosInstance.get(`api/edit-user/${userId}`);
-
-    
-  };
+  // Panggil fungsi async
+  sendData();
+};
 
 const handlePasswordSubmit = async (e: FormEvent) => {
   e.preventDefault();
@@ -196,6 +202,30 @@ const handlePasswordSubmit = async (e: FormEvent) => {
             <span>›</span>
             <span>Profile</span>
           </div>
+
+            {showErrorModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+                <div className=" flex justify-between">
+                  <h2 className="text-xl font-bold text-red-600 mb-4">Validation Failed</h2>
+                  <button
+                    onClick={() => setShowErrorModal(false)}
+                    className="hover:bg-gray-100 hover:rounded-md text-gray-600 p-2"
+                  >
+                    X
+                  </button>
+                </div>
+           
+                
+                <p className="text-gray-800 whitespace-pre-line">{errorMessage || 'Error Submit Document' }</p>
+                <div className="mt-4 flex justify-end">
+                  
+                </div>
+              </div>
+            </div>
+          )}
+
+
 
           <div className="mt-6 flex items-center gap-6">
             <div className="relative">
@@ -375,35 +405,7 @@ const handlePasswordSubmit = async (e: FormEvent) => {
             </div>
 
             {/* Email Settings */}
-            {/* <div className="rounded-lg bg-white p-6 shadow-md transition hover:shadow-lg">
-              <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-gray-800">
-                <Mail className="h-5 w-5 text-orange-500" />
-                Email Address
-              </h2>
-
-              <div className="mb-4">
-                <div className="text-sm text-gray-600">
-                  Your email address is used for login and receiving important notifications about your account.
-                </div>
-              </div>
-
-              <div className="relative mb-6">
-                <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
-                <input
-                  type="email"
-                  value={user.email}
-                  readOnly
-                  className="w-full rounded-md border border-gray-300 bg-gray-50 py-2 pl-10 pr-3"
-                />
-              </div>
-
-              <button
-                onClick={() => setShowChangeEmailModal(true)}
-                className="w-full rounded-md bg-orange-500 py-2 font-medium text-white shadow-sm transition hover:bg-orange-600"
-              >
-                Change Email
-              </button>
-            </div> */}
+           
           </div>
         )}
 
