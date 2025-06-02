@@ -72,7 +72,7 @@ export default function PopupsPage() {
     setSelectedPartner(partner);
     
     setForm({ ...partner });
-    console.log(partner);
+
   };
 
   const handleDelete = (id: number) => {
@@ -104,10 +104,9 @@ export default function PopupsPage() {
     try {
       
       const response = await axiosInstance.delete(`/api/product/${partnerToDelete}`);
-      console.log("berhasil");
+
     } catch (error) {
 
-      console.log(error);
 
     } finally {
 

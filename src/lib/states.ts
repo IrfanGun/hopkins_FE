@@ -18,7 +18,7 @@ export async function getStates(): Promise<States[]> {
             name: item.name,
             shortName: item.short_name,
         }));
-        console.log("States fetched successfully:", response.data);
+
 
     } catch (error) {
         console.error("Error fetching states:", error);

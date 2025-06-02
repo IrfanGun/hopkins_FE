@@ -128,7 +128,6 @@ const handlePasswordSubmit = async (e: FormEvent) => {
       confirmPassword: "",
     });
 
-    console.log("Password baru:", passwordFormData.password);
   } catch (error) {
     console.error("Terjadi kesalahan:", error);
     alert("Terjadi kesalahan saat mengubah password.");

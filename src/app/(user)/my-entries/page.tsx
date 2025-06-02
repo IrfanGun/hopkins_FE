@@ -107,49 +107,7 @@ export default function MyEntriesPage() {
       </div>
 
       {/* Search and Filter Bar */}
-      <div className="sticky top-0 z-10 border-b bg-white py-4 shadow-sm">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-            {/* Search */}
-            <div className="relative w-full max-w-md">
-              <input
-                type="text"
-                placeholder="Search entries..."
-                className="w-full rounded-full border border-gray-300 bg-gray-50 py-2 pl-10 pr-4 focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
-              />
-              <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
-            </div>
-
-            {/* Filters */}
-            <div className="flex gap-2">
-              <button
-                onClick={() => setActiveFilter("all")}
-                className={`rounded-full px-4 py-2 text-sm font-medium ${
-                  activeFilter === "all" ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
-              >
-                All Entries
-              </button>
-              <button
-                onClick={() => setActiveFilter("active")}
-                className={`rounded-full px-4 py-2 text-sm font-medium ${
-                  activeFilter === "active" ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
-              >
-                Active
-              </button>
-              <button
-                onClick={() => setActiveFilter("past")}
-                className={`rounded-full px-4 py-2 text-sm font-medium ${
-                  activeFilter === "past" ? "bg-orange-500 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                }`}
-              >
-                Past
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+      
 
       {/* Breadcrumb */}
       <div className="container mx-auto px-4 py-4">

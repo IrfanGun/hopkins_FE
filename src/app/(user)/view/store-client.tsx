@@ -37,7 +37,7 @@ export default function StoresClient() {
        const loadStores = async () => {
       
         const data = await fetchStores();
-        console.log(data);
+
         setStores(data);
      
       };

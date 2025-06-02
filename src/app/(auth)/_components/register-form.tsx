@@ -128,7 +128,7 @@ const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => 
       },
       { withCredentials: true }
     );
-    console.log(loginResponse.data);
+
 
     // 3. Simpan token dan data user
     Cookies.set("token", loginResponse.data.token);

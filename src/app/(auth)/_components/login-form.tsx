@@ -96,7 +96,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           localStorage.setItem('customer-hopkins', JSON.stringify(userData));
           router.push("/user");
         } else {
-          console.log('Subscription inactive or customer not found');
+
           setError("Your subscription is inactive.");
         }
       } catch (error: any) {

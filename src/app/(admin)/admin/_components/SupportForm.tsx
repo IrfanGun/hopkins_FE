@@ -10,7 +10,7 @@ import { AxiosError } from "axios";
 
 interface SupportFormProps {
   onSuccess: () => void;
-}  
+}
 
 export default function SupportForm({ onSuccess }: SupportFormProps) {
   const [any, setTickets] = useState<Ticket[]>([]);
@@ -20,14 +20,11 @@ export default function SupportForm({ onSuccess }: SupportFormProps) {
   const [isDelete, setIsDelete] = useState<boolean>(false);
   const [SupportId, setSupportId] = useState<number>();
 
-
   const [form, setForm] = useState<Omit<Ticket, "id" | "createdAt">>({
-
     subject: "",
     message: "",
     userEmail: "",
     status: "open",
-
   });
 
   const [editId, setEditId] = useState<number | null>(null);
@@ -41,49 +38,34 @@ export default function SupportForm({ onSuccess }: SupportFormProps) {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    console.log(form);
-
     try {
       setIsLoading(true);
-      const response = await axiosInstance.post('/api/support-tickets', {
-
+      const response = await axiosInstance.post("/api/support-tickets", {
         subject: form.subject,
         message: form.message,
         user_email: form.userEmail,
-        status: form.status
-
+        status: form.status,
       });
 
       onSuccess();
-
     } catch (error) {
       const err = error as AxiosError;
 
       if (err.response) {
-
         const errorData = err.response.data as Record<string, string[]>;
         const allMessages: string[] = Object.values(errorData).flat();
         setMessage(allMessages);
         setIsShowModal(true);
-
-
       }
-
     } finally {
-      
       setIsLoading(false);
-
     }
 
     setForm({ subject: "", message: "", userEmail: "", status: "open" });
   };
-
-
-
 
   const handleEdit = (ticket: Ticket) => {
     setEditId(ticket.id);
@@ -95,18 +77,17 @@ export default function SupportForm({ onSuccess }: SupportFormProps) {
     });
   };
 
-
   const handleDelete = (id: number) => {
     setTickets((prev) => prev.filter((ticket) => ticket.id !== id));
     if (editId === id) setEditId(null);
   };
 
   const confirmDelete = () => {
-      console.log("oleh");
-  } 
+
+  };
   return (
     <div>
-      {isShowModal &&
+      {isShowModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <ShowModal
             setMessage={Message}
@@ -115,10 +96,9 @@ export default function SupportForm({ onSuccess }: SupportFormProps) {
             setDelete={confirmDelete}
             deleteId={SupportId}
             isLoading={isLoading}
-
           />
         </div>
-      }
+      )}
 
       <form
         onSubmit={handleSubmit}
@@ -187,21 +167,20 @@ export default function SupportForm({ onSuccess }: SupportFormProps) {
         </div>
 
         {isLoading ? (
-         
-          <div className="bg-orange-500 inline-block rounded-md px-4 justify-start py-2 text-sm ">
-             <ThemeProvider theme={customTheme}><Spinner  size="md" color="base" /></ThemeProvider> 
+          <div className="inline-block justify-start rounded-md bg-orange-500 px-4 py-2 text-sm">
+            <ThemeProvider theme={customTheme}>
+              <Spinner size="md" color="base" />
+            </ThemeProvider>
           </div>
-          
         ) : (
-          <Button className="bg-orange-500 hover:bg-orange-600 text-white cursor-pointer" type="submit">{editId ? "Update Ticket" : "Add Ticket"}</Button>
-
-        )
-
-        }
-      
+          <Button
+            className="cursor-pointer bg-orange-500 text-white hover:bg-orange-600"
+            type="submit"
+          >
+            {editId ? "Update Ticket" : "Add Ticket"}
+          </Button>
+        )}
       </form>
-
     </div>
-
   );
 }

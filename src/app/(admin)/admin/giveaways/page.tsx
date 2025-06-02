@@ -109,7 +109,6 @@ export default function AdminGiveawaysPage() {
     } catch (error) {
 
       const err = error as AxiosError;
-      console.log(err.response);
       if (err.response) {
 
         const errorData = err.response.data as Record<string, string[]>;
@@ -155,7 +154,7 @@ export default function AdminGiveawaysPage() {
     } catch (error) {
 
       const err = error as AxiosError;
-      console.log(err.response);
+
       if (err.response) {
         const errorData = err.response.data as Record<string, string[]>;
         const allMessages: string[] = Object.values(errorData).flat();
@@ -165,7 +164,7 @@ export default function AdminGiveawaysPage() {
 
     } finally {
       setIsLoading(false);
-      console.log("cek");
+
       loadGiveaways();
     }
 

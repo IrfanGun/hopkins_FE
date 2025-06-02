@@ -12,32 +12,14 @@ import { Category, SubCategory } from "../../../../lib/types";
 import { formatCategories } from "src/lib/formatCategories";
 import axios from "axios";
 
-
-// interface SubCategory {
-//   id: number;
-//   name: string;
-  
-// }
-
-// interface Category {
-//   id: number;
-//   name: string;
-//   subcategories: SubCategory[];
-// }
-
-
-
 export default function CategoriesPage() {
-
-
-
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<{
-    id : number;
+    id: number;
     type: "category" | "subcategory";
     name: string;
     categoryName?: string;
-    id_subcategory ? :number;
+    id_subcategory?: number;
   } | null>(null);
 
   const [categories, setCategories] = useState<Category[]>([]);
@@ -50,23 +32,20 @@ export default function CategoriesPage() {
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     null,
   );
-  const [selectedSubcategory, setSelectedSubcategory] = useState<SubCategory | null>(
-    null,
-  );
+  const [selectedSubcategory, setSelectedSubcategory] =
+    useState<SubCategory | null>(null);
   const [newCategoryName, setNewCategoryName] = useState("");
   const [newSubcategoryName, setNewSubcategoryName] = useState("");
-  
+
   useEffect(() => {
-
-
     const loadCategories = async () => {
       const cats = await initialCategories();
-      const formattedCategories = formatCategories(cats); 
-      setCategories(formattedCategories); 
+      const formattedCategories = formatCategories(cats);
+      setCategories(formattedCategories);
     };
 
-    loadCategories(); 
-  }, []); 
+    loadCategories();
+  }, []);
 
   const toggleCategory = (categoryName: string) => {
     setExpandedCategories((prev) =>
@@ -76,185 +55,152 @@ export default function CategoriesPage() {
     );
   };
 
-  const handleAddCategory = async() => {
+  const handleAddCategory = async () => {
     try {
       const response = await axiosInstance.post("/api/category", {
         name: newCategoryName,
       });
-      
-        const loadCategories = async () => {
+
+      const loadCategories = async () => {
         const cats = await initialCategories();
-        const formattedCategories = formatCategories(cats); 
-        setCategories(formattedCategories); 
+        const formattedCategories = formatCategories(cats);
+        setCategories(formattedCategories);
       };
-      
+
       setNewCategoryName("");
       setShowAddCategoryModal(false);
-      loadCategories(); 
-
-     
+      loadCategories();
     } catch (error: any) {
       if (error.response) {
-       
         console.error("Server Error:", error.response.data);
-
       } else if (error.request) {
         console.error("No Response from Server:", error.request);
       } else {
         console.error("Error:", error.message);
       }
-    
+
       return null;
     }
   };
 
-  const handleEditCategory = async() => {
-   
+  const handleEditCategory = async () => {
     try {
       if (!selectedCategory) return;
 
-      const response = await axiosInstance.put(`/api/category/${selectedCategory.id}`, {
-        name: newCategoryName,
-      });
+      const response = await axiosInstance.put(
+        `/api/category/${selectedCategory.id}`,
+        {
+          name: newCategoryName,
+        },
+      );
       setShowEditCategoryModal(false);
       setNewCategoryName("");
-      
+
       const loadCategories = async () => {
         const cats = await initialCategories();
-        const formattedCategories = formatCategories(cats); 
-        setCategories(formattedCategories); 
+        const formattedCategories = formatCategories(cats);
+        setCategories(formattedCategories);
       };
-  
-      loadCategories(); 
 
-    } catch (error: any) {
-      console.log(error);
-    }
-   
+      loadCategories();
+    } catch (error: any) {}
   };
 
-  const handleEditSubcategory = async ( ) => {
-    
-
-  
+  const handleEditSubcategory = async () => {
     try {
-     
-    if (!selectedSubcategory) return;
-      const response = await axiosInstance.put(`/api/subcategory/${selectedSubcategory.id}`, {
-        id : selectedSubcategory.id,
-        name: newSubcategoryName,
-        
-      });
+      if (!selectedSubcategory) return;
+      const response = await axiosInstance.put(
+        `/api/subcategory/${selectedSubcategory.id}`,
+        {
+          id: selectedSubcategory.id,
+          name: newSubcategoryName,
+        },
+      );
       const loadCategories = async () => {
         const cats = await initialCategories();
-        const formattedCategories = formatCategories(cats); 
-        setCategories(formattedCategories); 
+        const formattedCategories = formatCategories(cats);
+        setCategories(formattedCategories);
       };
 
       setShowEditSubcategoryModal(false);
       setNewSubcategoryName("");
-      
+
       loadCategories();
-
-
-    } catch (error: any) {
-      console.log(error);
-    }
+    } catch (error: any) {}
 
     const updated = await initialCategories();
     const loadCategories = async () => {
       const cats = await initialCategories();
-      const formattedCategories = formatCategories(cats); 
-      setCategories(formattedCategories); 
+      const formattedCategories = formatCategories(cats);
+      setCategories(formattedCategories);
     };
 
-    loadCategories(); 
+    loadCategories();
     setShowEditSubcategoryModal(false);
   };
 
-  const handleDeleteCategory = async (id : Number) => {
-   
-   try {
-
+  const handleDeleteCategory = async (id: Number) => {
+    try {
       const response = await axiosInstance.delete(`api/category/${id}`, {
-        headers : {
-          Authorization : `Bearer YOUR_ACCESS_TOKEN`,
-        }
+        headers: {
+          Authorization: `Bearer YOUR_ACCESS_TOKEN`,
+        },
       });
       setShowDeleteModal(false);
       setNewCategoryName("");
-      
-      const loadCategories = async () => {
-        const cats = await initialCategories();
-        const formattedCategories = formatCategories(cats); 
-        setCategories(formattedCategories); 
-      };
-  
-      loadCategories(); 
-      
-      
-
-   } catch (error) {
-    console.error("Error deleting category:", error);
-    // Handle error appropriately, e.g., show a notification to the user
-    
-   }
-
-   
-
-  };
-
-  const handleDeleteSubcategory = async (id : Number) => 
-  {
-    console.log(id);
-    try {
-
-      const response = await axiosInstance.delete(`api/subcategory/${id}`, {
-        headers : {
-          Authorization : `Bearer YOUR_ACCESS_TOKEN`,
-        }
-      })
 
       const loadCategories = async () => {
         const cats = await initialCategories();
-        const formattedCategories = formatCategories(cats); 
-        setCategories(formattedCategories); 
+        const formattedCategories = formatCategories(cats);
+        setCategories(formattedCategories);
       };
-  
-      loadCategories(); 
-      setShowDeleteModal(false);
 
+      loadCategories();
     } catch (error) {
-      console.log(error);
+      console.error("Error deleting category:", error);
+      // Handle error appropriately, e.g., show a notification to the user
     }
   };
 
-  const handleAddSubcategory = async(category_id : number, name : string ) => {
-    
+  const handleDeleteSubcategory = async (id: Number) => {
+    try {
+      const response = await axiosInstance.delete(`api/subcategory/${id}`, {
+        headers: {
+          Authorization: `Bearer YOUR_ACCESS_TOKEN`,
+        },
+      });
 
-    try  {
-    const response = await axiosInstance.post("/api/subcategory", {
-      name: name,
-      category_id: category_id,
-    });
+      const loadCategories = async () => {
+        const cats = await initialCategories();
+        const formattedCategories = formatCategories(cats);
+        setCategories(formattedCategories);
+      };
 
-    setNewSubcategoryName("");
-    const loadCategories = async () => {
-      const cats = await initialCategories();
-      const formattedCategories = formatCategories(cats); 
-      setCategories(formattedCategories); 
-    };
+      loadCategories();
+      setShowDeleteModal(false);
+    } catch (error) {}
+  };
 
-    loadCategories(); 
-   
-    setShowAddSubcategoryModal(false);
+  const handleAddSubcategory = async (category_id: number, name: string) => {
+    try {
+      const response = await axiosInstance.post("/api/subcategory", {
+        name: name,
+        category_id: category_id,
+      });
 
-    } catch (error: any) { 
-      console.log(error);
+      setNewSubcategoryName("");
+      const loadCategories = async () => {
+        const cats = await initialCategories();
+        const formattedCategories = formatCategories(cats);
+        setCategories(formattedCategories);
+      };
+
+      loadCategories();
+
+      setShowAddSubcategoryModal(false);
+    } catch (error: any) {
+  
     }
-
-
-
   };
 
   return (
@@ -324,7 +270,11 @@ export default function CategoriesPage() {
                     </button>
                     <button
                       onClick={() => {
-                        setDeleteTarget({ type: "category", name: cat.name, id : cat.id });
+                        setDeleteTarget({
+                          type: "category",
+                          name: cat.name,
+                          id: cat.id,
+                        });
                         setShowDeleteModal(true); // ⬅️ Tambahkan ini
                       }}
                       className="p-1 text-gray-500 hover:text-red-500"
@@ -340,7 +290,9 @@ export default function CategoriesPage() {
                         key={sub.id}
                         className="flex items-center justify-between"
                       >
-                        <span className="text-sm text-gray-700">{sub.name}</span>
+                        <span className="text-sm text-gray-700">
+                          {sub.name}
+                        </span>
                         <div className="flex gap-2">
                           <button
                             onClick={() => {
@@ -356,11 +308,11 @@ export default function CategoriesPage() {
                           <button
                             onClick={() => {
                               setDeleteTarget({
-                                id : cat.id,
+                                id: cat.id,
                                 type: "subcategory",
                                 name: sub.name,
                                 categoryName: cat.name,
-                                id_subcategory : sub.id
+                                id_subcategory: sub.id,
                               });
                               setShowDeleteModal(true); // ⬅️ Tambahkan ini
                             }}
@@ -419,25 +371,16 @@ export default function CategoriesPage() {
             setDeleteTarget(null);
           }}
           onConfirm={async () => {
-            
             if (deleteTarget.type === "category") {
-             
-            
-            await handleDeleteCategory(deleteTarget.id); 
-            console.log("Deleting category:", deleteTarget.id);
-              
-              
+              await handleDeleteCategory(deleteTarget.id);
             } else if (
               deleteTarget.type === "subcategory" &&
               deleteTarget.categoryName
             ) {
-             
               if (deleteTarget.id_subcategory !== undefined) {
                 await handleDeleteSubcategory(deleteTarget.id_subcategory);
               }
             }
-
-          
           }}
         />
       )}

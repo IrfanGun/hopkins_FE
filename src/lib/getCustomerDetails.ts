@@ -13,7 +13,6 @@ const getCustomerDetails = async (id_customer: string): Promise<Customer | null>
     const response: AxiosResponse<Customer> = await stripeInstance.get(`/customers/${id_customer}`);
     return response.data;
   } catch (error: any) {
-    console.error('Error fetching customer details:', error.message);
     return null;
   }
 };

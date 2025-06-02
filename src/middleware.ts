@@ -7,7 +7,6 @@ export async function middleware(request: NextRequest) {
   const url = request.nextUrl.pathname;
 
    if (!token) {
-    console.log("⛔ Tidak ada token, redirect ke /login");
     if (url !== '/login') {
       return NextResponse.redirect(new URL('/login', request.url));
     }
@@ -35,7 +34,6 @@ export async function middleware(request: NextRequest) {
   const role = data.user.role;
  
   if (url.startsWith('/login') && token) {
-    console.log("🔒 Sudah login, redirect ke dashboard");
     if (role.name === 'admin') {
       return NextResponse.redirect(new URL('/admin', request.url));
     }

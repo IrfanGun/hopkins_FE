@@ -62,7 +62,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(404).json({ error: 'Customer not found' });
 
   } catch (error: any) {
-    console.error('Error in get-all-customers:', error);
     return res.status(500).json({ error: error.message || 'Internal server error' });
   }
 }

@@ -88,11 +88,11 @@ useEffect(() => {
           partner.category.toLowerCase() === (category as string).toLowerCase() &&
           partner.subcategory?.toLowerCase().replace(/\s+/g, "-") === (subcategory as string).toLowerCase()
         );
-        setPartners(response); // Simpan semua partner yang diterima
+        setPartners(response); 
         setFilteredPartners(filteredData);
-        console.log(displayedPartners, partners); // Hanya update filtered data
+      
       } catch (error) {
-        console.error("Error loading partners", error);
+ 
       } finally {
         setIsLoading(false);
       }

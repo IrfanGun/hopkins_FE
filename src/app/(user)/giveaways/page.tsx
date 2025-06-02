@@ -32,7 +32,6 @@ export default function GiveawaysPage() {
       } 
         catch (error) {
 
-        console.error("Error fetching giveaways:", error);
       } finally {
         setLoading(false);
       }

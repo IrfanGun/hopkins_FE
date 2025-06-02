@@ -95,7 +95,7 @@ export default function SupportPage() {
       setTickets(response);
 
     } catch {
-      console.log();
+
     } finally {
       setIsLoading(false);
     }

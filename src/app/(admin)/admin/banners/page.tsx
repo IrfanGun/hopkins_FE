@@ -16,228 +16,164 @@ export default function BannersPage() {
   const [showAddBannerModal, setShowAddBannerModal] = useState(false);
   const [showEditBannerModal, setShowEditBannerModal] = useState(false);
   const [selectedBanner, setSelectedBanner] = useState<Banner | null>(null);
-  const [ isLoading, setIsLoading ] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [isLoadBanner, setLoadBanner] = useState(false);
-  const [Notification, setNotification] = useState < string[]>([]);
-  const [showNotification, setShowNotification] = useState(false); 
+  const [Notification, setNotification] = useState<string[]>([]);
+  const [showNotification, setShowNotification] = useState(false);
   const [isDelete, setIsDelete] = useState(false);
   const [BannerId, setBannerId] = useState<number | null>(null);
   const [loadingBannerId, setLoadingBannerId] = useState<number | null>(null);
-
 
   const [newBanner, setNewBanner] = useState<Omit<Banner, "id">>({
     title: "",
     image: "",
     page: "Dashboard",
     active: true,
-
   });
 
-  useEffect(()  => {
-   
+  useEffect(() => {
     const loadBanner = async () => {
-      
       try {
-        console.log("active")
         setLoadBanner(true);
         const response = await initialBanners();
         setBanners(response);
-        
-
       } catch (e) {
-  
       } finally {
-
         setLoadBanner(false);
       }
-    }
+    };
 
     loadBanner();
-
-
-  },[]) 
+  }, []);
 
   const handleAddBanner = async () => {
     if (newBanner.title.trim() === "") return;
-    
+
     setIsLoading(true);
-    
+
     try {
-
-
       const response = await axiosInstance.post("/api/banner", {
-        title : newBanner.title,
-        image_url : newBanner.image,
-        page : newBanner.page,
-        is_active : newBanner.active,
-
+        title: newBanner.title,
+        image_url: newBanner.image,
+        page: newBanner.page,
+        is_active: newBanner.active,
       });
-      
- 
-      
     } catch (error) {
-      
       const err = error as AxiosError;
-    
-      if (err.response) {
 
-        const errorData = err.response.data  as Record<string, string[]>;
+      if (err.response) {
+        const errorData = err.response.data as Record<string, string[]>;
         const allMessages: string[] = Object.values(errorData).flat();
         setNotification(allMessages);
-      
-        setShowNotification(true);
-      
-      } 
-      
-    } finally {
 
+        setShowNotification(true);
+      }
+    } finally {
       setIsLoading(false);
 
       setShowAddBannerModal(false);
       const reloadBanner = async () => {
         const getBanner = await initialBanners();
         setBanners(getBanner);
-      }
-  
+      };
+
       reloadBanner();
-    
-      
     }
   };
 
   const handleEditBanner = async () => {
-
-
-
     setIsLoading(true);
     try {
       const id = selectedBanner?.id;
       const putBanner = await axiosInstance.put(`/api/banner/${id}`, {
-        title : newBanner.title,
-        image_url : newBanner.image,
-        page : newBanner.page,
-        is_active : newBanner.active,
-      }
-      );
-
+        title: newBanner.title,
+        image_url: newBanner.image,
+        page: newBanner.page,
+        is_active: newBanner.active,
+      });
     } catch (error) {
-
       const err = error as AxiosError;
-    
+
       if (err.response) {
-
-        const errorData = err.response.data  as Record<string, string[]>;
+        const errorData = err.response.data as Record<string, string[]>;
         const allMessages: string[] = Object.values(errorData).flat();
-        console.log(allMessages);
         setNotification(allMessages);
-        
         setShowNotification(true);
-      
-      } 
-
+      }
     } finally {
-
       setIsLoading(false);
       const reloadBanner = async () => {
         const getBanner = await initialBanners();
         setBanners(getBanner);
       };
-      
+
       setShowEditBannerModal(false);
       reloadBanner();
-  
-
     }
-
-
   };
 
   const handleDeleteBanner = (bannerId: number) => {
-
     setIsDelete(true);
     setShowNotification(true);
-    console.log(bannerId);
     setBannerId(bannerId);
     setNotification(["Are you sure you want to delete this banner?"]);
-
   };
 
-  const HandleDelete = async (bannerId : number) => {
-
-
+  const HandleDelete = async (bannerId: number) => {
     setIsLoading(true);
 
     try {
-      
       const id = bannerId;
       const response = await axiosInstance.delete(`/api/banner/${id}`);
-
-      
     } catch (error) {
-
       const err = error as AxiosError;
-    
+
       if (err.response) {
-
-        const errorData = err.response.data  as Record<string, string[]>;
+        const errorData = err.response.data as Record<string, string[]>;
         const allMessages: string[] = Object.values(errorData).flat();
-        console.log(allMessages);
         setNotification(allMessages);
-      
+
         setShowNotification(true);
-      
-      
-      } 
-
-      
-      
+      }
     } finally {
-
       setIsLoading(false);
       const reloadBanner = async () => {
         const getBanner = await initialBanners();
         setBanners(getBanner);
-       
-
       };
-   
-    
-  
+
       setShowNotification(false);
       reloadBanner();
       setIsLoading(false);
       setIsDelete(false);
-
     }
-
-  }
-  
+  };
 
   const handleToggleActive = async (bannerId: number) => {
-
     setLoadingBannerId(bannerId);
 
     try {
       const targetBanner = banners.find((b) => b.id === bannerId);
-      const response = await axiosInstance.put(`/api/banner/activation/${bannerId}`, {
-        is_active: !targetBanner?.active,
-      });
-  
+      const response = await axiosInstance.put(
+        `/api/banner/activation/${bannerId}`,
+        {
+          is_active: !targetBanner?.active,
+        },
+      );
+
       // Update hanya banner yang diubah
       setBanners((prevBanners) =>
         prevBanners.map((banner) =>
           banner.id === bannerId
             ? { ...banner, active: !banner.active }
-            : banner
-        )
+            : banner,
+        ),
       );
     } catch (error) {
-      console.error(error);
+      
     } finally {
       setLoadingBannerId(null);
     }
-    
-
   };
 
   const resetForm = () => {
@@ -246,7 +182,6 @@ export default function BannersPage() {
       image: "",
       page: "",
       active: true,
-  
     });
     setSelectedBanner(null);
   };
@@ -263,7 +198,7 @@ export default function BannersPage() {
           Add Banner
         </button>
       </div>
-      
+
       <BannerList
         banners={banners}
         setSelectedBanner={(banner) => {
@@ -273,8 +208,6 @@ export default function BannersPage() {
             image: banner.image,
             page: banner.page,
             active: banner.active,
-          
-
           });
           setShowEditBannerModal(true);
         }}
@@ -282,8 +215,8 @@ export default function BannersPage() {
         setShowEditBannerModal={setShowEditBannerModal}
         handleDeleteBanner={handleDeleteBanner}
         handleToggleActive={handleToggleActive}
-        isLoadBanner = {isLoadBanner}
-        loadingBannerId = {loadingBannerId}
+        isLoadBanner={isLoadBanner}
+        loadingBannerId={loadingBannerId}
       />
 
       {showAddBannerModal && (
@@ -296,25 +229,23 @@ export default function BannersPage() {
               resetForm();
               setShowAddBannerModal(false);
             }}
-            isLoading = {isLoading}
+            isLoading={isLoading}
           />
         </div>
       )}
 
-      {showNotification  && (
+      {showNotification && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <ShowModal
             setMessage={Notification}
             setClose={() => setShowNotification(false)}
-            isDelete = {isDelete}
+            isDelete={isDelete}
             setDelete={HandleDelete}
             deleteId={BannerId}
-            isLoading = {isLoading}
+            isLoading={isLoading}
           />
-      </div>
-      ) }
-
-     
+        </div>
+      )}
 
       {showEditBannerModal && selectedBanner && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
@@ -326,8 +257,8 @@ export default function BannersPage() {
               resetForm();
               setShowEditBannerModal(false);
             }}
-            isEdit 
-            isLoading = {isLoading}
+            isEdit
+            isLoading={isLoading}
           />
         </div>
       )}

@@ -80,7 +80,6 @@ export default function MajorDrawWinnersAdminPage() {
       setIsLoading(true);
       const response = await fetchDraws();
       setData(response);
-      console.log(response);
     } catch (error) {
 
     } finally {
@@ -104,7 +103,6 @@ export default function MajorDrawWinnersAdminPage() {
 
   const addPrize = async() => {
 
-    console.log(newPrize);
     if (editId == null) {
 
       setNotification(["Add the prize first berfore fill the winners !"]);
@@ -194,7 +192,7 @@ export default function MajorDrawWinnersAdminPage() {
   // Update Submit
   const submitUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(form);
+
     try {
 
       setIsLoadingData(true);
@@ -229,7 +227,7 @@ export default function MajorDrawWinnersAdminPage() {
   }
 
   const handleDelete = (id: string) => {
-    console.log(id);
+
     setShowNotification(true);
     setIsDelete(true);
     setNotification(["Are sure delete this draw ?"]);

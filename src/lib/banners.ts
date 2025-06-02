@@ -29,7 +29,6 @@ export async function fetchBanner(): Promise<Banner[]> {
 
   } catch (e) {
 
-    console.log(e);
     return []
 
   }

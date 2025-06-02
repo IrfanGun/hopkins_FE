@@ -49,7 +49,7 @@ const [ isLoading, isSetLoading] = useState(false);
 
       isSetLoading(true)
       const data = await fetchStores();
-      console.log(data);
+
       setStores(data);
       isSetLoading(false)
    
